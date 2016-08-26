@@ -47,6 +47,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/cast', express.static(path.join(__dirname, 'uploads/images/cast'))); // 마운트포인트 매핑
 app.use('/poster', express.static(path.join(__dirname, 'uploads/images/poster'))); // 마운트포인트 매핑
 app.use('/profile', express.static(path.join(__dirname, 'uploads/images/profile'))); // 마운트포인트 매핑
+app.use('/boards', express.static(path.join(__dirname, 'uploads/images/board'))); // '/boards' url의 경우 오른쪽의 경로로 연결하겠다.
+app.use('/wishlists', express.static(path.join(__dirname, 'uploads/images/posterImage')));
 
 app.use('/auth', auth);
 app.use('/playlists', playlist);
