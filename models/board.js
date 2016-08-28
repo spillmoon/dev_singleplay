@@ -5,7 +5,7 @@ var url = require('url');
 var fs = require('fs');
 
 function listBoards(callback) {
-    var sql = 'SELECT boardNo, titleFilePath FROM board';
+    var sql = 'SELECT boardNo, title, writeDate, titleFilePath FROM board';
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
@@ -20,6 +20,8 @@ function listBoards(callback) {
             board.list = [];
             for (var i=0; i<results.length; i++) {
                 board.list.push({
+                    title: results[i].title,
+                    writeDate: results[i].writeDate,
                     fileUrl : url.resolve('http://localhost:8080/boards/', path.basename(results[i].titleFilePath))
                 });
             }
@@ -43,7 +45,7 @@ function findBoard(boardNo, callback) {
             }
             var board = {};
             board.fileName = path.basename(result[0].filePath);
-            board.fileUrl = url.resolve('http://localhost:80/boards/', board.fileName);
+            board.fileUrl = url.resolve('http://localhost:8080/boards/', board.fileName);
             callback(null, board);
         });
     });

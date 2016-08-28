@@ -16,13 +16,3 @@ insert into place(placeName, address, placeImageName, placeImagePath)
 values('엑스코 컨벤션홀', '대구시 북구', 'place8.png', 'C:\\Didimdol\\node_project\\dev_singleplay\\uploads\\images\\place\\place8.png');
 insert into place(placeName, address, placeImageName, placeImagePath)
 values('블루스퀘어 삼성카드홀', '서울시 용산구', 'place9.png', 'C:\\Didimdol\\node_project\\dev_singleplay\\uploads\\images\\place\\place9.png');
-
-
-
-select *
-from play
-where theme = '뮤지컬' and playDay = str_to_date('2016-08-30', '%Y-%m-%d');
-
-select *
-from play
-where id = 19;

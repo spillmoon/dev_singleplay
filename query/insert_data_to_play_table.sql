@@ -232,3 +232,4 @@ INSERT INTO play (name, place_id, playDay, playTime, theme, VIPprice, Rprice, Sp
 VALUES ('페스트', 4, '2016-09-25', date_format('2016-09-25 14:00', '%H:%i'), 0, 140000, 120000, 90000, 50, 9.3);
 INSERT INTO play (name, place_id, playDay, playTime, theme, VIPprice, Rprice, Sprice, salePer, starScoreAvg)
 VALUES ('페스트', 4, '2016-09-25', date_format('2016-09-25 18:30', '%H:%i'), 0, 140000, 120000, 90000, 50, 9.3);
+

@@ -7,9 +7,10 @@ var fs = require('fs');
 
 //FIXME: 로그인 연동
 function listWish(callback) {
-    var sql_select_wishlist = "SELECT p.name, place.placeName, p.playDay, p.playTime, p.VIPprice, p.salePer, p.starScoreAvg " +
+    var sql_select_wishlist = "SELECT p.name, place.placeName, p.playDay, p.playTime, p.VIPprice, p.salePer, p.starScoreAvg, i.imageName " +
         "FROM play p join wishlist w on (p.id = w.playId) " +
-        "join place on (place.id = p.place_id)";
+        "join place on (place.id = p.place_id) + "
+        "join image i on (p.name = i.play_name)";
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
@@ -29,9 +30,9 @@ function listWish(callback) {
                 wish.playDay = results[i].playDay;
                 wish.playTime = results[i].playTime;
                 wish.price = results[i].VIPprice;
-                wish.salePrice = results[i].VIPprice*(100-55)/100;
+                wish.salePrice = results[i].VIPprice * ((100-results[i].salePer)/100);
                 wish.list.push({
-                    list : url.resolve('http://localhost:8080/wishlists/', path.basename(results[i].posterImage))
+                    list : url.resolve('https://localhost:8080/image/poster/', path.basename(results[i].imageName))
                 });
             }
             callback(null, wish);

@@ -15,8 +15,8 @@ router.get('/', function(req, res, next) {
                 itemsPerPage: 10,
                 startIndex: startIndex,
                 paging: {
-                    prev: "http://server:port/boards?start=" + (startIndex-10),
-                    next: "http://server:port/boards?start=" + (startIndex+10)
+                    prev: "http://localhost:8080/boards?start=" + (startIndex-10),
+                    next: "http://localhost:8080/boards?start=" + (startIndex+10)
                 },
                 results: results
             });
