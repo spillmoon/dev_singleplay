@@ -1,6 +1,4 @@
-var mysql = require('mysql');
 var dbPool = require('../models/common').dbPool;
-var async = require('async');
 var path = require('path');
 var url = require('url');
 var fs = require('fs');
@@ -9,7 +7,7 @@ var fs = require('fs');
 function listWish(callback) {
     var sql_select_wishlist = "SELECT p.name, place.placeName, p.playDay, p.playTime, p.VIPprice, p.salePer, p.starScoreAvg, i.imageName " +
         "FROM play p join wishlist w on (p.id = w.playId) " +
-        "join place on (place.id = p.place_id) + "
+        "join place on (place.id = p.place_id)" +
         "join image i on (p.name = i.play_name)";
 
     dbPool.getConnection(function (err, dbConn) {
