@@ -31,8 +31,8 @@ passport.serializeUser(function (user, done) {
     done(null, user.id);
 });
 
-passport.deserializeUser(function (userEmail, done) {
-    User.findUser(userEmail, function (err, user) {
+passport.deserializeUser(function (id, done) {
+    User.findUser(id, function (err, user) {
         if (err) {
             return done(err);
         }

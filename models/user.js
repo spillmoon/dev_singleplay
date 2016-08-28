@@ -1,24 +1,66 @@
-var mysql = require('mysql');
+var dbPool = require('../models/common').dbPool;
+
 var staticUser = {};
 staticUser.name = "한세정";
 staticUser.id = 1;
 staticUser.email = "test@naver.com";
 staticUser.password = "123";
 
-function findByEmail(userEmail, callback) {
-    if (userEmail === staticUser.email) {
-        callback(null, staticUser);
-    }
+function findByEmail(email, callback) {
+    var sql = 'SELECT id, userEmail, password FROM user WHERE userEmail = ?';
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        dbConn.query(sql, [email], function(err, results) {
+            dbConn.release();
+            if (err) {
+                return callback(err);
+            }
+            if (results.length === 0) {
+                return callback(null, null);
+            }
+            callback(null, results[0]);
+        })
+    });
 }
 
 function verifyPassword(password, hashPassword, callback) {
-    if (password === hashPassword) {
-        callback(null, true);
-    }
+    var sql = 'SELECT SHA2(?, 256) password';
+    dbPool.getConnection(function(err, dbConn){
+        if (err) {
+            return callback(err);
+        }
+        dbConn.query(sql, [password], function(err, results) {
+            dbConn.release();
+            if (err) {
+                return callback(err);
+            }
+            if (results[0].password !== hashPassword) {
+                return callback(null, false)
+            }
+            callback(null, true);
+        });
+    });
 }
 
-function findUser(email, callback) {
-    callback(null, staticUser);
+function findUser(userId, callback) {
+    var sql = 'SELECT id, userEmail FROM user WHERE id = ?';
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        dbConn.query(sql, [userId], function(err, results) {
+            dbConn.release();
+            if (err) {
+                return callback(err);
+            }
+            var user = {};
+            user.id = results[0].id;
+            user.email = results[0].email;
+            callback(null, user);
+        });
+    });
 }
 
 function findOrCreate(profile, callback) {
