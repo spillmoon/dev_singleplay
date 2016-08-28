@@ -1,5 +1,4 @@
 var mysql = require('mysql');
-var async = require('async');
 var dbPool = require('../models/common').dbPool;
 var path = require('path');
 var url = require('url');
@@ -21,7 +20,7 @@ function listBoards(callback) {
             board.list = [];
             for (var i=0; i<results.length; i++) {
                 board.list.push({
-                    fileUrl : url.resolve('http://localhost:80/boards/', path.basename(results[i].titleFilePath))
+                    fileUrl : url.resolve('http://localhost:8080/boards/', path.basename(results[i].titleFilePath))
                 });
             }
 

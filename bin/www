@@ -15,7 +15,7 @@ var path = require('path');
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '8080');
+var port = normalizePort(process.env.PORT || process.env.DEFAULT_PORT);
 app.set('port', port);
 
 /**
