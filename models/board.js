@@ -16,16 +16,16 @@ function listBoards(callback) {
             if (err) {
                 return callback(err);
             }
-            var board = {};
-            board.list = [];
+            console.log('here is board list model');
+            var board = [];
             for (var i=0; i<results.length; i++) {
-                board.list.push({
+                board.push({
+                    id: results[i].boardNo,
                     title: results[i].title,
                     writeDate: results[i].writeDate,
-                    fileUrl : url.resolve('http://localhost:8080/boards/', path.basename(results[i].titleFilePath))
+                    fileUrl : url.resolve('http://localhost:8080/boardimg/', path.basename(results[i].titleFilePath))
                 });
             }
-
             callback(null, board);
         });
     })
@@ -43,9 +43,7 @@ function findBoard(boardNo, callback) {
             if (err) {
                 return callback(err);
             }
-            var board = {};
-            board.fileName = path.basename(result[0].filePath);
-            board.fileUrl = url.resolve('http://localhost:8080/boards/', board.fileName);
+            var board = url.resolve('http://localhost:8080/boardimg/', path.basename(result[0].filePath));
             callback(null, board);
         });
     });
