@@ -48,8 +48,7 @@ function listWish(callback) {
 }
 
 function createWish(userId, playId, callback) {
-    var sql = 'insert into wishlist(userId, playId) ' +
-        'values(?, ?)';
+    var sql = 'insert into wishlist(userId, playId) values(?, ?)';
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
