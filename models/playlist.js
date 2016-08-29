@@ -272,17 +272,14 @@ function searchKeyword(keyword, callback) {
 }
 
 function findPlay(pid, callback) {
-    var sql_play = "select py.id pid, name, theme, placeName, playDay, playTime, VIPprice, Rprice, Sprice, salePer, starScoreAvg " +
+    var sql_play = "select py.id pid, name, theme, placeName, playDay, playTime, starScoreAvg, " +
+        "VIPprice, VIPprice*(100-salePer)/100 saleVIP, Rprice, Rprice*(100-salePer)/100 saleR, Sprice, Sprice*(100-salePer)/100 saleS, salePer " +
         "from play py join place pe on (py.place_id = pe.id) " +
-        "where py.id = ? ";
-    var sql_poster = "select imagePath " +
-        "from image i join play p on (i.play_name = p.name) " +
-        "where name = ? and imageType = 0 " +
-        "group by imageNo";
-    var sql_cast = "select imagePath " +
-        "from image i join play p on (i.play_name = p.name) " +
-        "where name = ? and imageType = 1 " +
-        "group by imageNo";
+        "where py.id = ?";
+
+    var sql_images = "select imagePath, imageType " +
+        "from play py join image i on (i.play_name = py.name) " +
+        "where py.id = ?";
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
@@ -306,49 +303,17 @@ function findPlay(pid, callback) {
             playlist.playName = results[0].name;
             playlist.theme = theme;
             playlist.placeName = results[0].placeName;
-            playlist.day = results[0].playDay;
-            playlist.time = results[0].playTime;
-            playlist.price = results[0].VIPprice;
-            playlist.salePrice = results[0].VIPprice * ((100 - results[0].salePer) / 100);
-            playlist.userCount = 0;
-            playlist.seatCount = {};
-            playlist.seatPrice = {};
+            playlist.playDay = results[0].playDay;
+            playlist.playTime = results[0].playTime;
+            playlist.VIPprice = results[0].VIPprice;
+            playlist.saleVIPprice = results[0].VIPprice * ((100 - results[0].salePer) / 100);
+            playlist.Rprice = results[0].Rprice;
+            playlist.saleRprice = results[0].Rprice * ((100 - results[0].salePer) / 100);
+            playlist.Sprice = results[0].Sprice;
+            playlist.saleSprice = results[0].Sprice * ((100 - results[0].salePer) / 100);
             playlist.salePer = results[0].salePer;
             playlist.starScore = results[0].starScoreAvg;
-
-            async.parallel([selectPoster, selectCast], function(err) {
-                dbConn.release();
-                if (err) {
-                    return callback(err);
-                }
-                callback(null, playlist);
-            });
-
-            function selectPoster(callback) {
-                dbConn.query(sql_poster, [playlist.name], function(err, posters) {
-                    if (err) {
-                        return callback(err);
-                    }
-                    playlist.poster = [];
-                    for(var i = 0; i < posters.length; i++){
-                        playlist.poster.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(posters[i].imagePath)));
-                    }
-                    callback(null);
-                });
-            }
-
-            function selectCast(callback) {
-                dbConn.query(sql_cast, [playlist.name], function(err, casts) {
-                    if (err) {
-                        return callback(err);
-                    }
-                    playlist.cast = [];
-                    for(var i = 0; i < casts.length; i++){
-                        playlist.cast.push(url.resolve('http://127.0.0.1:8080/castimg/', path.basename(casts[i].imagePath)));
-                    }
-                    callback(null);
-                });
-            }
+            playlist.userCount = 0;
         });
     });
 }
@@ -359,3 +324,47 @@ module.exports.concertList = concertList;
 module.exports.searchLocation = searchLocation;
 module.exports.searchKeyword = searchKeyword;
 module.exports.findPlay = findPlay;
+
+
+// var sql_poster = "select imagePath " +
+//     "from image i join play p on (i.play_name = p.name) " +
+//     "where name = ? and imageType = 0 " +
+//     "group by imageNo";
+// var sql_cast = "select imagePath " +
+//     "from image i join play p on (i.play_name = p.name) " +
+//     "where name = ? and imageType = 1 " +
+//     "group by imageNo";
+//
+// async.parallel([selectPoster, selectCast], function(err) {
+//     dbConn.release();
+//     if (err) {
+//         return callback(err);
+//     }
+//     callback(null, playlist);
+// });
+//
+// function selectPoster(callback) {
+//     dbConn.query(sql_poster, [playlist.name], function(err, posters) {
+//         if (err) {
+//             return callback(err);
+//         }
+//         playlist.poster = [];
+//         for(var i = 0; i < posters.length; i++){
+//             playlist.poster.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(posters[i].imagePath)));
+//         }
+//         callback(null);
+//     });
+// }
+//
+// function selectCast(callback) {
+//     dbConn.query(sql_cast, [playlist.name], function(err, casts) {
+//         if (err) {
+//             return callback(err);
+//         }
+//         playlist.cast = [];
+//         for(var i = 0; i < casts.length; i++){
+//             playlist.cast.push(url.resolve('http://127.0.0.1:8080/castimg/', path.basename(casts[i].imagePath)));
+//         }
+//         callback(null);
+//     });
+// }
