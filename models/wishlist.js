@@ -55,11 +55,11 @@ function createWish(userId, playId, callback) {
         if (err) {
             return callback(err);
         }
-        dbConn.query(sql, [userId, playId], function (err, result) {
+        dbConn.query(sql, [userId, playId], function (err) {
             if (err) {
                 return callback(err);
             }
-            callback(null, result);
+            callback(null);
         });
     });
 }
