@@ -8,7 +8,8 @@ function listWish(callback) {
     var sql_select_wishlist = "SELECT p.id pid, p.name, place.placeName, p.playDay, p.playTime, p.VIPprice, p.salePer, p.starScoreAvg, i.imageName " +
         "FROM play p join wishlist w on (p.id = w.playId) " +
         "join place on (place.id = p.place_id)" +
-        "join image i on (p.name = i.play_name)";
+        "join image i on (p.name = i.play_name) " +
+        "group by p.name";
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {

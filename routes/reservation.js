@@ -7,24 +7,23 @@ var Reservation = require('../models/reservation');
 
 // GET, 예약 목록
 router.get('/', isSecure, isAuthenticated, function(req, res, next) {
-    var startIndex = parseInt(req.query.start, 10);
-    if (req.url.match(/\/\?start=\d/i)) {
-        res.send({
-            totalItems: 30,
-            itemsPerPage: 10,
-            startIndex: startIndex,
-            paging: {
-                prev: "http://server:port/wishlists?sort=0&start=" + (startIndex-10),
-                next: "http://server:port/wishlists?sort=0&start=" + (startIndex+10)
-            },
-            results: [{
-                userRsvNo: 1367,
-                playName: "위키드",
-                playDate: "2016-08-22",
-                playTime: "18:00",
-                placeName: "디큐브 아트센터",
-                poster: "http://server:port/images/poster/filename.jpg"
-            }]
+    if (req.url.match(/\?start=\d+/i)) {
+        var startIndex = parseInt(req.query.start, 10);
+
+        Reservation.listRsv(function (err, results) {
+            if (err) {
+                return next(err);
+            }
+            res.send({
+                totalItems: 50,
+                itemsPerPage: 10,
+                startIndex: startIndex,
+                paging: {
+                    prev: "https://localhost:4433/wishlists?start=" + (startIndex - 10),
+                    next: "https://localhost:4433/wishlists?start=" + (startIndex + 10)
+                },
+                results: results
+            });
         });
     }
 });
