@@ -17,6 +17,8 @@ router.get('/', function(req, res, next) {
                 paging: {
                     prev: "http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/boards?start=" + (startIndex-10),
                     next: "http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/boards?start=" + (startIndex+10)
+                    // prev: "http://localhost:8080/boards?start=" + (startIndex-10),
+                    // next: "http://localhost:8080/boards?start=" + (startIndex+10)
                 },
                 results: boardListInfo
             });

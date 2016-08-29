@@ -19,6 +19,8 @@ router.get('/', isSecure, isAuthenticated, function(req, res, next) {
                 paging: {
                     prev: "https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/wishlists?start=" + (startIndex - 10),
                     next: "https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/wishlists?start=" + (startIndex + 10)
+                    // prev: "https://localhost:4433/wishlists?start=" + (startIndex - 10),
+                    // next: "https://localhost:4433/wishlists?start=" + (startIndex + 10)
                 },
                 results: wishlist
             });

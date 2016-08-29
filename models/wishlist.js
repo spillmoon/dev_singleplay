@@ -41,6 +41,7 @@ function listWish(callback) {
                     salePer: results[i].salePer,
                     starScore: results[i].starScoreAvg,
                     poster: url.resolve('https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/posterimg/', path.basename(results[i].imagePath))
+                    //poster: url.resolve('https://localhost:4433/posterimg/', path.basename(results[i].imagePath))
                 });
             }
             callback(null, wishlist);
