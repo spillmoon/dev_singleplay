@@ -16,14 +16,13 @@ function listBoards(callback) {
             if (err) {
                 return callback(err);
             }
-            console.log('here is board list model');
             var board = [];
             for (var i=0; i<results.length; i++) {
                 board.push({
-                    id: results[i].boardNo,
+                    boardNo: results[i].boardNo,
                     title: results[i].title,
                     writeDate: results[i].writeDate,
-                    fileUrl : url.resolve('http://localhost:8080/boardimg/', path.basename(results[i].titleFilePath))
+                    image : url.resolve('http://localhost:8080/boardimg/', path.basename(results[i].titleFilePath))
                 });
             }
             callback(null, board);

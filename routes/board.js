@@ -5,7 +5,6 @@ var Board = require('../models/board');
 // GET, 공지사항, 이벤트 목록
 router.get('/', function(req, res, next) {
     if (req.url.match(/\/\?start=\d/i)) {
-        console.log('here is board list routes');
         var startIndex = parseInt(req.query.start, 10);
         Board.listBoards(function(err, boardListInfo) {
             if (err) {
@@ -28,7 +27,6 @@ router.get('/', function(req, res, next) {
 // GET, 공지사항, 이벤트 목록
 router.get('/:bid', function (req, res, next) {
     var boardNo = req.params.bid;
-    console.log('here is board routes');
     Board.findBoard(boardNo, function (err, boardImageUrl) {
         if (err) {
             return next(err);
