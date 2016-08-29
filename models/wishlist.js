@@ -40,7 +40,7 @@ function listWish(callback) {
                     salePrice: results[i].VIPprice * ((100 - results[i].salePer) / 100),
                     salePer: results[i].salePer,
                     starScore: results[i].starScoreAvg,
-                    poster: url.resolve('http://localhost:8080/posterimg/', path.basename(results[i].imagePath))
+                    poster: url.resolve('https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/posterimg/', path.basename(results[i].imagePath))
                 });
             }
             callback(null, wishlist);

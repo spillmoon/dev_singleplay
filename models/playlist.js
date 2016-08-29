@@ -54,7 +54,7 @@ function musicalList(sort, callback) {
                     salePrice: results[i].VIPprice * ((100 - results[i].salePer) / 100),
                     salePer: results[i].salePer,
                     starScore: results[i].starScoreAvg,
-                    poster: url.resolve('http://localhost:8080/posterimg/', path.basename(results[i].imagePath))
+                    poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imagePath))
                 });
             }
             callback(null, playlist);
@@ -111,7 +111,7 @@ function operaList(sort, callback) {
                     salePrice: results[i].VIPprice * ((100 - results[i].salePer) / 100),
                     salePer: results[i].salePer,
                     starScore: results[i].starScoreAvg,
-                    poster: url.resolve('http://localhost:8080/posterimg/', path.basename(results[i].imagePath))
+                    poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imagePath))
                 });
             }
             callback(null, playlist);
@@ -168,7 +168,7 @@ function concertList(sort, callback) {
                     salePrice: results[i].VIPprice * ((100 - results[i].salePer) / 100),
                     salePer: results[i].salePer,
                     starScore: results[i].starScoreAvg,
-                    poster: url.resolve('http://localhost:8080/posterimg/', path.basename(results[i].imagePath))
+                    poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imagePath))
                 });
             }
             callback(null, playlist);
@@ -213,7 +213,7 @@ function searchLocation(location, callback) {
                     salePrice: results[i].VIPprice * ((100 - results[i].salePer) / 100),
                     salePer: results[i].salePer,
                     starScore: results[i].starScoreAvg,
-                    poster: url.resolve('http://localhost:8080/posterimg/', path.basename(results[i].imagePath))
+                    poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imagePath))
                 });
             }
             callback(null, playlist);
@@ -257,7 +257,7 @@ function searchKeyword(keyword, callback) {
                     salePrice: results[i].VIPprice * ((100 - results[i].salePer) / 100),
                     salePer: results[i].salePer,
                     star: results[i].starScoreAvg,
-                    posterUrl: url.resolve('http://localhost:8080/posterimg/', path.basename(results[i].imagePath))
+                    posterUrl: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imagePath))
                 });
             }
             callback(null, playlist);
