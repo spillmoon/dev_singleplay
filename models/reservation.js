@@ -47,7 +47,8 @@ function listRsv(callback) {
                     playTime : results[i].playTime,
                     price : results[i].VIPprice,
                     salePrice : results[i].VIPprice * ((100-results[i].salePer)/100),
-                    list : url.resolve('https://localhost:4433/posterimg/', path.basename(results[i].imageName))
+                    list : url.resolve('https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/posterimg/', path.basename(results[i].imageName))
+                    // list : url.resolve('https://localhost:4433/posterimg/', path.basename(results[i].imageName))
                 });
             }
             callback(null, rsv);

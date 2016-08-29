@@ -54,7 +54,8 @@ function musicalList(sort, callback) {
                     salePrice: results[i].VIPprice * ((100 - results[i].salePer) / 100),
                     salePer: results[i].salePer,
                     starScore: results[i].starScoreAvg,
-                    poster: url.resolve('http://localhost:8080/posterimg/', path.basename(results[i].imagePath))
+                    poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imagePath))
+                    // poster: url.resolve('http://localhost:8080/posterimg/', path.basename(results[i].imagePath))
                 });
             }
             callback(null, playlist);
@@ -111,7 +112,8 @@ function operaList(sort, callback) {
                     salePrice: results[i].VIPprice * ((100 - results[i].salePer) / 100),
                     salePer: results[i].salePer,
                     starScore: results[i].starScoreAvg,
-                    poster: url.resolve('http://localhost:8080/posterimg/', path.basename(results[i].imagePath))
+                    poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imagePath))
+                    // poster: url.resolve('http://localhost:8080/posterimg/', path.basename(results[i].imagePath))
                 });
             }
             callback(null, playlist);
@@ -168,7 +170,8 @@ function concertList(sort, callback) {
                     salePrice: results[i].VIPprice * ((100 - results[i].salePer) / 100),
                     salePer: results[i].salePer,
                     starScore: results[i].starScoreAvg,
-                    poster: url.resolve('http://localhost:8080/posterimg/', path.basename(results[i].imagePath))
+                    poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imagePath))
+                    // poster: url.resolve('http://localhost:8080/posterimg/', path.basename(results[i].imagePath))
                 });
             }
             callback(null, playlist);
@@ -213,7 +216,8 @@ function searchLocation(location, callback) {
                     salePrice: results[i].VIPprice * ((100 - results[i].salePer) / 100),
                     salePer: results[i].salePer,
                     starScore: results[i].starScoreAvg,
-                    poster: url.resolve('http://localhost:8080/posterimg/', path.basename(results[i].imagePath))
+                    poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imagePath))
+                    // poster: url.resolve('http://localhost:8080/posterimg/', path.basename(results[i].imagePath))
                 });
             }
             callback(null, playlist);
@@ -222,12 +226,11 @@ function searchLocation(location, callback) {
 }
 // 검색한 키워드와 관련된 공연 목록(장르 구분 없음)
 function searchKeyword(keyword, callback) {
-    var sql = "select py.id pid, name, theme, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath " +
+    var sql = "select a.pid, name, theme, placeName, playDay, playTime, VIPprice, Rprice, Sprice, salePer, starScoreAvg " +
+        "from (select py.id pid, name, theme, placeName, playDay, playTime, VIPprice, Rprice, Sprice, salePer, starScoreAvg " +
         "from play py join place pe on (py.place_id = pe.id) " +
-        "join image i on (i.play_name = py.name) " +
-        "where playDay = str_to_date('2016-09-01', '%Y-%m-%d') and name like '%" + keyword + "%' " +
-        "group by name " +
-        "order by playTime asc";
+        "where name like '%" + keyword + "%' or placeName like '%" + keyword + "%') a " +
+        "where a.playDay = '2016-09-01'";
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
@@ -258,7 +261,8 @@ function searchKeyword(keyword, callback) {
                     salePrice: results[i].VIPprice * ((100 - results[i].salePer) / 100),
                     salePer: results[i].salePer,
                     star: results[i].starScoreAvg,
-                    posterUrl: url.resolve('http://localhost:8080/posterimg/', path.basename(results[i].imagePath))
+                    posterUrl: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imagePath))
+                    // poster: url.resolve('http://localhost:8080/posterimg/', path.basename(results[i].imagePath))
                 });
             }
             callback(null, playlist);
@@ -267,7 +271,7 @@ function searchKeyword(keyword, callback) {
 }
 
 function findPlay(pid, callback) {
-    var sql_play = "select py.id pid, name, theme, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg " +
+    var sql_play = "select py.id pid, name, theme, placeName, playDay, playTime, VIPprice, Rprice, Sprice, salePer, starScoreAvg " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "where py.id = ? ";
     var sql_poster = "select imagePath " +
