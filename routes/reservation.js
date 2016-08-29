@@ -51,20 +51,7 @@ router.post('/', isSecure, isAuthenticated, function(req, res, next) {
 // GET, 예약 상세 정보
 router.get('/:rid', isSecure, isAuthenticated, function(req, res, next) {
     var rsvId = req.params.rid;
-    var rsvSeat = [];
-    rsvSeat = ["S-A9", "S-A10"];
 
-    res.send({
-        RsvNo: rsvId,
-        playName: "위키드",
-        playDate: "2016-08-22",
-        playTime: "18:00",
-        placeName: "디큐브 아트센터",
-        poster: "http://server:port/images/poster/filename.jpg",
-        rsvDate: "2016-08-22",
-        rsvSeat: rsvSeat,
-        price: 10000
-    });
 });
 
 module.exports = router;

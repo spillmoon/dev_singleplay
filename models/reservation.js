@@ -1,5 +1,3 @@
-//insert into reservation(user_id, play_id, play_name, rsvDate, usableSeat_usableNo, seatClass)
-//values (1, 28, '키다리아저씨', str_to_date('2016-08-28', '%Y-%m-%d'), 3, 'S');
 var dbPool = require('../models/common').dbPool;
 var path = require('path');
 var url = require('url');
@@ -57,5 +55,30 @@ function listRsv(callback) {
     });
 }
 
+// function findRsv(rsvId, callback) {
+//     var sql = 'select p.name, p.playDay, p.playTime, pl.placeName, r.seatClass, u.seatInfo, ((?price*(100-c.salePer)/100)-user.mileage) settlement, r.id, i.imageName, i.imagePath ' +
+//     'from reservation r join usableSeat u on (r.usableSeat_usableNo = u.usableNo) ' +
+//     'join image i on (i.play_name = r.play_name) ' +
+//     'join play p on (p.name = r.play_name) ' +
+//     'join place pl on (pl.id = p.place_id) ' +
+//     'join coupon c on (r.user_id = c.user_id) ' +
+//     'join user on (user.id = c.user_id) ' +
+//     'group by id';
+//
+//     dbPool.getConnection(function(err, dbConn) {
+//        if (err) {
+//            return callback(err);
+//        }
+//        dbConn.query(sql, [rsvId], function(err, result){
+//            if (err) {
+//                return callback(err);
+//            }
+//
+//            callback(null, result);
+//        });
+//     });
+// }
+
 module.exports.createRsv = createRsv;
 module.exports.listRsv = listRsv;
+//module.exports.findRsv = findRsv;

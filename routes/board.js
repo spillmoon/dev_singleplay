@@ -27,6 +27,7 @@ router.get('/', function(req, res, next) {
 // GET, 공지사항, 이벤트 목록
 router.get('/:bid', function (req, res, next) {
     var boardNo = req.params.bid;
+
     Board.findBoard(boardNo, function (err, boardImageUrl) {
         if (err) {
             return next(err);
