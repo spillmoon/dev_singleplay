@@ -43,7 +43,7 @@ function listWish(callback) {
                     salePrice: results[i].VIPprice * ((100 - results[i].salePer) / 100),
                     salePer: results[i].salePer,
                     starScore: results[i].starScoreAvg,
-                    poster: url.resolve('https://localhost:4433/posterimg/', path.basename(results[i].imagePath))
+                    poster: url.resolve('https://127.0.0.1:4433/posterimg/', path.basename(results[i].imagePath))
                 });
             }
             callback(null, wishlist);
@@ -98,7 +98,7 @@ function createWish(userId, playId, callback) {
                 var thumbnail = [];
                 for (var i = 0; i < results.length; i++) {
                     thumbnail.push({
-                        thumbnail: url.resolve('https://localhost:4433/posterimg/', path.basename(results[i].imagePath))
+                        thumbnail: url.resolve('https://127.0.0.1:4433/posterimg/', path.basename(results[i].imagePath))
                     });
                 }
                 callback(null, thumbnail);

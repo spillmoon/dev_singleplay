@@ -19,10 +19,10 @@ router.get('/', isSecure, isAuthenticated, function(req, res, next) {
                 itemsPerPage: 10,
                 startIndex: startIndex,
                 paging: {
-                    prev: "https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/wishlists?start=" + (startIndex - 10),
-                    next: "https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/wishlists?start=" + (startIndex + 10)
-                    // prev: "https://localhost:4433/wishlists?start=" + (startIndex - 10),
-                    // next: "https://localhost:4433/wishlists?start=" + (startIndex + 10)
+                    // prev: "https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/wishlists?start=" + (startIndex - 10),
+                    // next: "https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/wishlists?start=" + (startIndex + 10)
+                    prev: "https://127.0.0.1:4433/wishlists?start=" + (startIndex - 10),
+                    next: "https://127.0.0.1:4433/wishlists?start=" + (startIndex + 10)
                 },
                 results: results
             });
@@ -62,8 +62,8 @@ router.get('/:rid', isSecure, isAuthenticated, function(req, res, next) {
         playDate: "2016-08-22",
         playTime: "18:00",
         placeName: "디큐브 아트센터",
-        poster: "https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/images/poster/filename.jpg",
-        // poster: "https://localhost:4433/images/poster/filename.jpg",
+        // poster: "https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/images/poster/filename.jpg",
+        poster: "https://127.0.0.1:4433/images/poster/filename.jpg",
         rsvDate: "2016-08-22",
         rsvSeat: rsvSeat,
         price: 10000
