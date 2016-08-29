@@ -41,5 +41,3 @@ router.get('/:bid', function (req, res, next) {
 });
 
 module.exports = router;
-
-

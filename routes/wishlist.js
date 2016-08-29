@@ -59,4 +59,3 @@ router.delete('/:wid', isSecure, isAuthenticated, function(req, res, next) {
 });
 
 module.exports = router;
-

@@ -41,9 +41,9 @@ router.post('/', isSecure, isAuthenticated, function(req, res, next) {
     var seatClass = req.body.seatClass;
 
     Reservation.createRsv(user_id, play_id, play_name, rsvDate, usableSeatNo, seatClass, function(err) {
-       if (err) {
-           return next(err);
-       }
+        if (err) {
+            return next(err);
+        }
         res.send({
             result : "예약 성공",
         });

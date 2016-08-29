@@ -22,10 +22,10 @@ function createRsv(user_id, play_id, play_name, rsvDate, usableSeatNo, seatClass
 
 function listRsv(callback) {
     var sql_select_rsvlist = 'SELECT p.name, place.placeName, p.playDay, p.playTime, p.VIPprice, p.salePer, p.starScoreAvg, i.imageName ' +
-    'FROM play p join reservation r on (p.id = r.play_id) ' +
-    'join place on (place.id = p.place_id) ' +
-    'join image i on (p.name = i.play_name) ' +
-    'group by p.name';
+        'FROM play p join reservation r on (p.id = r.play_id) ' +
+        'join place on (place.id = p.place_id) ' +
+        'join image i on (p.name = i.play_name) ' +
+        'group by p.name';
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {

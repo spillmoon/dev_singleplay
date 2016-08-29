@@ -140,6 +140,7 @@ function concertList(sort, callback) {
         "where playDay = '2016-09-01' and theme = 2 " +
         "group by name " +
         "order by salePer desc";
+
     var sql = "";
     if (sort == 0)
         sql = sql_star;
