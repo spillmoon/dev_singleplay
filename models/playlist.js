@@ -4,22 +4,25 @@ var url = require('url');
 var async = require('async');
 var dbPool = require('../models/common').dbPool;
 
-// todo: 뮤지컬 목록(정렬 방식에 따른 목록 정렬)
+// 뮤지컬 목록(정렬 방식에 따른 목록 정렬)
 function musicalList(sort, callback) {
-    var sql_star = "select py.id pid, name, placeName, playDay, playTime, VIPprice, starScoreAvg, imagePath " +
+    var sql_star = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
         "where playDay = '2016-09-01' and theme = 0 " +
+        "group by name " +
         "order by starScoreAvg desc";
-    var sql_time = "select py.id pid, name, placeName, playDay, playTime, VIPprice, starScoreAvg, imagePath " +
+    var sql_time = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
-        "where playDay = '2016-09-01' " +
+        "where playDay = '2016-09-01' and theme = 0 " +
+        "group by name " +
         "order by playTime asc";
-    var sql_sale = "select py.id pid, name, placeName, playDay, playTime, VIPprice, starScoreAvg, imagePath " +
+    var sql_sale = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
-        "where playDay = '2016-09-01' " +
+        "where playDay = '2016-09-01' and theme = 0 " +
+        "group by name " +
         "order by salePer desc";
     var sql = "";
     if (sort == 0)
@@ -41,39 +44,42 @@ function musicalList(sort, callback) {
             var playlist = [];
             for (var i = 0; i < results.length; i++) {
                 playlist.push({
-                    id: results[i].pid,
-                    name: results[i].name,
+                    playId: results[i].pid,
+                    playName: results[i].name,
                     theme: "뮤지컬",
                     placeName: results[i].placeName,
                     playDay: results[i].playDay,
                     playTime: results[i].playTime,
                     price: results[i].VIPprice,
                     salePrice: results[i].VIPprice * ((100 - results[i].salePer) / 100),
-                    writeDate: results[i].writeDate,
-                    star: results[i].starScoreAvg,
-                    posterUrl: url.resolve('http://localhost:8080/posterimg/', path.basename(results[i].imagePath))
+                    salePer: results[i].salePer,
+                    starScore: results[i].starScoreAvg,
+                    poster: url.resolve('http://localhost:8080/posterimg/', path.basename(results[i].imagePath))
                 });
             }
             callback(null, playlist);
         });
     });
 }
-// todo: 오페라 목록(정렬 방식에 따른 목록 정렬)
+// 오페라 목록(정렬 방식에 따른 목록 정렬)
 function operaList(sort, callback) {
-    var sql_star = "select py.id pid, name, placeName, playDay, playTime, VIPprice, starScoreAvg, imagePath " +
+    var sql_star = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
-        "where playDay = '2016-09-01' and theme = 0 " +
+        "where playDay = '2016-09-01' and theme = 1 " +
+        "group by name " +
         "order by starScoreAvg desc";
-    var sql_time = "select py.id pid, name, placeName, playDay, playTime, VIPprice, starScoreAvg, imagePath " +
+    var sql_time = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
-        "where playDay = '2016-09-01' " +
+        "where playDay = '2016-09-01' and theme = 1 " +
+        "group by name " +
         "order by playTime asc";
-    var sql_sale = "select py.id pid, name, placeName, playDay, playTime, VIPprice, starScoreAvg, imagePath " +
+    var sql_sale = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
-        "where playDay = '2016-09-01' " +
+        "where playDay = '2016-09-01' and theme = 1 " +
+        "group by name " +
         "order by salePer desc";
     var sql = "";
     if (sort == 0)
@@ -95,39 +101,42 @@ function operaList(sort, callback) {
             var playlist = [];
             for (var i = 0; i < results.length; i++) {
                 playlist.push({
-                    id: results[i].pid,
-                    name: results[i].name,
+                    playId: results[i].pid,
+                    playName: results[i].name,
                     theme: "오페라",
                     placeName: results[i].placeName,
                     playDay: results[i].playDay,
                     playTime: results[i].playTime,
                     price: results[i].VIPprice,
                     salePrice: results[i].VIPprice * ((100 - results[i].salePer) / 100),
-                    writeDate: results[i].writeDate,
-                    star: results[i].starScoreAvg,
-                    posterUrl: url.resolve('http://localhost:8080/posterimg/', path.basename(results[i].imagePath))
+                    salePer: results[i].salePer,
+                    starScore: results[i].starScoreAvg,
+                    poster: url.resolve('http://localhost:8080/posterimg/', path.basename(results[i].imagePath))
                 });
             }
             callback(null, playlist);
         });
     });
 }
-// todo: 콘서트 목록(정렬 방식에 따른 목록 정렬)
+// 콘서트 목록(정렬 방식에 따른 목록 정렬)
 function concertList(sort, callback) {
-    var sql_star = "select py.id pid, name, placeName, playDay, playTime, VIPprice, starScoreAvg, imagePath " +
+    var sql_star = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
-        "where playDay = '2016-09-01' and theme = 0 " +
+        "where playDay = '2016-09-01' and theme = 2 " +
+        "group by name " +
         "order by starScoreAvg desc";
-    var sql_time = "select py.id pid, name, placeName, playDay, playTime, VIPprice, starScoreAvg, imagePath " +
+    var sql_time = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
-        "where playDay = '2016-09-01' " +
+        "where playDay = '2016-09-01' and theme = 2 " +
+        "group by name " +
         "order by playTime asc";
-    var sql_sale = "select py.id pid, name, placeName, playDay, playTime, VIPprice, starScoreAvg, imagePath " +
+    var sql_sale = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
-        "where playDay = '2016-09-01' " +
+        "where playDay = '2016-09-01' and theme = 2 " +
+        "group by name " +
         "order by salePer desc";
     var sql = "";
     if (sort == 0)
@@ -149,29 +158,30 @@ function concertList(sort, callback) {
             var playlist = [];
             for (var i = 0; i < results.length; i++) {
                 playlist.push({
-                    id: results[i].pid,
-                    name: results[i].name,
+                    playId: results[i].pid,
+                    playName: results[i].name,
                     theme: "콘서트",
                     placeName: results[i].placeName,
                     playDay: results[i].playDay,
                     playTime: results[i].playTime,
                     price: results[i].VIPprice,
                     salePrice: results[i].VIPprice * ((100 - results[i].salePer) / 100),
-                    writeDate: results[i].writeDate,
-                    star: results[i].starScoreAvg,
-                    posterUrl: url.resolve('http://localhost:8080/posterimg/', path.basename(results[i].imagePath))
+                    salePer: results[i].salePer,
+                    starScore: results[i].starScoreAvg,
+                    poster: url.resolve('http://localhost:8080/posterimg/', path.basename(results[i].imagePath))
                 });
             }
             callback(null, playlist);
         });
     });
 }
-// todo: 검색한 구의 공연장에서 하는 공연 목록(장르 구분 없음)
+// 검색한 구의 공연장에서 하는 공연 목록(장르 구분 없음)
 function searchLocation(location, callback) {
-    var sql = "select py.id pid, name, theme, placeName, playDay, playTime, VIPprice, starScoreAvg, imagePath " +
+    var sql = "select py.id pid, name, theme, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
         "where playDay = '2016-09-01' and address = ? " +
+        "group by name " +
         "order by playTime asc";
 
     dbPool.getConnection(function (err, dbConn) {
@@ -193,29 +203,30 @@ function searchLocation(location, callback) {
                 if (results[i].theme == 2)
                     theme = "콘서트";
                 playlist.push({
-                    id: results[i].pid,
-                    name: results[i].name,
+                    playId: results[i].pid,
+                    playName: results[i].name,
                     theme: theme,
                     placeName: results[i].placeName,
                     playDay: results[i].playDay,
                     playTime: results[i].playTime,
                     price: results[i].VIPprice,
                     salePrice: results[i].VIPprice * ((100 - results[i].salePer) / 100),
-                    writeDate: results[i].writeDate,
-                    star: results[i].starScoreAvg,
-                    posterUrl: url.resolve('http://localhost:8080/posterimg/', path.basename(results[i].imagePath))
+                    salePer: results[i].salePer,
+                    starScore: results[i].starScoreAvg,
+                    poster: url.resolve('http://localhost:8080/posterimg/', path.basename(results[i].imagePath))
                 });
             }
             callback(null, playlist);
         });
     });
 }
-// todo: 검색한 키워드와 관련된 공연 목록(장르 구분 없음)
+// 검색한 키워드와 관련된 공연 목록(장르 구분 없음)
 function searchKeyword(keyword, callback) {
-    var sql = "select py.id pid, name, theme, placeName, playDay, playTime, VIPprice, starScoreAvg, imagePath " +
+    var sql = "select py.id pid, name, theme, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
-        "where playDay = '2016-09-01' and name like %?% " +
+        "where playDay = str_to_date('2016-09-01', '%Y-%m-%d') and name like '%" + keyword + "%' " +
+        "group by name " +
         "order by playTime asc";
 
     dbPool.getConnection(function (err, dbConn) {
@@ -245,7 +256,7 @@ function searchKeyword(keyword, callback) {
                     playTime: results[i].playTime,
                     price: results[i].VIPprice,
                     salePrice: results[i].VIPprice * ((100 - results[i].salePer) / 100),
-                    writeDate: results[i].writeDate,
+                    salePer: results[i].salePer,
                     star: results[i].starScoreAvg,
                     posterUrl: url.resolve('http://localhost:8080/posterimg/', path.basename(results[i].imagePath))
                 });
@@ -256,7 +267,7 @@ function searchKeyword(keyword, callback) {
 }
 
 function findPlay(pid, callback) {
-    var sql_play = "select py.id pid, name, theme, placeName, playDay, playTime, VIPprice, starScoreAvg " +
+    var sql_play = "select py.id pid, name, theme, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "where py.id = ? ";
     var sql_poster = "select imagePath " +
@@ -286,16 +297,19 @@ function findPlay(pid, callback) {
             if (results[0].theme == 2)
                 theme = "콘서트";
 
-            playlist.id = results[0].pid;
-            playlist.name = results[0].name;
+            playlist.playId = results[0].pid;
+            playlist.playName = results[0].name;
             playlist.theme = theme;
             playlist.placeName = results[0].placeName;
-            playlist.playDay = results[0].playDay;
-            playlist.playTime = results[0].playTime;
+            playlist.day = results[0].playDay;
+            playlist.time = results[0].playTime;
             playlist.price = results[0].VIPprice;
             playlist.salePrice = results[0].VIPprice * ((100 - results[0].salePer) / 100);
-            playlist.writeDate = results[0].writeDate;
-            playlist.star = results[0].starScoreAvg;
+            playlist.userCount = 0;
+            playlist.seatCount = {};
+            playlist.seatPrice = {};
+            playlist.salePer = results[0].salePer;
+            playlist.starScore = results[0].starScoreAvg;
 
             async.parallel([selectPoster, selectCast], function(err) {
                 dbConn.release();
