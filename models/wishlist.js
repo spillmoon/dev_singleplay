@@ -28,7 +28,7 @@ function listWish(callback) {
                     theme = "오페라";
                 if (results[i].theme == 2)
                     theme = "콘서트";
-                wishlist.put({
+                wishlist.push({
                     playId: results[i].pid,
                     playName: results[i].name,
                     theme: theme,
