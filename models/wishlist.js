@@ -128,5 +128,3 @@ module.exports.listWish = listWish;
 module.exports.createWish = createWish;
 module.exports.deleteWish = deleteWish;
 
-
-
