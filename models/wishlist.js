@@ -43,6 +43,7 @@ function listWish(callback) {
                     salePrice: results[i].VIPprice * ((100 - results[i].salePer) / 100),
                     salePer: results[i].salePer,
                     starScore: results[i].starScoreAvg,
+                    // poster: url.resolve('https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/posterimg/', path.basename(results[i].imagePath))
                     poster: url.resolve('https://127.0.0.1:4433/posterimg/', path.basename(results[i].imagePath))
                 });
             }
@@ -50,7 +51,7 @@ function listWish(callback) {
         });
     });
 }
-
+// fixme: 로그인 연동
 function createWish(userId, playId, callback) {
     var sql_insert_wish = 'insert into wishlist(userId, playId) values(?, ?)';
 
@@ -98,6 +99,7 @@ function createWish(userId, playId, callback) {
                 var thumbnail = [];
                 for (var i = 0; i < results.length; i++) {
                     thumbnail.push({
+                        // thumbnail: url.resolve('https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/posterimg/', path.basename(results[i].imagePath))
                         thumbnail: url.resolve('https://127.0.0.1:4433/posterimg/', path.basename(results[i].imagePath))
                     });
                 }
@@ -106,7 +108,7 @@ function createWish(userId, playId, callback) {
         }
     });
 }
-
+// fixme: 로그인 연동
 function deleteWish(wishId, callback) {
     var sql = 'delete from wishlist where wishId = ? ';
 

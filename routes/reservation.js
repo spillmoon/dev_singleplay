@@ -3,33 +3,21 @@ var router = express.Router();
 var isSecure = require('./common').isSecure;
 var isAuthenticated = require('./common').isAuthenticated;
 var Reservation = require('../models/reservation');
-
-
+// todo: 예약 목록 로컬 테스트
+// todo: 예약 목록 서버 테스트
 // GET, 예약 목록
 router.get('/', isSecure, isAuthenticated, function(req, res, next) {
-    if (req.url.match(/\?start=\d+/i)) {
-        var startIndex = parseInt(req.query.start, 10);
-
-        Reservation.listRsv(function (err, results) {
-            if (err) {
-                return next(err);
-            }
-            res.send({
-                totalItems: 50,
-                itemsPerPage: 10,
-                startIndex: startIndex,
-                paging: {
-                    prev: "https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/wishlists?start=" + (startIndex - 10),
-                    next: "https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/wishlists?start=" + (startIndex + 10)
-                    // prev: "https://localhost:4433/wishlists?start=" + (startIndex - 10),
-                    // next: "https://localhost:4433/wishlists?start=" + (startIndex + 10)
-                },
-                results: results
-            });
+    Reservation.listRsv(function (err, results) {
+        if (err) {
+            return next(err);
+        }
+        res.send({
+            results: results
         });
-    }
+    });
 });
-
+// todo: 예약하기 로컬 테스트
+// todo: 예약하기 서버 테스트
 // POST, 예약하기
 router.post('/', isSecure, isAuthenticated, function(req, res, next) {
     //user_id, play_id, play_name, rsvDate, usableNo, seatClass
@@ -49,19 +37,20 @@ router.post('/', isSecure, isAuthenticated, function(req, res, next) {
         });
     });
 });
-
+// todo: 예약 상세 로컬 테스트
+// todo: 예약 상세 서버 테스트
 // GET, 예약 상세 정보
 router.get('/:rid', isSecure, isAuthenticated, function(req, res, next) {
-        var rsvId = req.params.rid;
+    var rsvId = req.params.rid;
 
-        Reservation.findRsv(rsvId, function(err, result) {
-            if (err) {
-                return next(err);
-            }
-            res.send({
-                result: result
-            });
-        })
+    Reservation.findRsv(rsvId, function (err, result) {
+        if (err) {
+            return next(err);
+        }
+        res.send({
+            result: result
+        });
+    });
 });
 
 module.exports = router;

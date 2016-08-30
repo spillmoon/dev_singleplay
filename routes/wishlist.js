@@ -3,31 +3,21 @@ var router = express.Router();
 var isSecure = require('./common').isSecure;
 var isAuthenticated = require('./common').isAuthenticated;
 var Wishlist = require('../models/wishlist');
-
+// todo: 위시 목록 로컬 테스트
+// todo: 위시 목록 서버 테스트
 // GET, 위시리스트 목록
 router.get('/', isSecure, isAuthenticated, function(req, res, next) {
-    if (req.url.match(/\?start=\d+/i)) {
-        var startIndex = parseInt(req.query.start, 10);
-        Wishlist.listWish(function (err, wishlist) {
-            if (err) {
-                return next(err);
-            }
-            res.send({
-                totalItems: 50,
-                itemsPerPage: 10,
-                startIndex: startIndex,
-                paging: {
-                    // prev: "https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/wishlists?start=" + (startIndex - 10),
-                    // next: "https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/wishlists?start=" + (startIndex + 10)
-                    prev: "https://127.0.0.1:4433/wishlists?start=" + (startIndex - 10),
-                    next: "https://127.0.0.1:4433/wishlists?start=" + (startIndex + 10)
-                },
-                results: wishlist
-            });
+    Wishlist.listWish(function (err, wishlist) {
+        if (err) {
+            return next(err);
+        }
+        res.send({
+            results: wishlist
         });
-    }
+    });
 });
-
+// todo: 위시보기 로컬 테스트
+// todo: 위시보기 서버 테스트
 // POST, 위시리스트 추가
 router.post('/', isSecure, isAuthenticated, function(req, res, next) {
     var userId = req.body.userId;
@@ -43,7 +33,8 @@ router.post('/', isSecure, isAuthenticated, function(req, res, next) {
         });
     });
 });
-
+// todo: 위시 삭제 로컬 테스트
+// todo: 위시 삭제 서버 테스트
 // DELETE, 위시리스트 삭제
 router.delete('/:wid', isSecure, isAuthenticated, function(req, res, next) {
     var wishId = req.params.wid;

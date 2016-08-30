@@ -1,10 +1,10 @@
 var express = require('express');
 var router = express.Router();
 var Play = require('../models/playlist');
-
+// todo: 공연 목록 로컬 테스트
+// todo: 공연 목록 서버 테스트
 // GET, 항목별 정렬된 공연 목록
 router.get('/', function (req, res, next) {
-    var startIndex = parseInt(req.query.start, 10);
     var action = req.query.action || 0;
 
     if (action == 0) { // 항목별 검색
@@ -16,15 +16,6 @@ router.get('/', function (req, res, next) {
                     return next(err);
                 }
                 res.send({
-                    totalItems: 140,
-                    itemsPerPage: 10,
-                    startIndex: startIndex,
-                    paging: {
-                        // prev: "http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/playlists/?action=" + action + "&theme=" + theme + "&sort=" + sort + "&start=" + (startIndex-10),
-                        // next: "http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/playlists/?action=" + action + "&theme=" + theme + "&sort=" + sort + "&start=" + (startIndex+10)
-                        prev: "http://127.0.0.1:8080/playlists/?action=" + action + "&theme=" + theme + "&sort=" + sort + "&start=" + (startIndex-10),
-                        next: "http://127.0.0.1:8080/playlists/?action=" + action + "&theme=" + theme + "&sort=" + sort + "&start=" + (startIndex+10)
-                    },
                     results: playlist
                 });
             });
@@ -34,15 +25,6 @@ router.get('/', function (req, res, next) {
                     return next(err);
                 }
                 res.send({
-                    totalItems: 140,
-                    itemsPerPage: 10,
-                    startIndex: startIndex,
-                    paging: {
-                        // prev: "http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/playlists/?action=" + action + "&theme=" + theme + "&sort=" + sort + "&start=" + (startIndex-10),
-                        // next: "http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/playlists/?action=" + action + "&theme=" + theme + "&sort=" + sort + "&start=" + (startIndex+10)
-                        prev: "http://127.0.0.1:8080/playlists/?action=" + action + "&theme=" + theme + "&sort=" + sort + "&start=" + (startIndex-10),
-                        next: "http://127.0.0.1:8080/playlists/?action=" + action + "&theme=" + theme + "&sort=" + sort + "&start=" + (startIndex+10)
-                    },
                     results: playlist
                 });
             });
@@ -52,15 +34,6 @@ router.get('/', function (req, res, next) {
                     return next(err);
                 }
                 res.send({
-                    totalItems: 140,
-                    itemsPerPage: 10,
-                    startIndex: startIndex,
-                    paging: {
-                        // prev: "http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/playlists/?action=" + action + "&theme=" + theme + "&sort=" + sort + "&start=" + (startIndex-10),
-                        // next: "http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/playlists/?action=" + action + "&theme=" + theme + "&sort=" + sort + "&start=" + (startIndex+10)
-                        prev: "http://127.0.0.1:8080/playlists/?action=" + action + "&theme=" + theme + "&sort=" + sort + "&start=" + (startIndex-10),
-                        next: "http://127.0.0.1:8080/playlists/?action=" + action + "&theme=" + theme + "&sort=" + sort + "&start=" + (startIndex+10)
-                    },
                     results: playlist
                 });
             });
@@ -73,15 +46,6 @@ router.get('/', function (req, res, next) {
                 return next(err);
             }
             res.send({
-                totalItems: 140,
-                itemsPerPage: 10,
-                startIndex: startIndex,
-                paging: {
-                    // prev: "http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/playlists/?action=" + action + "&location=" + location + "&start=" + (startIndex-10),
-                    // next: "http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/playlists/?action=" + action + "&location=" + location + "&start=" + (startIndex+10)
-                    prev: "http://127.0.0.1:8080/playlists/?action=" + action + "&theme=" + theme + "&sort=" + sort + "&start=" + (startIndex-10),
-                    next: "http://127.0.0.1:8080/playlists/?action=" + action + "&theme=" + theme + "&sort=" + sort + "&start=" + (startIndex+10)
-                },
                 results: playlist
             });
         });
@@ -93,21 +57,13 @@ router.get('/', function (req, res, next) {
                 return next(err);
             }
             res.send({
-                totalItems: 140,
-                itemsPerPage: 10,
-                startIndex: startIndex,
-                paging: {
-                    // prev: "http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/playlists/?action=" + action + "&keyword=" + keyword + "&start=" + (startIndex-10),
-                    // next: "http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/playlists/?action=" + action + "&keyword=" + keyword + "&start=" + (startIndex+10)
-                    prev: "http://127.0.0.1:8080/playlists/?action=" + action + "&theme=" + theme + "&sort=" + sort + "&start=" + (startIndex-10),
-                    next: "http://127.0.0.1:8080/playlists/?action=" + action + "&theme=" + theme + "&sort=" + sort + "&start=" + (startIndex+10)
-                },
                 results: playlist
             });
         });
     }
 });
-
+// todo: 공연 상세 로컬 테스트
+// todo: 공연 상세 서버 테스트
 // GET, 공연 상세 정보
 router.get('/:pid', function (req, res, next) {
     var playId = req.params.pid;

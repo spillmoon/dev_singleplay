@@ -55,25 +55,14 @@ router.put('/me', isSecure, isAuthenticated, function(req, res, next) {
 
 // 쿠폰 목록 조회
 router.get('/me/coupons', isSecure, isAuthenticated, function(req, res, next) {
-    if (req.url.match(/\?start=\d+/i)) {
-        var startIndex = parseInt(req.query.start, 10);
-
-        res.send({
-            totalItems: 15,
-            itemsPerPage: 10,
-            startIndex: startIndex,
-            paging: {
-                prev: "http://server:port/users/me/coupons?start=" + (startIndex-10),
-                next: "http://server:port/users/me/coupons?start=" + (startIndex+10)
-            },
-            results: [{
-                couponNo: 10023,
-                couponName: "추석 한정 10% 할인 쿠폰",
-                periodStart: "2016-09-14",
-                periodEnd: "2016-09-18"
-            }]
-        });
-    }
+    res.send({
+        results: [{
+            couponNo: 10023,
+            couponName: "추석 한정 10% 할인 쿠폰",
+            periodStart: "2016-09-14",
+            periodEnd: "2016-09-18"
+        }]
+    });
 });
 
 module.exports = router;

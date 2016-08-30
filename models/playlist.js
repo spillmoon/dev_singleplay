@@ -3,7 +3,7 @@ var path = require('path');
 var url = require('url');
 var async = require('async');
 var dbPool = require('../models/common').dbPool;
-
+// fixme: 쿼리 리팩토링
 // 뮤지컬 목록(정렬 방식에 따른 목록 정렬)
 function musicalList(sort, callback) {
     var sql_star = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath " +
@@ -62,6 +62,7 @@ function musicalList(sort, callback) {
         });
     });
 }
+// fixme: 쿼리 리팩토링
 // 오페라 목록(정렬 방식에 따른 목록 정렬)
 function operaList(sort, callback) {
     var sql_star = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath " +
@@ -120,6 +121,7 @@ function operaList(sort, callback) {
         });
     });
 }
+// fixme: 쿼리 리팩토링
 // 콘서트 목록(정렬 방식에 따른 목록 정렬)
 function concertList(sort, callback) {
     var sql_star = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath " +
@@ -179,6 +181,7 @@ function concertList(sort, callback) {
         });
     });
 }
+// todo: 수정할거 발견
 // 검색한 구의 공연장에서 하는 공연 목록(장르 구분 없음)
 function searchLocation(location, callback) {
     var sql = "select py.id pid, name, theme, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath " +
@@ -225,11 +228,13 @@ function searchLocation(location, callback) {
         });
     });
 }
+// todo: 수정할거 발견
 // 검색한 키워드와 관련된 공연 목록(장르 구분 없음)
 function searchKeyword(keyword, callback) {
-    var sql = "select a.pid, name, theme, placeName, playDay, playTime, VIPprice, Rprice, Sprice, salePer, starScoreAvg " +
-        "from (select py.id pid, name, theme, placeName, playDay, playTime, VIPprice, Rprice, Sprice, salePer, starScoreAvg " +
+    var sql = "select a.pid, name, theme, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath " +
+        "from (select py.id pid, name, theme, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath " +
         "from play py join place pe on (py.place_id = pe.id) " +
+        "join image i on (i.play_name = py.name) " +
         "where name like '%" + keyword + "%' or placeName like '%" + keyword + "%') a " +
         "where a.playDay = '2016-09-01'";
 
@@ -272,49 +277,83 @@ function searchKeyword(keyword, callback) {
 }
 
 function findPlay(pid, callback) {
-    var sql_play = "select py.id pid, name, theme, placeName, playDay, playTime, starScoreAvg, " +
-        "VIPprice, VIPprice*(100-salePer)/100 saleVIP, Rprice, Rprice*(100-salePer)/100 saleR, Sprice, Sprice*(100-salePer)/100 saleS, salePer " +
-        "from play py join place pe on (py.place_id = pe.id) " +
-        "where py.id = ?";
+    var sql_image = "select imagePath, imageType " +
+        "from play p join image i on (i.play_name = p.name) " +
+        "where p.id = ?";
 
-    var sql_images = "select imagePath, imageType " +
-        "from play py join image i on (i.play_name = py.name) " +
-        "where py.id = ?";
+    var sql_info = "select p.id pid, name, theme, placeName, playDay, playTime, VIPprice, Rprice, Sprice, salePer, starScoreAvg, usableNo, seatInfo, seatClass " +
+        "from play p join usableSeat u on (p.id = u.play_id) " +
+        "join place pl on (p.place_id = pl.id) " +
+        "where p.id = ?";
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
             return callback(err);
         }
-        dbConn.query(sql_play, [pid], function (err, results) {
+        var playlist = {};
+        async.parallel([getPlayImage, getPlayInfo], function(err) {
+            dbConn.release();
             if (err) {
                 return callback(err);
             }
-            var playlist = {};
-            var theme = "";
-
-            if (results[0].theme == 0)
-                theme = "뮤지컬";
-            if (results[0].theme == 1)
-                theme = "오페라";
-            if (results[0].theme == 2)
-                theme = "콘서트";
-
-            playlist.playId = results[0].pid;
-            playlist.playName = results[0].name;
-            playlist.theme = theme;
-            playlist.placeName = results[0].placeName;
-            playlist.playDay = results[0].playDay;
-            playlist.playTime = results[0].playTime;
-            playlist.VIPprice = results[0].VIPprice;
-            playlist.saleVIPprice = results[0].VIPprice * ((100 - results[0].salePer) / 100);
-            playlist.Rprice = results[0].Rprice;
-            playlist.saleRprice = results[0].Rprice * ((100 - results[0].salePer) / 100);
-            playlist.Sprice = results[0].Sprice;
-            playlist.saleSprice = results[0].Sprice * ((100 - results[0].salePer) / 100);
-            playlist.salePer = results[0].salePer;
-            playlist.starScore = results[0].starScoreAvg;
-            playlist.userCount = 0;
+            callback(null, playlist);
         });
+
+        function getPlayImage(callback) {
+            dbConn.query(sql_image, [pid], function(err, images) {
+                if (err) {
+                    return callback(err);
+                }
+                playlist.poster = [];
+                playlist.cast = [];
+                for(var i = 0; i < images.length; i++){
+                    if (images[i].imageType == 0 ) {
+                        // playlist.poster.push(url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(images[i].imagePath)));
+                        playlist.poster.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(images[i].imagePath)));
+                    }
+                    else {
+                        // playlist.cast.push(url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(images[i].imagePath)));
+                        playlist.cast.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(images[i].imagePath)));
+                    }
+                }
+                callback(null);
+            });
+        }
+
+        function getPlayInfo(callback) {
+            dbConn.query(sql_info, [pid], function(err, playinfo) {
+                if (err) {
+                    return callback(err);
+                }
+                var theme = "";
+                if (playinfo[0].theme == '0')
+                    theme = "뮤지컬";
+                if (playinfo[0].theme == '1')
+                    theme = "오페라";
+                if (playinfo[0].theme == '2')
+                    theme = "콘서트";
+                playlist.playId = playinfo[0].pid;
+                playlist.playName = playinfo[0].name;
+                playlist.theme = theme;
+                playlist.placeName = playinfo[0].placeName;
+                playlist.playDay = playinfo[0].playDay;
+                playlist.playTime = playinfo[0].playTime;
+                playlist.VIPprice = playinfo[0].VIPprice;
+                playlist.saleVIPprice = playinfo[0].VIPprice * ((100 - playinfo[0].salePer) / 100);
+                playlist.Rprice = playinfo[0].Rprice;
+                playlist.saleRprice = playinfo[0].Rprice * ((100 - playinfo[0].salePer) / 100);
+                playlist.Sprice = playinfo[0].Sprice;
+                playlist.saleSprice = playinfo[0].Sprice * ((100 - playinfo[0].salePer) / 100);
+                playlist.salePer = playinfo[0].salePer;
+                playlist.starScore = playinfo[0].starScoreAvg;
+                playlist.userCount = 0;
+                playlist.usableSeat = [];
+                for(var i = 0; i < playinfo.length; i++){
+                    playlist.usableSeat.push(playinfo[i].seatInfo);
+                }
+                callback(null);
+            });
+        }
     });
 }
 
@@ -324,47 +363,3 @@ module.exports.concertList = concertList;
 module.exports.searchLocation = searchLocation;
 module.exports.searchKeyword = searchKeyword;
 module.exports.findPlay = findPlay;
-
-
-// var sql_poster = "select imagePath " +
-//     "from image i join play p on (i.play_name = p.name) " +
-//     "where name = ? and imageType = 0 " +
-//     "group by imageNo";
-// var sql_cast = "select imagePath " +
-//     "from image i join play p on (i.play_name = p.name) " +
-//     "where name = ? and imageType = 1 " +
-//     "group by imageNo";
-//
-// async.parallel([selectPoster, selectCast], function(err) {
-//     dbConn.release();
-//     if (err) {
-//         return callback(err);
-//     }
-//     callback(null, playlist);
-// });
-//
-// function selectPoster(callback) {
-//     dbConn.query(sql_poster, [playlist.name], function(err, posters) {
-//         if (err) {
-//             return callback(err);
-//         }
-//         playlist.poster = [];
-//         for(var i = 0; i < posters.length; i++){
-//             playlist.poster.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(posters[i].imagePath)));
-//         }
-//         callback(null);
-//     });
-// }
-//
-// function selectCast(callback) {
-//     dbConn.query(sql_cast, [playlist.name], function(err, casts) {
-//         if (err) {
-//             return callback(err);
-//         }
-//         playlist.cast = [];
-//         for(var i = 0; i < casts.length; i++){
-//             playlist.cast.push(url.resolve('http://127.0.0.1:8080/castimg/', path.basename(casts[i].imagePath)));
-//         }
-//         callback(null);
-//     });
-// }
