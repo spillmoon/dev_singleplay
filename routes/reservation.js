@@ -5,29 +5,17 @@ var isAuthenticated = require('./common').isAuthenticated;
 var Reservation = require('../models/reservation');
 
 
-// GET, 예약 목록
-router.get('/', isSecure, isAuthenticated, function(req, res, next) {
-    if (req.url.match(/\?start=\d+/i)) {
-        var startIndex = parseInt(req.query.start, 10);
-
-        Reservation.listRsv(function (err, results) {
-            if (err) {
-                return next(err);
-            }
-            res.send({
-                totalItems: 50,
-                itemsPerPage: 10,
-                startIndex: startIndex,
-                paging: {
-                    prev: "https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/wishlists?start=" + (startIndex - 10),
-                    next: "https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/wishlists?start=" + (startIndex + 10)
-                    // prev: "https://localhost:4433/wishlists?start=" + (startIndex - 10),
-                    // next: "https://localhost:4433/wishlists?start=" + (startIndex + 10)
-                },
-                results: results
-            });
+// GET, 예약 목록, 페이징 이건 제가 지웠습니다!
+router.get('/', isSecure, isAuthenticated, function (req, res, next) {
+    Reservation.listRsv(function (err, results) {
+        if (err) {
+            return next(err);
+        }
+        res.send({
+            results: results
         });
-    }
+    });
+
 });
 
 // POST, 예약하기

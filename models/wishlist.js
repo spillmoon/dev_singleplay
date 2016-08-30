@@ -8,7 +8,7 @@ var async = require('async');
 
 // FIXME: 로그인 연동
 function listWish(callback) {
-    var sql_select_wishlist = "SELECT p.id pid, p.name, place.placeName, p.playDay, p.playTime, p.VIPprice, p.salePer, p.starScoreAvg, i.imageName " +
+    var sql_select_wishlist = "SELECT p.id pid, p.name, place.placeName, p.playDay, p.playTime, VIPprice, Rprice, Sprice, p.salePer, p.starScoreAvg, i.imageName " +
         "FROM play p join wishlist w on (p.id = w.playId) " +
         "join place on (place.id = p.place_id)" +
         "join image i on (p.name = i.play_name) " +
@@ -23,30 +23,31 @@ function listWish(callback) {
             if (err) {
                 return callback(err);
             }
-            var wishlist = [];
-            var theme = "";
-            for (var i = 0; i < results.length; i++) {
-                if (results[i].theme == 0)
-                    theme = "뮤지컬";
-                if (results[i].theme == 1)
-                    theme = "오페라";
-                if (results[i].theme == 2)
-                    theme = "콘서트";
-                wishlist.push({
-                    playId: results[i].pid,
-                    playName: results[i].name,
-                    theme: theme,
-                    placeName: results[i].placeName,
-                    playDay: results[i].playDay,
-                    playTime: results[i].playTime,
-                    price: results[i].VIPprice,
-                    salePrice: results[i].VIPprice * ((100 - results[i].salePer) / 100),
-                    salePer: results[i].salePer,
-                    starScore: results[i].starScoreAvg,
-                    poster: url.resolve('https://127.0.0.1:4433/posterimg/', path.basename(results[i].imagePath))
+            var wish = {};
+            var tmpwish = {}; // 조건에 맞는 price와 salePrice를 담을 임시 객체
+            wish.list = [];
+            for (var i=0; i<results.length; i++) {
+                if (results[i] === null) {
+                    tmpwish.price = results[i].VIPprice;
+                    tmpwish.salePrice = results[i].VIPprice * ((100-results[i].salePer)/100);
+                } else {
+                    tmpwish.price = results[i].Rprice;
+                    tmpwish.salePrice = results[i].Rprice * ((100-results[i].salePer)/100);
+                }
+                wish.list.push({
+                    playName : results[i].name,
+                    starScoreAvg : results[i].starScoreAvg,
+                    placeName : results[i].placeName,
+                    playDay : results[i].playDay,
+                    playTime : results[i].playTime,
+                    salePer : results[i].salePer,
+                    originalPrice : tmpwish.price,
+                    salePrice : tmpwish.salePrice,
+                    poster : url.resolve('https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/posterimg/', path.basename(results[i].imageName))
+                    // "poster" : url.resolve('https://localhost:4433/posterimg/', path.basename(results[i].imageName))
                 });
             }
-            callback(null, wishlist);
+            callback(null, wish);
         });
     });
 }
