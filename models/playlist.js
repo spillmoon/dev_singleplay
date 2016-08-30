@@ -7,17 +7,17 @@ var dbPool = require('../models/common').dbPool;
 // fixme: 쿼리 리팩토링
 // 뮤지컬 목록(정렬 방식에 따른 목록 정렬)
 function musicalList(sort, callback) {
-    var sql_star = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath, imageType " +
+    var sql_star = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imageName, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
         "where playDay = '2016-09-01' and theme = 0 and imageType = 0 " +
         "order by starScoreAvg desc";
-    var sql_time = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath, imageType " +
+    var sql_time = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imageName, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
         "where playDay = '2016-09-01' and theme = 0 and imageType = 0 " +
         "order by playTime asc";
-    var sql_sale = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath, imageType " +
+    var sql_sale = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imageName, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
         "where playDay = '2016-09-01' and theme = 0 and imageType = 0 " +
@@ -52,8 +52,8 @@ function musicalList(sort, callback) {
                     salePrice: results[i].VIPprice * ((100 - results[i].salePer) / 100),
                     salePer: results[i].salePer,
                     starScore: results[i].starScoreAvg,
-                    // poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imagePath))
-                    poster: url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(results[i].imagePath))
+                    poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
+                    // poster: url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(results[i].imageName))
                 });
             }
             callback(null, playlist);
@@ -63,17 +63,17 @@ function musicalList(sort, callback) {
 // fixme: 쿼리 리팩토링
 // 오페라 목록(정렬 방식에 따른 목록 정렬)
 function operaList(sort, callback) {
-    var sql_star = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath, imageType " +
+    var sql_star = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imageName, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
         "where playDay = '2016-09-01' and theme = 1 and imageType = 0 " +
         "order by starScoreAvg desc";
-    var sql_time = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath, imageType " +
+    var sql_time = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imageName, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
         "where playDay = '2016-09-01' and theme = 1 and imageType = 0 " +
         "order by playTime asc";
-    var sql_sale = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath, imageType " +
+    var sql_sale = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imageName, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
         "where playDay = '2016-09-01' and theme = 1 and imageType = 0 " +
@@ -108,8 +108,8 @@ function operaList(sort, callback) {
                     salePrice: results[i].VIPprice * ((100 - results[i].salePer) / 100),
                     salePer: results[i].salePer,
                     starScore: results[i].starScoreAvg,
-                    // poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imagePath))
-                    poster: url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(results[i].imagePath))
+                    poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
+                    // poster: url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(results[i].imageName))
                 });
             }
             callback(null, playlist);
@@ -119,17 +119,17 @@ function operaList(sort, callback) {
 // fixme: 쿼리 리팩토링
 // 콘서트 목록(정렬 방식에 따른 목록 정렬)
 function concertList(sort, callback) {
-    var sql_star = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath, imageType " +
+    var sql_star = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imageName, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
         "where playDay = '2016-09-01' and theme = 2 and imageType = 0 " +
         "order by starScoreAvg desc";
-    var sql_time = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath, imageType " +
+    var sql_time = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imageName, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
         "where playDay = '2016-09-01' and theme = 2 and imageType = 0 " +
         "order by playTime asc";
-    var sql_sale = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath, imageType " +
+    var sql_sale = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imageName, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
         "where playDay = '2016-09-01' and theme = 2 and imageType = 0 " +
@@ -165,8 +165,8 @@ function concertList(sort, callback) {
                     salePrice: results[i].VIPprice * ((100 - results[i].salePer) / 100),
                     salePer: results[i].salePer,
                     starScore: results[i].starScoreAvg,
-                    // poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imagePath))
-                    poster: url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(results[i].imagePath))
+                    poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
+                    // poster: url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(results[i].imageName))
                 });
             }
             callback(null, playlist);
@@ -176,7 +176,7 @@ function concertList(sort, callback) {
 
 // 검색한 구의 공연장에서 하는 공연 목록(장르 구분 없음)
 function searchLocation(location, callback) {
-    var sql = "select py.id pid, name, theme, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath, imageType " +
+    var sql = "select py.id pid, name, theme, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imageName, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
         "where playDay = '2016-09-01' and address = ? and imageType = 0 " +
@@ -211,8 +211,8 @@ function searchLocation(location, callback) {
                     salePrice: results[i].VIPprice * ((100 - results[i].salePer) / 100),
                     salePer: results[i].salePer,
                     starScore: results[i].starScoreAvg,
-                    // poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imagePath))
-                    poster: url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(results[i].imagePath))
+                    poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
+                    // poster: url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(results[i].imageName))
                 });
             }
             callback(null, playlist);
@@ -222,8 +222,8 @@ function searchLocation(location, callback) {
 
 // 검색한 키워드와 관련된 공연 목록(장르 구분 없음)
 function searchKeyword(keyword, callback) {
-    var sql = "select a.pid, name, theme, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath, imageType " +
-        "from (select py.id pid, name, theme, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath, imageType " +
+    var sql = "select a.pid, name, theme, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imageName, imageType " +
+        "from (select py.id pid, name, theme, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imageName, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
         "where name like '%" + keyword + "%' or placeName like '%" + keyword + "%') a " +
@@ -258,8 +258,8 @@ function searchKeyword(keyword, callback) {
                     salePrice: results[i].VIPprice * ((100 - results[i].salePer) / 100),
                     salePer: results[i].salePer,
                     star: results[i].starScoreAvg,
-                    // posterUrl: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imagePath))
-                    poster: url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(results[i].imagePath))
+                    posterUrl: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
+                    // poster: url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(results[i].imageName))
                 });
             }
             callback(null, playlist);
@@ -268,7 +268,7 @@ function searchKeyword(keyword, callback) {
 }
 
 function findPlay(pid, callback) {
-    var sql_image = "select p.id pid, name, theme, placeName, playDay, playTime, VIPprice, Rprice, Sprice, salePer, starScoreAvg, imagePath, imageType " +
+    var sql_image = "select p.id pid, name, theme, placeName, playDay, playTime, VIPprice, Rprice, Sprice, salePer, starScoreAvg, imageName, imageType " +
         "from play p join image i on (i.play_name = p.name) " +
         "join place pl on (p.place_id = pl.id) " +
         "where p.id = ?";
@@ -321,12 +321,12 @@ function findPlay(pid, callback) {
                 playlist.cast = [];
                 for(var i = 0; i < playinfo.length; i++){
                     if (playinfo[i].imageType == 0 ) {
-                        // playlist.poster.push(url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(images[i].imagePath)));
-                        playlist.poster.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(playinfo[i].imagePath)));
+                        playlist.poster.push(url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(playinfo[i].imageName)));
+                        // playlist.poster.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(playinfo[i].imageName)));
                     }
                     else {
-                        // playlist.cast.push(url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(images[i].imagePath)));
-                        playlist.cast.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(playinfo[i].imagePath)));
+                        playlist.cast.push(url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(playinfo[i].imageName)));
+                        // playlist.cast.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(playinfo[i].imageName)));
                     }
                 }
                 callback(null);

@@ -42,8 +42,8 @@ function listWish(callback) {
                     salePer : results[i].salePer,
                     originalPrice : tmpwish.price,
                     salePrice : tmpwish.salePrice,
-                    // poster : url.resolve('https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/posterimg/', path.basename(results[i].imageName))
-                    poster : url.resolve('https://127.0.0.1:4433/posterimg/', path.basename(results[i].imageName))
+                    poster : url.resolve('https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/posterimg/', path.basename(results[i].imageName))
+                    // poster : url.resolve('https://127.0.0.1:4433/posterimg/', path.basename(results[i].imageName))
                 });
             }
             callback(null, wish);
@@ -98,8 +98,8 @@ function createWish(userId, playId, callback) {
                 var thumbnail = [];
                 for (var i = 0; i < results.length; i++) {
                     thumbnail.push({
-                        // thumbnail: url.resolve('https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/posterimg/', path.basename(results[i].imagePath))
-                        thumbnail: url.resolve('https://127.0.0.1:4433/posterimg/', path.basename(results[i].imagePath))
+                        thumbnail: url.resolve('https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/posterimg/', path.basename(results[i].imageName))
+                        // thumbnail: url.resolve('https://127.0.0.1:4433/posterimg/', path.basename(results[i].imageName))
                     });
                 }
                 callback(null, thumbnail);

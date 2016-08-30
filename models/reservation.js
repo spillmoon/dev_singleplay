@@ -39,8 +39,8 @@ function listRsv(callback) {
                     salePer: results[i].salePer,
                     originalPrice: tmprsv.price,
                     salePrice: tmprsv.salePrice,
-                    // poster: url.resolve('https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/posterimg/', path.basename(results[i].imageName))
-                    poster: url.resolve('https://127.0.0.1:4433/posterimg/', path.basename(results[i].imageName))
+                    poster: url.resolve('https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/posterimg/', path.basename(results[i].imageName))
+                    // poster: url.resolve('https://127.0.0.1:4433/posterimg/', path.basename(results[i].imageName))
                 });
             }
             callback(null, rsv);
@@ -100,8 +100,8 @@ function findRsv(rsvId, callback) {
             if (rsv.seatClass = 'S') {
                 rsv.settlement = ((result[0].Sprice*(100-result[0].salePer)/100)-result[0].mileage)
             }
-            rsv.poster = url.resolve('https://127.0.0.1:4433/posterimg/', path.basename(result[0].imageName));
-            // rsv.poster = url.resolve('https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/posterimg/', path.basename(result.imageName));
+            rsv.poster = url.resolve('https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/posterimg/', path.basename(result.imageName));
+            // rsv.poster = url.resolve('https://127.0.0.1:4433/posterimg/', path.basename(result[0].imageName));
             callback(null, rsv);
         });
     });

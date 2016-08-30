@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var isSecure = require('./common').isSecure;
 var isAuthenticated = require('./common').isAuthenticated;
-var Review = require('../models/review')
+var Review = require('../models/review');
 
 // POST, 별점 주기
 router.post('/', isSecure, isAuthenticated, function (req, res, next) {
