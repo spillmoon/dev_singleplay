@@ -7,7 +7,7 @@ var async = require('async');
 
 // FIXME: 로그인 연동
 function listWish(callback) {
-    var sql_select_wishlist = "SELECT w.id, p.name, place.placeName, p.playDay, p.playTime, VIPprice, Rprice, Sprice, p.salePer, p.starScoreAvg, i.imageName " +
+    var sql_select_wishlist = "SELECT w.wishId, p.name, place.placeName, p.playDay, p.playTime, VIPprice, Rprice, Sprice, p.salePer, p.starScoreAvg, i.imageName " +
         "FROM play p join wishlist w on (p.id = w.playId) " +
         "join place on (place.id = p.place_id)" +
         "join image i on (p.name = i.play_name) " +

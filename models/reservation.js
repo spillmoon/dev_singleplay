@@ -23,12 +23,12 @@ function listRsv(callback) {
             var tmprsv = {}; // 조건에 맞는 price와 salePrice를 담을 임시 객체
             rsv.list = [];
             for (var i=0; i<results.length; i++) {
-                if (results[i] === null) {
-                    tmprsv.price = results[i].VIPprice;
-                    tmprsv.salePrice = results[i].VIPprice * ((100-results[i].salePer)/100);
-                } else {
+                if (results[i].VIPprice === null) {
                     tmprsv.price = results[i].Rprice;
                     tmprsv.salePrice = results[i].Rprice * ((100-results[i].salePer)/100);
+                } else {
+                    tmprsv.price = results[i].VIPprice;
+                    tmprsv.salePrice = results[i].VIPprice * ((100-results[i].salePer)/100);
                 }
                 rsv.list.push({
                     playName: results[i].name,
@@ -85,6 +85,7 @@ function findRsv(rsvId, callback) {
                 return callback(err);
             }
             var rsv = {};
+            rsv.playName = result[0].name;
             rsv.playDay = result[0].playDay;
             rsv.playTime = result[0].playTime;
             rsv.placeName = result[0].placeName;
