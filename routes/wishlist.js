@@ -3,21 +3,19 @@ var router = express.Router();
 var isSecure = require('./common').isSecure;
 var isAuthenticated = require('./common').isAuthenticated;
 var Wishlist = require('../models/wishlist');
-// todo: 위시 목록 로컬 테스트
-// todo: 위시 목록 서버 테스트
-// GET, 위시리스트 목록
+
+// GET, 위시리스트 목록,
 router.get('/', isSecure, isAuthenticated, function(req, res, next) {
-    Wishlist.listWish(function (err, wishlist) {
-        if (err) {
-            return next(err);
-        }
-        res.send({
-            results: wishlist
+        Wishlist.listWish(function (err, wishlist) {
+            if (err) {
+                return next(err);
+            }
+            res.send({
+                results: wishlist
+            });
         });
-    });
 });
-// todo: 위시보기 로컬 테스트
-// todo: 위시보기 서버 테스트
+
 // POST, 위시리스트 추가
 router.post('/', isSecure, isAuthenticated, function(req, res, next) {
     var userId = req.body.userId;
@@ -33,9 +31,8 @@ router.post('/', isSecure, isAuthenticated, function(req, res, next) {
         });
     });
 });
-// todo: 위시 삭제 로컬 테스트
-// todo: 위시 삭제 서버 테스트
-// DELETE, 위시리스트 삭제
+
+// DELETE, 위시리스트 삭제, 페이징 삭제함!
 router.delete('/:wid', isSecure, isAuthenticated, function(req, res, next) {
     var wishId = req.params.wid;
 
