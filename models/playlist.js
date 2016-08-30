@@ -6,23 +6,20 @@ var dbPool = require('../models/common').dbPool;
 // fixme: 쿼리 리팩토링
 // 뮤지컬 목록(정렬 방식에 따른 목록 정렬)
 function musicalList(sort, callback) {
-    var sql_star = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath " +
+    var sql_star = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
-        "where playDay = '2016-09-01' and theme = 0 " +
-        "group by name " +
+        "where playDay = '2016-09-01' and theme = 0 and imageType = 0 " +
         "order by starScoreAvg desc";
-    var sql_time = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath " +
+    var sql_time = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
-        "where playDay = '2016-09-01' and theme = 0 " +
-        "group by name " +
+        "where playDay = '2016-09-01' and theme = 0 and imageType = 0 " +
         "order by playTime asc";
-    var sql_sale = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath " +
+    var sql_sale = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
-        "where playDay = '2016-09-01' and theme = 0 " +
-        "group by name " +
+        "where playDay = '2016-09-01' and theme = 0 and imageType = 0 " +
         "order by salePer desc";
     var sql = "";
     if (sort == 0)
@@ -65,23 +62,20 @@ function musicalList(sort, callback) {
 // fixme: 쿼리 리팩토링
 // 오페라 목록(정렬 방식에 따른 목록 정렬)
 function operaList(sort, callback) {
-    var sql_star = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath " +
+    var sql_star = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
-        "where playDay = '2016-09-01' and theme = 1 " +
-        "group by name " +
+        "where playDay = '2016-09-01' and theme = 1 and imageType = 0 " +
         "order by starScoreAvg desc";
-    var sql_time = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath " +
+    var sql_time = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
-        "where playDay = '2016-09-01' and theme = 1 " +
-        "group by name " +
+        "where playDay = '2016-09-01' and theme = 1 and imageType = 0 " +
         "order by playTime asc";
-    var sql_sale = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath " +
+    var sql_sale = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
-        "where playDay = '2016-09-01' and theme = 1 " +
-        "group by name " +
+        "where playDay = '2016-09-01' and theme = 1 and imageType = 0 " +
         "order by salePer desc";
     var sql = "";
     if (sort == 0)
@@ -124,23 +118,20 @@ function operaList(sort, callback) {
 // fixme: 쿼리 리팩토링
 // 콘서트 목록(정렬 방식에 따른 목록 정렬)
 function concertList(sort, callback) {
-    var sql_star = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath " +
+    var sql_star = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
-        "where playDay = '2016-09-01' and theme = 2 " +
-        "group by name " +
+        "where playDay = '2016-09-01' and theme = 2 and imageType = 0 " +
         "order by starScoreAvg desc";
-    var sql_time = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath " +
+    var sql_time = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
-        "where playDay = '2016-09-01' and theme = 2 " +
-        "group by name " +
+        "where playDay = '2016-09-01' and theme = 2 and imageType = 0 " +
         "order by playTime asc";
-    var sql_sale = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath " +
+    var sql_sale = "select py.id pid, name, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
-        "where playDay = '2016-09-01' and theme = 2 " +
-        "group by name " +
+        "where playDay = '2016-09-01' and theme = 2 and imageType = 0 " +
         "order by salePer desc";
 
     var sql = "";
@@ -181,14 +172,13 @@ function concertList(sort, callback) {
         });
     });
 }
-// todo: 수정할거 발견
+
 // 검색한 구의 공연장에서 하는 공연 목록(장르 구분 없음)
 function searchLocation(location, callback) {
-    var sql = "select py.id pid, name, theme, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath " +
+    var sql = "select py.id pid, name, theme, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
-        "where playDay = '2016-09-01' and address = ? " +
-        "group by name " +
+        "where playDay = '2016-09-01' and address = ? and imageType = 0 " +
         "order by playTime asc";
 
     dbPool.getConnection(function (err, dbConn) {
@@ -228,15 +218,15 @@ function searchLocation(location, callback) {
         });
     });
 }
-// todo: 수정할거 발견
+
 // 검색한 키워드와 관련된 공연 목록(장르 구분 없음)
 function searchKeyword(keyword, callback) {
-    var sql = "select a.pid, name, theme, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath " +
-        "from (select py.id pid, name, theme, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath " +
+    var sql = "select a.pid, name, theme, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath, imageType " +
+        "from (select py.id pid, name, theme, placeName, playDay, playTime, VIPprice, salePer, starScoreAvg, imagePath, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
         "where name like '%" + keyword + "%' or placeName like '%" + keyword + "%') a " +
-        "where a.playDay = '2016-09-01'";
+        "where a.playDay = '2016-09-01' and imageType = 0";
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
