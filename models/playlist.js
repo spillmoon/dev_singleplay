@@ -3,6 +3,7 @@ var path = require('path');
 var url = require('url');
 var async = require('async');
 var dbPool = require('../models/common').dbPool;
+// fixme: 같은 날 다른 시간 공연들 하나로 표시, 시간은 여러개 저장할 수 있도록 하기
 // fixme: 쿼리 리팩토링
 // 뮤지컬 목록(정렬 방식에 따른 목록 정렬)
 function musicalList(sort, callback) {
@@ -267,13 +268,13 @@ function searchKeyword(keyword, callback) {
 }
 
 function findPlay(pid, callback) {
-    var sql_image = "select imagePath, imageType " +
+    var sql_image = "select p.id pid, name, theme, placeName, playDay, playTime, VIPprice, Rprice, Sprice, salePer, starScoreAvg, imagePath, imageType " +
         "from play p join image i on (i.play_name = p.name) " +
+        "join place pl on (p.place_id = pl.id) " +
         "where p.id = ?";
 
-    var sql_info = "select p.id pid, name, theme, placeName, playDay, playTime, VIPprice, Rprice, Sprice, salePer, starScoreAvg, usableNo, seatInfo, seatClass " +
+    var sql_info = "select usableNo, seatInfo, seatClass " +
         "from play p join usableSeat u on (p.id = u.play_id) " +
-        "join place pl on (p.place_id = pl.id) " +
         "where p.id = ?";
 
     dbPool.getConnection(function (err, dbConn) {
@@ -281,7 +282,7 @@ function findPlay(pid, callback) {
             return callback(err);
         }
         var playlist = {};
-        async.parallel([getPlayImage, getPlayInfo], function(err) {
+        async.parallel([getPlayInfo, getPlaySeat], function(err) {
             dbConn.release();
             if (err) {
                 return callback(err);
@@ -289,29 +290,8 @@ function findPlay(pid, callback) {
             callback(null, playlist);
         });
 
-        function getPlayImage(callback) {
-            dbConn.query(sql_image, [pid], function(err, images) {
-                if (err) {
-                    return callback(err);
-                }
-                playlist.poster = [];
-                playlist.cast = [];
-                for(var i = 0; i < images.length; i++){
-                    if (images[i].imageType == 0 ) {
-                        // playlist.poster.push(url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(images[i].imagePath)));
-                        playlist.poster.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(images[i].imagePath)));
-                    }
-                    else {
-                        // playlist.cast.push(url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(images[i].imagePath)));
-                        playlist.cast.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(images[i].imagePath)));
-                    }
-                }
-                callback(null);
-            });
-        }
-
         function getPlayInfo(callback) {
-            dbConn.query(sql_info, [pid], function(err, playinfo) {
+            dbConn.query(sql_image, [pid], function(err, playinfo) {
                 if (err) {
                     return callback(err);
                 }
@@ -337,9 +317,35 @@ function findPlay(pid, callback) {
                 playlist.salePer = playinfo[0].salePer;
                 playlist.starScore = playinfo[0].starScoreAvg;
                 playlist.userCount = 0;
-                playlist.usableSeat = [];
+                playlist.poster = [];
+                playlist.cast = [];
                 for(var i = 0; i < playinfo.length; i++){
-                    playlist.usableSeat.push(playinfo[i].seatInfo);
+                    if (playinfo[i].imageType == 0 ) {
+                        // playlist.poster.push(url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(images[i].imagePath)));
+                        playlist.poster.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(playinfo[i].imagePath)));
+                    }
+                    else {
+                        // playlist.cast.push(url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(images[i].imagePath)));
+                        playlist.cast.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(playinfo[i].imagePath)));
+                    }
+                }
+                callback(null);
+            });
+        }
+
+        function getPlaySeat(callback) {
+            dbConn.query(sql_info, [pid], function(err, seatinfo) {
+                if (err) {
+                    return callback(err);
+                }
+                if (seatinfo.length == 0) {
+                    playlist.message = "매진";
+                }
+                else {
+                    playlist.usableSeat = [];
+                    for (var i = 0; i < seatinfo.length; i++) {
+                        playlist.usableSeat.push(seatinfo[i].seatInfo);
+                    }
                 }
                 callback(null);
             });
