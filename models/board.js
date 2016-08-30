@@ -20,8 +20,6 @@ function listBoards(callback) {
             for (var i=0; i<results.length; i++) {
                 board.push({
                     boardNo: results[i].boardNo,
-                    title: results[i].title,
-                    writeDate: results[i].writeDate,
                     // image : url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/boardimg/', path.basename(results[i].titleFilePath))
                     image : url.resolve('http://127.0.0.1:8080/boardimg/', path.basename(results[i].titleFilePath))
                 });

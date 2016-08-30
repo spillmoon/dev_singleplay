@@ -6,14 +6,14 @@ var Wishlist = require('../models/wishlist');
 
 // GET, 위시리스트 목록,
 router.get('/', isSecure, isAuthenticated, function(req, res, next) {
-        Wishlist.listWish(function (err, wishlist) {
-            if (err) {
-                return next(err);
-            }
-            res.send({
-                results: wishlist
-            });
+    Wishlist.listWish(function (err, wishlist) {
+        if (err) {
+            return next(err);
+        }
+        res.send({
+            results: wishlist
         });
+    });
 });
 
 // POST, 위시리스트 추가

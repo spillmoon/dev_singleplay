@@ -15,20 +15,17 @@ router.get('/', isSecure, isAuthenticated, function (req, res, next) {
             results: results
         });
     });
-
 });
 
 // POST, 예약하기
 router.post('/', isSecure, isAuthenticated, function(req, res, next) {
-    //user_id, play_id, play_name, rsvDate, usableNo, seatClass
-    var user_id = req.body.user_id;
-    var play_id = req.body.play_id;
-    var play_name = req.body.play_name;
-    var rsvDate = req.body.rsvDate;
+    var userId = req.body.userId;
+    var playId = req.body.playId;
+    var playName = req.body.playName;
     var usableSeatNo = req.body.usableSeatNo;
     var seatClass = req.body.seatClass;
 
-    Reservation.createRsv(user_id, play_id, play_name, rsvDate, usableSeatNo, seatClass, function(err) {
+    Reservation.createRsv(userId, playId, playName, usableSeatNo, seatClass, function(err) {
        if (err) {
            return next(err);
        }
@@ -40,16 +37,16 @@ router.post('/', isSecure, isAuthenticated, function(req, res, next) {
 
 // GET, 예약 상세 정보
 router.get('/:rid', isSecure, isAuthenticated, function(req, res, next) {
-        var rsvId = req.params.rid;
+    var rsvId = req.params.rid;
 
-        Reservation.findRsv(rsvId, function(err, result) {
-            if (err) {
-                return next(err);
-            }
-            res.send({
-                result: result
-            });
-        })
+    Reservation.findRsv(rsvId, function(err, result) {
+        if (err) {
+            return next(err);
+        }
+        res.send({
+            result: result
+        });
+    })
 });
 
 module.exports = router;

@@ -1,4 +1,3 @@
-var mysql = require('mysql');
 var dbPool = require('../models/common').dbPool;
 var path = require('path');
 var url = require('url');
@@ -8,11 +7,11 @@ var async = require('async');
 
 // FIXME: 로그인 연동
 function listWish(callback) {
-    var sql_select_wishlist = "SELECT p.id pid, p.name, place.placeName, p.playDay, p.playTime, VIPprice, Rprice, Sprice, p.salePer, p.starScoreAvg, i.imageName " +
+    var sql_select_wishlist = "SELECT w.id, p.name, place.placeName, p.playDay, p.playTime, VIPprice, Rprice, Sprice, p.salePer, p.starScoreAvg, i.imageName " +
         "FROM play p join wishlist w on (p.id = w.playId) " +
         "join place on (place.id = p.place_id)" +
         "join image i on (p.name = i.play_name) " +
-        "group by p.name";
+        "group by w.wishId";
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
@@ -43,8 +42,8 @@ function listWish(callback) {
                     salePer : results[i].salePer,
                     originalPrice : tmpwish.price,
                     salePrice : tmpwish.salePrice,
-                    poster : url.resolve('https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/posterimg/', path.basename(results[i].imageName))
-                    // "poster" : url.resolve('https://localhost:4433/posterimg/', path.basename(results[i].imageName))
+                    // poster : url.resolve('https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/posterimg/', path.basename(results[i].imageName))
+                    poster : url.resolve('https://127.0.0.1:4433/posterimg/', path.basename(results[i].imageName))
                 });
             }
             callback(null, wish);
@@ -99,6 +98,7 @@ function createWish(userId, playId, callback) {
                 var thumbnail = [];
                 for (var i = 0; i < results.length; i++) {
                     thumbnail.push({
+                        // thumbnail: url.resolve('https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/posterimg/', path.basename(results[i].imagePath))
                         thumbnail: url.resolve('https://127.0.0.1:4433/posterimg/', path.basename(results[i].imagePath))
                     });
                 }
