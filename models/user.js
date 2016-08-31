@@ -70,8 +70,38 @@ function findOrCreate(profile, callback) {
     user.facebookid = profile.id;
     return callback(null, user);
 }
+// todo: 쿠폰함 조회, 프로필 변경 구현하기
+function couponList(uid, callback) {
+    var sql_coupon_list = "select couponNo, couponName, salePer, periodStart, periodEnd " +
+        "from coupon " +
+        "where user_id = ?";
+
+    dbPool.getConnection(function (err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        dbConn.query(sql_coupon_list, [uid], function(err, results) {
+            dbConn.release();
+            if (err) {
+                return callback(err);
+            }
+            var coupons = [];
+            for(var i = 0; i < results.length; i++) {
+                coupons.push({
+                    couponNo: results[i].couponNo,
+                    couponName: results[i].couponName,
+                    salePer: results[i].salePer,
+                    periodStart: results[i].periodStart,
+                    periodEnd: results[i].periodEnd
+                });
+            }
+            callback(null, coupons);
+        });
+    });
+}
 
 module.exports.findByEmail = findByEmail;
 module.exports.verifyPassword = verifyPassword;
 module.exports.findUser = findUser;
 module.exports.findOrCreate = findOrCreate;
+module.exports.couponList = couponList;

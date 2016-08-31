@@ -5,8 +5,9 @@ var path = require('path');
 var url = require('url');
 var isSecure = require('./common').isSecure;
 var isAuthenticated = require('./common').isAuthenticated;
+var User = require('../models/user');
 
-// PUT, 프로필, PUSH 수정
+// todo: PUT, 프로필, PUSH 수정
 router.put('/me', isSecure, isAuthenticated, function(req, res, next) {
     var action = req.body.action;
     if (action == "push") {
@@ -53,15 +54,15 @@ router.put('/me', isSecure, isAuthenticated, function(req, res, next) {
     }
 });
 
-// 쿠폰 목록 조회
+// todo: 쿠폰 목록 조회
 router.get('/me/coupons', isSecure, isAuthenticated, function(req, res, next) {
-    res.send({
-        results: [{
-            couponNo: 10023,
-            couponName: "추석 한정 10% 할인 쿠폰",
-            periodStart: "2016-09-14",
-            periodEnd: "2016-09-18"
-        }]
+    User.couponList(req.query.uid, function(err, coupons) {
+        if (err) {
+            return next(err);
+        }
+        res.send({
+            results: coupons
+        });
     });
 });
 
