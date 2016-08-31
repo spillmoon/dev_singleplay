@@ -55,7 +55,7 @@ function listWish(callback) {
 function createWish(userId, playId, callback) {
     var sql_insert_wish = 'insert into wishlist(userId, playId) values(?, ?)';
 
-    var sql_select_thumbnail = 'select i.imageName, i.imagePath ' +
+    var sql_select_thumbnail = 'select i.imageName ' +
         'from wishlist w join play p on (w.playId = p.id) ' +
         'join image i on (i.play_name = p.name) ' +
         'group by wishId';

@@ -61,9 +61,6 @@ passport.use(new FacebookTokenStrategy({
     clientSecret: process.env.FACEBOOK_APP_SECRET
 }, function (accessToken, refreshToken, profile, done) {
     User.findOrCreate(profile, function (err, user) {
-        console.log(profile.id);
-        console.log(profile.emails);
-        console.log(profile.displayName);
         if (err) {
             return done(err);
         }

@@ -46,6 +46,7 @@ function verifyPassword(password, hashPassword, callback) {
 
 function findUser(userId, callback) {
     var sql = 'SELECT id, userEmail FROM user WHERE id = ?';
+    console.log(userId);
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
             return callback(err);
