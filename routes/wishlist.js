@@ -11,6 +11,7 @@ router.get('/', isSecure, isAuthenticated, function(req, res, next) {
             return next(err);
         }
         res.send({
+            code: 1,
             results: wishlist
         });
     });
@@ -18,7 +19,7 @@ router.get('/', isSecure, isAuthenticated, function(req, res, next) {
 
 // POST, 위시리스트 추가
 router.post('/', isSecure, isAuthenticated, function(req, res, next) {
-    var userId = req.session.id;
+    var userId = req.session.user.id;
     var playId = req.body.playId;
 
     Wishlist.createWish(userId, playId, function (err, thumbnail) {
@@ -26,7 +27,7 @@ router.post('/', isSecure, isAuthenticated, function(req, res, next) {
             return next(err);
         }
         res.send({
-            message: "위시리스트 추가 완료",
+            code: 1,
             results: thumbnail
         });
     });
@@ -41,6 +42,7 @@ router.delete('/:wid', isSecure, isAuthenticated, function(req, res, next) {
             return next(err);
         }
         res.send({
+            code: 1,
             message : "위시리스트 삭제 완료"
         });
     });

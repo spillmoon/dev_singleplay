@@ -9,6 +9,7 @@ router.get('/', function (req, res, next) {
             return next(err);
         }
         res.send({
+            code: 1,
             results: boardListInfo
         });
     });
@@ -23,6 +24,7 @@ router.get('/:bid', function (req, res, next) {
             return next(err);
         }
         res.send({
+            code: 1,
             result: boardImageUrl
         });
     });

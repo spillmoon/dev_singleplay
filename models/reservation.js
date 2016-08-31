@@ -52,7 +52,7 @@ function listRsv(callback) {
 function createRsv(userId, playId, playName, usableSeatNo, seatClass, callback) {
     var sql = 'insert into reservation(user_id, play_id, play_name, usableSeat_usableNo, seatClass) ' +
         "values (?, ?, ?, ?, ?)";
-
+    console.log('ggg '+userId);
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
             return callback(err);

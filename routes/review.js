@@ -6,7 +6,7 @@ var Review = require('../models/review');
 
 // POST, 별점 주기
 router.post('/', isSecure, isAuthenticated, function (req, res, next) {
-    var userId = req.session.id;
+    var userId = req.session.user.id;
     var playId = req.body.playId;
     var playName = req.body.playName;
     var starScore = req.body.starScore;
@@ -16,6 +16,7 @@ router.post('/', isSecure, isAuthenticated, function (req, res, next) {
             return next(err);
         }
         res.send({
+            code: 1,
             message: "평가해주셔서 감사합니다."
         });
     });

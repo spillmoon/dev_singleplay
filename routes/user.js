@@ -25,6 +25,7 @@ router.put('/me', isSecure, isAuthenticated, function(req, res, next) {
             });
         }
         res.send({
+            code: 1,
             message: "알림 변경 성공"
         });
     } else {
@@ -45,6 +46,7 @@ router.put('/me', isSecure, isAuthenticated, function(req, res, next) {
             if (userInfo.image)
                 name = userInfo.image.name;
             res.send({
+                code: 1,
                 profileImg: url.resolve("http://127.0.0.1:3000", "/profile/"+ name),
                 userName: userInfo.name,
                 userEmail: userInfo.email,
@@ -61,6 +63,7 @@ router.get('/me/coupons', isSecure, isAuthenticated, function(req, res, next) {
             return next(err);
         }
         res.send({
+            code: 1,
             results: coupons
         });
     });

@@ -16,6 +16,7 @@ router.get('/', function (req, res, next) {
                     return next(err);
                 }
                 res.send({
+                    code: 1,
                     results: playlist
                 });
             });
@@ -25,6 +26,7 @@ router.get('/', function (req, res, next) {
                     return next(err);
                 }
                 res.send({
+                    code: 1,
                     results: playlist
                 });
             });
@@ -34,6 +36,7 @@ router.get('/', function (req, res, next) {
                     return next(err);
                 }
                 res.send({
+                    code: 1,
                     results: playlist
                 });
             });
@@ -46,6 +49,7 @@ router.get('/', function (req, res, next) {
                 return next(err);
             }
             res.send({
+                code: 1,
                 results: playlist
             });
         });
@@ -57,6 +61,7 @@ router.get('/', function (req, res, next) {
                 return next(err);
             }
             res.send({
+                code: 1,
                 results: playlist
             });
         });
@@ -73,6 +78,7 @@ router.get('/:pid', function (req, res, next) {
             return next(err);
         }
         res.send({
+            code: 1,
             results: play
         });
     });

@@ -19,17 +19,18 @@ router.get('/', isSecure, isAuthenticated, function (req, res, next) {
 
 // POST, 예약하기
 router.post('/', isSecure, isAuthenticated, function(req, res, next) {
-    var userId = req.session.id;
+    var userId = req.session.user.id;
     var playId = req.body.playId;
     var playName = req.body.playName;
     var usableSeatNo = req.body.usableSeatNo;
     var seatClass = req.body.seatClass;
-
+    console.log('aaaaa '+userId);
     Reservation.createRsv(userId, playId, playName, usableSeatNo, seatClass, function(err) {
        if (err) {
            return next(err);
        }
         res.send({
+            code: 1,
             message: "예약 성공"
         });
     });
@@ -44,6 +45,7 @@ router.get('/:rid', isSecure, isAuthenticated, function(req, res, next) {
             return next(err);
         }
         res.send({
+            code: 1,
             result: result
         });
     })
