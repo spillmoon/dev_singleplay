@@ -43,7 +43,15 @@ function musicalList(sort, callback) {
                 return callback(err);
             }
             var playlist = [];
+            var tmpPrice = {};
             for (var i = 0; i < results.length; i++) {
+                if (results[i].VIPprice === null) {
+                    tmpPrice.price = results[i].Rprice;
+                    tmpPrice.salePrice = results[i].Rprice * ((100-results[i].salePer)/100);
+                } else {
+                    tmpPrice.price = results[i].VIPprice;
+                    tmpPrice.salePrice = results[i].VIPprice * ((100-results[i].salePer)/100);
+                }
                 playlist.push({
                     playId: results[i].pid,
                     playName: results[i].name,
@@ -102,7 +110,15 @@ function operaList(sort, callback) {
                 return callback(err);
             }
             var playlist = [];
+            var tmpPrice = {};
             for (var i = 0; i < results.length; i++) {
+                if (results[i].VIPprice === null) {
+                    tmpPrice.price = results[i].Rprice;
+                    tmpPrice.salePrice = results[i].Rprice * ((100-results[i].salePer)/100);
+                } else {
+                    tmpPrice.price = results[i].VIPprice;
+                    tmpPrice.salePrice = results[i].VIPprice * ((100-results[i].salePer)/100);
+                }
                 playlist.push({
                     playId: results[i].pid,
                     playName: results[i].name,
@@ -162,7 +178,15 @@ function concertList(sort, callback) {
                 return callback(err);
             }
             var playlist = [];
+            var tmpPrice = {};
             for (var i = 0; i < results.length; i++) {
+                if (results[i].VIPprice === null) {
+                    tmpPrice.price = results[i].Rprice;
+                    tmpPrice.salePrice = results[i].Rprice * ((100-results[i].salePer)/100);
+                } else {
+                    tmpPrice.price = results[i].VIPprice;
+                    tmpPrice.salePrice = results[i].VIPprice * ((100-results[i].salePer)/100);
+                }
                 playlist.push({
                     playId: results[i].pid,
                     playName: results[i].name,
@@ -203,6 +227,7 @@ function searchLocation(location, callback) {
             }
             var playlist = [];
             var theme = "";
+            var tmpPrice = {};
             for (var i = 0; i < results.length; i++) {
                 if (results[i].theme == 0)
                     theme = "뮤지컬";
@@ -210,6 +235,13 @@ function searchLocation(location, callback) {
                     theme = "오페라";
                 if (results[i].theme == 2)
                     theme = "콘서트";
+                if (results[i].VIPprice === null) {
+                    tmpPrice.price = results[i].Rprice;
+                    tmpPrice.salePrice = results[i].Rprice * ((100-results[i].salePer)/100);
+                } else {
+                    tmpPrice.price = results[i].VIPprice;
+                    tmpPrice.salePrice = results[i].VIPprice * ((100-results[i].salePer)/100);
+                }
                 playlist.push({
                     playId: results[i].pid,
                     playName: results[i].name,
@@ -251,6 +283,7 @@ function searchKeyword(keyword, callback) {
             }
             var playlist = [];
             var theme = "";
+            var tmpPrice = {};
             for (var i = 0; i < results.length; i++) {
                 if (results[i].theme == 0)
                     theme = "뮤지컬";
@@ -258,6 +291,13 @@ function searchKeyword(keyword, callback) {
                     theme = "오페라";
                 if (results[i].theme == 2)
                     theme = "콘서트";
+                if (results[i].VIPprice === null) {
+                    tmpPrice.price = results[i].Rprice;
+                    tmpPrice.salePrice = results[i].Rprice * ((100-results[i].salePer)/100);
+                } else {
+                    tmpPrice.price = results[i].VIPprice;
+                    tmpPrice.salePrice = results[i].VIPprice * ((100-results[i].salePer)/100);
+                }
                 playlist.push({
                     id: results[i].pid,
                     name: results[i].name,
