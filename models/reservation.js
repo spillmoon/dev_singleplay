@@ -19,9 +19,9 @@ function listRsv(callback) {
             if (err) {
                 return callback(err);
             }
-            var rsv = {};
+            var rsv = [];
             var tmprsv = {}; // 조건에 맞는 price와 salePrice를 담을 임시 객체
-            rsv.list = [];
+
             for (var i=0; i<results.length; i++) {
                 if (results[i].VIPprice === null) {
                     tmprsv.price = results[i].Rprice;
@@ -30,7 +30,7 @@ function listRsv(callback) {
                     tmprsv.price = results[i].VIPprice;
                     tmprsv.salePrice = results[i].VIPprice * ((100-results[i].salePer)/100);
                 }
-                rsv.list.push({
+                rsv.push({
                     playName: results[i].name,
                     starScoreAvg: results[i].starScoreAvg,
                     placeName: results[i].placeName,
@@ -100,7 +100,7 @@ function findRsv(rsvId, callback) {
             if (rsv.seatClass = 'S') {
                 rsv.settlement = ((result[0].Sprice*(100-result[0].salePer)/100)-result[0].mileage)
             }
-            rsv.poster = url.resolve('https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/posterimg/', path.basename(result.imageName));
+            rsv.poster = url.resolve('https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/posterimg/', path.basename(result[0].imageName));
             // rsv.poster = url.resolve('https://127.0.0.1:4433/posterimg/', path.basename(result[0].imageName));
             callback(null, rsv);
         });

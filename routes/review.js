@@ -16,9 +16,7 @@ router.post('/', isSecure, isAuthenticated, function (req, res, next) {
             return next(err);
         }
         res.send({
-            result: {
-                message: "평가해주셔서 감사합니다."
-            }
+            message: "평가해주셔서 감사합니다."
         });
     });
 

@@ -21,13 +21,13 @@ router.post('/', isSecure, isAuthenticated, function(req, res, next) {
     var userId = req.body.userId;
     var playId = req.body.playId;
 
-    Wishlist.createWish(userId, playId, function (err, results) {
+    Wishlist.createWish(userId, playId, function (err, thumbnail) {
         if (err) {
             return next(err);
         }
         res.send({
-            message: "위시리스트에 저장되었습니다!",
-            thumbnail: results
+            message: "위시리스트 추가 완료",
+            results: thumbnail
         });
     });
 });

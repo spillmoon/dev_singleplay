@@ -22,9 +22,9 @@ function listWish(callback) {
             if (err) {
                 return callback(err);
             }
-            var wish = {};
+            var wish = [];
             var tmpwish = {}; // 조건에 맞는 price와 salePrice를 담을 임시 객체
-            wish.list = [];
+
             for (var i=0; i<results.length; i++) {
                 if (results[i] === null) {
                     tmpwish.price = results[i].VIPprice;
@@ -33,7 +33,7 @@ function listWish(callback) {
                     tmpwish.price = results[i].Rprice;
                     tmpwish.salePrice = results[i].Rprice * ((100-results[i].salePer)/100);
                 }
-                wish.list.push({
+                wish.push({
                     playName : results[i].name,
                     starScoreAvg : results[i].starScoreAvg,
                     placeName : results[i].placeName,
@@ -97,10 +97,10 @@ function createWish(userId, playId, callback) {
                 }
                 var thumbnail = [];
                 for (var i = 0; i < results.length; i++) {
-                    thumbnail.push({
-                        thumbnail: url.resolve('https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/posterimg/', path.basename(results[i].imageName))
-                        // thumbnail: url.resolve('https://127.0.0.1:4433/posterimg/', path.basename(results[i].imageName))
-                    });
+                    thumbnail.push(
+                        url.resolve('https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/posterimg/', path.basename(results[i].imageName))
+                        // url.resolve('https://127.0.0.1:4433/posterimg/', path.basename(results[i].imageName))
+                    );
                 }
                 callback(null, thumbnail);
             });

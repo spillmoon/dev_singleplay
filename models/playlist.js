@@ -339,7 +339,7 @@ function findPlay(pid, callback) {
                     return callback(err);
                 }
                 if (seatinfo.length == 0) {
-                    playlist.message = "매진";
+                    playlist.usableSeat = "매진";
                 }
                 else {
                     playlist.usableSeat = [];

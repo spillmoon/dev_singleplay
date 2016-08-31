@@ -30,7 +30,7 @@ router.post('/', isSecure, isAuthenticated, function(req, res, next) {
            return next(err);
        }
         res.send({
-            result : "예약 성공",
+            message: "예약 성공"
         });
     });
 });

@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var Play = require('../models/playlist');
-// todo: 공연 목록 로컬 테스트
-// todo: 공연 목록 서버 테스트
+// 공연 목록 로컬 테스트
+// 공연 목록 서버 테스트
 // GET, 항목별 정렬된 공연 목록
 router.get('/', function (req, res, next) {
     var action = req.query.action || 0;
@@ -62,8 +62,8 @@ router.get('/', function (req, res, next) {
         });
     }
 });
-// todo: 공연 상세 로컬 테스트
-// todo: 공연 상세 서버 테스트
+// 공연 상세 로컬 테스트
+// 공연 상세 서버 테스트
 // GET, 공연 상세 정보
 router.get('/:pid', function (req, res, next) {
     var playId = req.params.pid;
