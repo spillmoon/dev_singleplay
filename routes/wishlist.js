@@ -18,7 +18,7 @@ router.get('/', isSecure, isAuthenticated, function(req, res, next) {
 
 // POST, 위시리스트 추가
 router.post('/', isSecure, isAuthenticated, function(req, res, next) {
-    var userId = req.body.userId;
+    var userId = req.session.id;
     var playId = req.body.playId;
 
     Wishlist.createWish(userId, playId, function (err, thumbnail) {

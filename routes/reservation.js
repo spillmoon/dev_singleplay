@@ -19,7 +19,7 @@ router.get('/', isSecure, isAuthenticated, function (req, res, next) {
 
 // POST, 예약하기
 router.post('/', isSecure, isAuthenticated, function(req, res, next) {
-    var userId = req.body.userId;
+    var userId = req.session.id;
     var playId = req.body.playId;
     var playName = req.body.playName;
     var usableSeatNo = req.body.usableSeatNo;
