@@ -64,11 +64,38 @@ function findUser(userId, callback) {
 }
 
 function findOrCreate(profile, callback) {
-    var user = {};
-    user.id = staticUser.id;
-    // user.email = profile.emails[0].value;
-    user.facebookid = profile.id;
-    return callback(null, user);
+    var sql_findUser = "select id, userEmail, facebookId from user where facebookId = ?";
+    var sql_createUser = "insert into user(userEmail, facebookId) values (?, ?)";
+
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        dbConn.query(sql_findUser, [profile.id], function(err, results) {
+            if (err) {
+                return callback(err);
+            }
+            if (results.length !== 0) {
+                dbConn.release();
+                var user = {};
+                user.id = results[0].id;
+                user.email = results[0].userEmail;
+                user.facebookId = results[0].facebookId;
+                return callback(null, user);
+            }
+            dbConn.query(sql_createUser, [profile.emails[0].value, profile.id], function(err, result) {
+                dbConn.release();
+                if (err) {
+                    return callback(err);
+                }
+                var user = {};
+                user.id = result.insertId;
+                user.email = profile.emails[0].value;
+                user.facebookId = profile.id;
+                callback(null, user);
+            });
+        });
+    });
 }
 // todo: 쿠폰함 조회, 프로필 변경 구현하기
 function couponList(uid, callback) {

@@ -44,7 +44,7 @@ passport.use(new FacebookStrategy({
         clientID: process.env.FACEBOOK_APP_ID,
         clientSecret: process.env.FACEBOOK_APP_SECRET,
         callbackURL: process.env.FACEBOOK_CALLBACK_URL,
-        profileFields: ['id', 'displayName', 'name', 'gender', 'profileUrl', 'photos']
+        profileFields: ['id', 'displayName', 'name', 'gender', 'profileUrl', 'photos', 'emails']
     },
     function (accessToken, refreshToken, profile, done) {
         console.log(accessToken);
@@ -61,6 +61,9 @@ passport.use(new FacebookTokenStrategy({
     clientSecret: process.env.FACEBOOK_APP_SECRET
 }, function (accessToken, refreshToken, profile, done) {
     User.findOrCreate(profile, function (err, user) {
+        console.log(profile.id);
+        console.log(profile.emails);
+        console.log(profile.displayName);
         if (err) {
             return done(err);
         }
@@ -100,13 +103,13 @@ router.get('/local/logout', function (req, res, next) {
     res.send({message: 'local logout'});
 });
 
-router.get('/facebook', passport.authenticate('facebook'));
+router.get('/facebook', passport.authenticate('facebook', { scope : ['email']}));
 
 router.get('/facebook/callback', passport.authenticate('facebook'), function (req, res, next) {
     res.send({message: 'facebook callback'});
 });
 
-router.post('/facebook/token', passport.authenticate('facebook-token'), function (req, res, next) {
+router.post('/facebook/token', passport.authenticate('facebook-token', { scope : ['email']}), function (req, res, next) {
     res.send(req.user ? '성공' : '실패');
 });
 
