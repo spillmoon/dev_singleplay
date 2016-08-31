@@ -4,7 +4,8 @@ var url = require('url');
 var fs = require('fs');
 
 function listRsv(callback) {
-    var sql_select_rsvlist = 'SELECT r.id, p.name, place.placeName, p.playDay, p.playTime, p.VIPprice, p.Rprice, p.Sprice, p.salePer, p.starScoreAvg, i.imageName ' +
+    var sql_select_rsvlist = 'SELECT r.id, p.name, place.placeName, substring(p.playDay, 1, 10) playDay, substring(p.playTime, 1, 5) playTime, ' +
+        'p.VIPprice, p.Rprice, p.Sprice, p.salePer, p.starScoreAvg, i.imageName ' +
         'FROM play p join reservation r on (p.id = r.play_id) ' +
         'join place on (place.id = p.place_id) ' +
         'join image i on (p.name = i.play_name) ' +
@@ -66,7 +67,8 @@ function createRsv(userId, playId, playName, usableSeatNo, seatClass, callback) 
 }
 
 function findRsv(rsvId, callback) {
-    var sql = 'select r.rsvDate, user.id uid, p.id pid, p.name, p.playDay, p.playTime, pl.placeName, r.seatClass, u.seatInfo, c.salePer, user.mileage, VIPprice, Rprice, Sprice, i.imageName, i.imagePath ' +
+    var sql = 'select r.rsvDate, user.id uid, p.id pid, p.name, substring(p.playDay, 1, 10) playDay, substring(p.playTime, 1, 5) playTime, ' +
+        'pl.placeName, r.seatClass, u.seatInfo, c.salePer, user.mileage, VIPprice, Rprice, Sprice, i.imageName, i.imagePath ' +
         'from reservation r join usableSeat u on (r.usableSeat_usableNo = u.usableNo) ' +
         'join image i on (i.play_name = r.play_name) ' +
         'join play p on (p.name = r.play_name) ' +
