@@ -58,7 +58,7 @@ router.put('/me', isSecure, isAuthenticated, function(req, res, next) {
 
 // todo: 쿠폰 목록 조회
 router.get('/me/coupons', isSecure, isAuthenticated, function(req, res, next) {
-    User.couponList(req.query.uid, function(err, coupons) {
+    User.couponList(req.user.id, function(err, coupons) {
         if (err) {
             return next(err);
         }

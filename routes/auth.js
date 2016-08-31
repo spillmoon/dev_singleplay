@@ -6,27 +6,6 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 var FacebookTokenStrategy = require('passport-facebook-token');
 var User = require('../models/user');
 
-passport.use(new LocalStrategy({usernameField: 'email', passwordField: 'password'}, function (email, password, done) {
-    User.findByEmail(email, function (err, user) {
-        if (err) {
-            return done(err);
-        }
-        if (!user) {
-            return done(null, false);
-        }
-        User.verifyPassword(password, user.password, function (err, result) {
-            if (err) {
-                return done(err);
-            }
-            if (!result) {
-                return done(null, false);
-            }
-            delete user.password;
-            done(null, user);
-        })
-    });
-}));
-
 passport.serializeUser(function (user, done) {
     done(null, user.id);
 });
@@ -40,22 +19,6 @@ passport.deserializeUser(function (id, done) {
     });
 });
 
-passport.use(new FacebookStrategy({
-        clientID: process.env.FACEBOOK_APP_ID,
-        clientSecret: process.env.FACEBOOK_APP_SECRET,
-        callbackURL: process.env.FACEBOOK_CALLBACK_URL,
-        profileFields: ['id', 'displayName', 'name', 'gender', 'profileUrl', 'photos', 'emails']
-    },
-    function (accessToken, refreshToken, profile, done) {
-        console.log(accessToken);
-        User.findOrCreate(profile, function (err, user) {
-            if (err) {
-                return done(err);
-            }
-            return done(null, user);
-        });
-    }));
-
 passport.use(new FacebookTokenStrategy({
     clientID: process.env.FACEBOOK_APP_ID,
     clientSecret: process.env.FACEBOOK_APP_SECRET
@@ -67,6 +30,43 @@ passport.use(new FacebookTokenStrategy({
         return done(null, user);
     });
 }));
+
+// passport.use(new LocalStrategy({usernameField: 'email', passwordField: 'password'}, function (email, password, done) {
+//     User.findByEmail(email, function (err, user) {
+//         if (err) {
+//             return done(err);
+//         }
+//         if (!user) {
+//             return done(null, false);
+//         }
+//         User.verifyPassword(password, user.password, function (err, result) {
+//             if (err) {
+//                 return done(err);
+//             }
+//             if (!result) {
+//                 return done(null, false);
+//             }
+//             delete user.password;
+//             done(null, user);
+//         })
+//     });
+// }));
+
+// passport.use(new FacebookStrategy({
+//         clientID: process.env.FACEBOOK_APP_ID,
+//         clientSecret: process.env.FACEBOOK_APP_SECRET,
+//         callbackURL: process.env.FACEBOOK_CALLBACK_URL,
+//         profileFields: ['id', 'displayName', 'name', 'gender', 'profileUrl', 'photos', 'emails']
+//     },
+//     function (accessToken, refreshToken, profile, done) {
+//         console.log(accessToken);
+//         User.findOrCreate(profile, function (err, user) {
+//             if (err) {
+//                 return done(err);
+//             }
+//             return done(null, user);
+//         });
+//     }));
 
 router.post('/local/login', function (req, res, next) {
     passport.authenticate('local', function (err, user) {

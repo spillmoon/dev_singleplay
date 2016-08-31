@@ -19,12 +19,12 @@ router.get('/', isSecure, isAuthenticated, function (req, res, next) {
 
 // POST, 예약하기
 router.post('/', isSecure, isAuthenticated, function(req, res, next) {
-    var userId = req.session.user.id;
+    var userId = req.user.id;
     var playId = req.body.playId;
     var playName = req.body.playName;
     var usableSeatNo = req.body.usableSeatNo;
     var seatClass = req.body.seatClass;
-    console.log('aaaaa '+userId);
+
     Reservation.createRsv(userId, playId, playName, usableSeatNo, seatClass, function(err) {
        if (err) {
            return next(err);

@@ -67,16 +67,14 @@ function createRsv(userId, playId, playName, usableSeatNo, seatClass, callback) 
 }
 
 function findRsv(rsvId, callback) {
-    var sql = 'select r.rsvDate, user.id uid, p.id pid, p.name, substring(p.playDay, 1, 10) playDay, substring(p.playTime, 1, 5) playTime, ' +
-        'pl.placeName, r.seatClass, u.seatInfo, c.salePer, user.mileage, VIPprice, Rprice, Sprice, i.imageName ' +
+    // 'select r.rsvDate, user.id uid, p.id pid, p.name, substring(p.playDay, 1, 10) playDay, substring(p.playTime, 1, 5) playTime, '
+    var sql = 'select r.id, r.user_id uid, r.play_id , r.play_name, substring(p.playDay, 1, 10) playDay, substring(p.playTime, 1, 5) playTime, ' +
+        'pl.placeName, r.seatClass, u.seatInfo, VIPprice, Rprice, Sprice, i.imageName ' +
         'from reservation r join usableSeat u on (r.usableSeat_usableNo = u.usableNo) ' +
+        'join play p on (p.id = r.play_id) ' +
+        'join place pl on (p.place_id = pl.id) ' +
         'join image i on (i.play_name = r.play_name) ' +
-        'join play p on (p.name = r.play_name) ' +
-        'join place pl on (pl.id = p.place_id) ' +
-        'join coupon c on (r.user_id = c.user_id) ' +
-        'join user on (user.id = c.user_id) ' +
-        'where r.id = ? ' +
-        'group by r.id';
+        'where r.id = ? and imageType = 0';
 
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
