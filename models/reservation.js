@@ -68,7 +68,7 @@ function createRsv(userId, playId, playName, usableSeatNo, seatClass, callback) 
 
 function findRsv(rsvId, callback) {
     var sql = 'select r.rsvDate, user.id uid, p.id pid, p.name, substring(p.playDay, 1, 10) playDay, substring(p.playTime, 1, 5) playTime, ' +
-        'pl.placeName, r.seatClass, u.seatInfo, c.salePer, user.mileage, VIPprice, Rprice, Sprice, i.imageName, i.imagePath ' +
+        'pl.placeName, r.seatClass, u.seatInfo, c.salePer, user.mileage, VIPprice, Rprice, Sprice, i.imageName ' +
         'from reservation r join usableSeat u on (r.usableSeat_usableNo = u.usableNo) ' +
         'join image i on (i.play_name = r.play_name) ' +
         'join play p on (p.name = r.play_name) ' +
