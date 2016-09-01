@@ -51,7 +51,7 @@ router.get('/', function (req, res, next) {
             });
         }
     }
-    else if (req.query.action == 1) { // 지역 검색
+    else if (action == 1) { // 지역 검색
         var location = req.query.location;
         Play.searchLocation(location, function(err, playlist) {
             if (err) {
@@ -63,7 +63,7 @@ router.get('/', function (req, res, next) {
             });
         });
     }
-    else if (req.query.action == 2) { // 키워드 검색
+    else if (action == 2) { // 키워드 검색
         var keyword = req.query.keyword;
         Play.searchKeyword(keyword, function(err, playlist) {
             if (err) {
