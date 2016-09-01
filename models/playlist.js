@@ -11,19 +11,19 @@ function musicalList(sort, callback) {
         "VIPprice, salePer, starScoreAvg, imageName, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
-        "where playDay = '2016-09-01' and theme = 0 and imageType = 0 " +
+        "where playDay = curdate() and theme = 0 and imageType = 0 " +
         "order by starScoreAvg desc";
     var sql_time = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
         "VIPprice, salePer, starScoreAvg, imageName, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
-        "where playDay = '2016-09-01' and theme = 0 and imageType = 0 " +
+        "where playDay = curdate() and theme = 0 and imageType = 0 " +
         "order by playTime asc";
     var sql_sale = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
         "VIPprice, salePer, starScoreAvg, imageName, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
-        "where playDay = '2016-09-01' and theme = 0 and imageType = 0 " +
+        "where playDay = curdate() and theme = 0 and imageType = 0 " +
         "order by salePer desc";
     var sql = "";
     if (sort == 0)
@@ -78,19 +78,19 @@ function operaList(sort, callback) {
         "VIPprice, salePer, starScoreAvg, imageName, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
-        "where playDay = '2016-09-01' and theme = 1 and imageType = 0 " +
+        "where playDay = curdate() and theme = 1 and imageType = 0 " +
         "order by starScoreAvg desc";
     var sql_time = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
         "VIPprice, salePer, starScoreAvg, imageName, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
-        "where playDay = '2016-09-01' and theme = 1 and imageType = 0 " +
+        "where playDay = curdate() and theme = 1 and imageType = 0 " +
         "order by playTime asc";
     var sql_sale = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
         "VIPprice, salePer, starScoreAvg, imageName, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
-        "where playDay = '2016-09-01' and theme = 1 and imageType = 0 " +
+        "where playDay = curdate() and theme = 1 and imageType = 0 " +
         "order by salePer desc";
     var sql = "";
     if (sort == 0)
@@ -145,19 +145,19 @@ function concertList(sort, callback) {
         "VIPprice, salePer, starScoreAvg, imageName, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
-        "where playDay = '2016-09-01' and theme = 2 and imageType = 0 " +
+        "where playDay = curdate() and theme = 2 and imageType = 0 " +
         "order by starScoreAvg desc";
     var sql_time = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
         "VIPprice, salePer, starScoreAvg, imageName, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
-        "where playDay = '2016-09-01' and theme = 2 and imageType = 0 " +
+        "where playDay = curdate() and theme = 2 and imageType = 0 " +
         "order by playTime asc";
     var sql_sale = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
         "VIPprice, salePer, starScoreAvg, imageName, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
-        "where playDay = '2016-09-01' and theme = 2 and imageType = 0 " +
+        "where playDay = curdate() and theme = 2 and imageType = 0 " +
         "order by salePer desc";
 
     var sql = "";
@@ -213,7 +213,7 @@ function searchLocation(location, callback) {
         "VIPprice, salePer, starScoreAvg, imageName, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
-        "where playDay = '2016-09-01' and address = ? and imageType = 0 " +
+        "where playDay = curdate() and address = ? and imageType = 0 " +
         "order by playTime asc";
 
     dbPool.getConnection(function (err, dbConn) {
@@ -270,7 +270,7 @@ function searchKeyword(keyword, callback) {
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
         "where name like '%" + keyword + "%' or placeName like '%" + keyword + "%') a " +
-        "where a.playDay = '2016-09-01' and imageType = 0";
+        "where a.playDay = curdate() and imageType = 0";
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {

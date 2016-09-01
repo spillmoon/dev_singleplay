@@ -12,6 +12,7 @@ router.get('/', isSecure, isAuthenticated, function (req, res, next) {
             return next(err);
         }
         res.send({
+            code: 1,
             results: results
         });
     });
