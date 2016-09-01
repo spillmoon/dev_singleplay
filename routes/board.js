@@ -25,7 +25,7 @@ router.get('/:bid', function (req, res, next) {
         }
         res.send({
             code: 1,
-            result: boardImageUrl
+            result: { image: boardImageUrl }
         });
     });
 });

@@ -396,15 +396,19 @@ function searchKeyword(keyword, callback) {
 }
 
 function findPlay(pid, callback) {
-    var sql_image = "select p.id pid, name, theme, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
+    var sql_info = "select p.id pid, name, theme, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
         "VIPprice, Rprice, Sprice, salePer, starScoreAvg, imageName, imageType " +
         "from play p join image i on (i.play_name = p.name) " +
         "join place pl on (p.place_id = pl.id) " +
         "where p.id = ?";
-
-    var sql_info = "select usableNo, seatInfo, seatClass " +
+    var sql_anoter_time = "select id, substring(playTime, 1, 5) playTime from play where playDay = curdate() and id = ?";
+    var sql_seat = "select " +
+        "sum(case when seatClass = 'VIP' then 1 else 0 end) 'VIP', " +
+        "sum(case when seatClass = 'R' then 1 else 0 end) 'R', " +
+        "sum(case when seatClass = 'S' then 1 else 0 end) 'S' " +
         "from play p join usableSeat u on (p.id = u.play_id) " +
         "where p.id = ?";
+
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
@@ -420,7 +424,7 @@ function findPlay(pid, callback) {
         });
 
         function getPlayInfo(callback) {
-            dbConn.query(sql_image, [pid], function(err, playinfo) {
+            dbConn.query(sql_info, [pid], function(err, playinfo) {
                 if (err) {
                     dbConn.release();
                     return callback(err);
@@ -437,7 +441,11 @@ function findPlay(pid, callback) {
                 playlist.theme = theme;
                 playlist.placeName = playinfo[0].placeName;
                 playlist.playDay = playinfo[0].playDay;
-                playlist.playTime = playinfo[0].playTime;
+                playlist.playTime = [];
+                playlist.playTime.push({
+                    id: playinfo[0].pid,
+                    time: playinfo[0].playTime
+                });
                 playlist.VIPprice = playinfo[0].VIPprice;
                 playlist.saleVIPprice = playinfo[0].VIPprice * ((100 - playinfo[0].salePer) / 100);
                 playlist.Rprice = playinfo[0].Rprice;
@@ -459,12 +467,24 @@ function findPlay(pid, callback) {
                         // playlist.cast.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(playinfo[i].imageName)));
                     }
                 }
-                callback(null);
+                dbConn.query(sql_time, [playinfo[0].name], function(err, times) {
+                    if (err) {
+                        dbConn.release();
+                        return callback(err);
+                    }
+                    if (times.length > 1) {
+                        playlist.playTime.push({
+                            id: times[1].id,
+                            time: times[1].playTime
+                        });
+                   }
+                    callback(null);
+                });
             });
         }
 
         function getPlaySeat(callback) {
-            dbConn.query(sql_info, [pid], function(err, seatinfo) {
+            dbConn.query(sql_seat, [pid], function(err, seatinfo) {
                 if (err) {
                     dbConn.release();
                     return callback(err);

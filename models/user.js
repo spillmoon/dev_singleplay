@@ -97,7 +97,7 @@ function findOrCreate(profile, callback) {
         });
     });
 }
-// todo: 쿠폰함 조회, 프로필 변경 구현하기
+// 쿠폰함 조회 구현하기
 function couponList(uid, callback) {
     var sql_coupon_list = "select couponNo, couponName, salePer, substring(periodStart, 1, 10) periodStart, substring(periodEnd, 1, 10) periodEnd " +
         "from coupon " +

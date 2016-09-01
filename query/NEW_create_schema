@@ -1,0 +1,252 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
+
+-- -----------------------------------------------------
+-- Schema dev_singleplaydb
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema dev_singleplaydb
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `dev_singleplaydb` DEFAULT CHARACTER SET utf8 ;
+USE `dev_singleplaydb` ;
+
+-- -----------------------------------------------------
+-- Table `dev_singleplaydb`.`user`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `dev_singleplaydb`.`user` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `userEmail` VARCHAR(45) NOT NULL,
+  `userImage` VARCHAR(255) NULL,
+  `userPhone` VARCHAR(45) NOT NULL,
+  `facebookId` VARCHAR(45) NULL,
+  `kakaoId` VARCHAR(45) NULL,
+  `naverId` VARCHAR(45) NULL,
+  `mileage` INT NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `userNo_UNIQUE` (`id` ASC))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `dev_singleplaydb`.`likeCate`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `dev_singleplaydb`.`likeCate` (
+  `cateId` INT NOT NULL,
+  `typeId` INT NOT NULL,
+  `typeNo` INT NOT NULL,
+  `typeName` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`cateId`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `dev_singleplaydb`.`place`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `dev_singleplaydb`.`place` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `placeName` VARCHAR(50) NOT NULL,
+  `address` VARCHAR(100) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `dev_singleplaydb`.`play`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `dev_singleplaydb`.`play` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `playNo` INT NULL,
+  `name` VARCHAR(50) NOT NULL,
+  `place_id` INT NOT NULL,
+  `placeImageName` VARCHAR(50) NOT NULL,
+  `playDay` DATE NOT NULL,
+  `playTime` TIME(4) NOT NULL,
+  `theme` INT NOT NULL,
+  `VIPprice` INT NULL,
+  `Rprice` INT NULL,
+  `Sprice` INT NULL,
+  `salePer` INT NOT NULL,
+  `starScoreAvg` FLOAT NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`, `name`),
+  INDEX `fk_play_place1_idx` (`place_id` ASC),
+  CONSTRAINT `fk_play_place1`
+    FOREIGN KEY (`place_id`)
+    REFERENCES `dev_singleplaydb`.`place` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `dev_singleplaydb`.`usableSeat`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `dev_singleplaydb`.`usableSeat` (
+  `usableNo` INT NOT NULL AUTO_INCREMENT,
+  `place_id` INT NOT NULL,
+  `play_id` INT NOT NULL,
+  `play_name` VARCHAR(50) NOT NULL,
+  `seatClass` VARCHAR(10) NULL,
+  `seatInfo` VARCHAR(10) NULL,
+  PRIMARY KEY (`usableNo`, `place_id`, `play_id`, `play_name`),
+  INDEX `fk_usableSeat_place1_idx` (`place_id` ASC),
+  INDEX `fk_usableSeat_play1_idx` (`play_id` ASC, `play_name` ASC),
+  CONSTRAINT `fk_usableSeat_place1`
+    FOREIGN KEY (`place_id`)
+    REFERENCES `dev_singleplaydb`.`place` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_usableSeat_play1`
+    FOREIGN KEY (`play_id` , `play_name`)
+    REFERENCES `dev_singleplaydb`.`play` (`id` , `name`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `dev_singleplaydb`.`coupon`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `dev_singleplaydb`.`coupon` (
+  `couponNo` INT NOT NULL AUTO_INCREMENT,
+  `couponName` VARCHAR(45) NOT NULL,
+  `salePer` INT NOT NULL,
+  `user_id` INT NOT NULL,
+  `periodStart` DATE NOT NULL,
+  `periodEnd` DATE NOT NULL,
+  PRIMARY KEY (`couponNo`),
+  INDEX `fk_coupon_user1_idx` (`user_id` ASC),
+  CONSTRAINT `fk_coupon_user1`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `dev_singleplaydb`.`user` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `dev_singleplaydb`.`image`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `dev_singleplaydb`.`image` (
+  `imageNo` INT NOT NULL AUTO_INCREMENT,
+  `play_id` INT NOT NULL,
+  `play_name` VARCHAR(50) NOT NULL,
+  `imageName` VARCHAR(45) NOT NULL,
+  `imageType` INT NOT NULL,
+  PRIMARY KEY (`imageNo`, `play_id`, `play_name`),
+  INDEX `fk_image_play1_idx` (`play_id` ASC, `play_name` ASC),
+  CONSTRAINT `fk_image_play1`
+    FOREIGN KEY (`play_id` , `play_name`)
+    REFERENCES `dev_singleplaydb`.`play` (`id` , `name`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `dev_singleplaydb`.`board`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `dev_singleplaydb`.`board` (
+  `boardNo` INT NOT NULL AUTO_INCREMENT,
+  `category` INT NOT NULL,
+  `titleFileName` VARCHAR(45) NOT NULL,
+  `fileName` VARCHAR(45) NOT NULL,
+  `writeDate` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`boardNo`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `dev_singleplaydb`.`push`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `dev_singleplaydb`.`push` (
+  `likeThemes` INT NULL,
+  `likeDay` INT NULL,
+  `user_id` INT NOT NULL,
+  PRIMARY KEY (`user_id`),
+  CONSTRAINT `fk_push_user1`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `dev_singleplaydb`.`user` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `dev_singleplaydb`.`reservation`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `dev_singleplaydb`.`reservation` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `user_id` INT NOT NULL,
+  `play_id` INT NOT NULL,
+  `play_name` VARCHAR(50) NOT NULL,
+  `rsvDate` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `usableSeat_usableNo` INT NOT NULL,
+  `seatClass` VARCHAR(10) NOT NULL,
+  `useMileage` VARCHAR(100) NULL,
+  `useCoupon` VARCHAR(100) NULL,
+  PRIMARY KEY (`id`, `user_id`, `play_id`, `play_name`, `usableSeat_usableNo`),
+  INDEX `fk_reservation_user1_idx` (`user_id` ASC),
+  INDEX `fk_reservation_usableSeat1_idx` (`usableSeat_usableNo` ASC),
+  INDEX `fk_reservation_play1_idx` (`play_id` ASC, `play_name` ASC),
+  CONSTRAINT `fk_reservation_user1`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `dev_singleplaydb`.`user` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_reservation_usableSeat1`
+    FOREIGN KEY (`usableSeat_usableNo`)
+    REFERENCES `dev_singleplaydb`.`usableSeat` (`usableNo`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_reservation_play1`
+    FOREIGN KEY (`play_id` , `play_name`)
+    REFERENCES `dev_singleplaydb`.`play` (`id` , `name`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `dev_singleplaydb`.`wishlist`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `dev_singleplaydb`.`wishlist` (
+  `wishId` INT NOT NULL AUTO_INCREMENT,
+  `userId` INT NOT NULL,
+  `playId` INT NOT NULL,
+  `ctime` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`wishId`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `dev_singleplaydb`.`starScore`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `dev_singleplaydb`.`starScore` (
+  `reviewNo` INT NOT NULL AUTO_INCREMENT,
+  `user_id` INT NOT NULL,
+  `play_id` INT NOT NULL,
+  `play_name` VARCHAR(50) NOT NULL,
+  `starScore` FLOAT NULL,
+  PRIMARY KEY (`reviewNo`, `user_id`, `play_id`, `play_name`),
+  INDEX `fk_starScore_user1_idx` (`user_id` ASC),
+  INDEX `fk_starScore_play1_idx` (`play_id` ASC, `play_name` ASC),
+  CONSTRAINT `fk_starScore_user1`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `dev_singleplaydb`.`user` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_starScore_play1`
+    FOREIGN KEY (`play_id` , `play_name`)
+    REFERENCES `dev_singleplaydb`.`play` (`id` , `name`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
