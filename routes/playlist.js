@@ -8,7 +8,7 @@ router.get('/', function (req, res, next) {
     var action = req.query.action;
 
     if (action == 0) { // 항목별 검색
-        var theme = req.query.theme || 0;
+        var theme = req.query.theme;
         var sort = req.query.sort || 0;
         if (theme == undefined) {
             Play.allList(sort, function(err, playlist) {
