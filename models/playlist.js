@@ -5,6 +5,71 @@ var dbPool = require('../models/common').dbPool;
 // fixme: 같은 날 다른 시간 공연들 하나로 표시, 시간은 여러개 저장할 수 있도록 하기
 // fixme: 쿼리 리팩토링
 // 뮤지컬 목록(정렬 방식에 따른 목록 정렬)
+function allList(sort, callback) {
+    var sql_star = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
+        "VIPprice, salePer, starScoreAvg, imageName, imageType " +
+        "from play py join place pe on (py.place_id = pe.id) " +
+        "join image i on (i.play_name = py.name) " +
+        "where playDay = curdate() and imageType = 0 " +
+        "order by starScoreAvg desc";
+    var sql_time = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
+        "VIPprice, salePer, starScoreAvg, imageName, imageType " +
+        "from play py join place pe on (py.place_id = pe.id) " +
+        "join image i on (i.play_name = py.name) " +
+        "where playDay = curdate() and imageType = 0 " +
+        "order by playTime asc";
+    var sql_sale = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
+        "VIPprice, salePer, starScoreAvg, imageName, imageType " +
+        "from play py join place pe on (py.place_id = pe.id) " +
+        "join image i on (i.play_name = py.name) " +
+        "where playDay = curdate() and imageType = 0 " +
+        "order by salePer desc";
+    var sql = "";
+    if (sort == 0)
+        sql = sql_star;
+    if (sort == 1)
+        sql = sql_time;
+    if (sort == 2)
+        sql = sql_sale;
+
+    dbPool.getConnection(function (err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        dbConn.query(sql, function (err, results) {
+            dbConn.release();
+            if (err) {
+                return callback(err);
+            }
+            var playlist = [];
+            var tmpPrice = {};
+            for (var i = 0; i < results.length; i++) {
+                if (results[i].VIPprice === null) {
+                    tmpPrice.price = results[i].Rprice;
+                    tmpPrice.salePrice = results[i].Rprice * ((100-results[i].salePer)/100);
+                } else {
+                    tmpPrice.price = results[i].VIPprice;
+                    tmpPrice.salePrice = results[i].VIPprice * ((100-results[i].salePer)/100);
+                }
+                playlist.push({
+                    playId: results[i].pid,
+                    playName: results[i].name,
+                    theme: "뮤지컬",
+                    placeName: results[i].placeName,
+                    playDay: results[i].playDay,
+                    playTime: results[i].playTime,
+                    price: results[i].VIPprice,
+                    salePrice: results[i].VIPprice * ((100 - results[i].salePer) / 100),
+                    salePer: results[i].salePer,
+                    starScore: results[i].starScoreAvg,
+                    poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
+                    // poster: url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(results[i].imageName))
+                });
+            }
+            callback(null, playlist);
+        });
+    });
+}
 function musicalList(sort, callback) {
     // substring()으로 T00:00:00.000Z 만 제거
     var sql_star = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
@@ -405,6 +470,7 @@ function findPlay(pid, callback) {
     });
 }
 
+module.exports.allList = allList;
 module.exports.musicalList = musicalList;
 module.exports.operaList = operaList;
 module.exports.concertList = concertList;

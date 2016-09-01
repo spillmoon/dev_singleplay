@@ -5,11 +5,22 @@ var Play = require('../models/playlist');
 // 공연 목록 서버 테스트
 // GET, 항목별 정렬된 공연 목록
 router.get('/', function (req, res, next) {
-    var action = req.query.action || 0;
+    var action = req.query.action;
 
     if (action == 0) { // 항목별 검색
         var theme = req.query.theme || 0;
         var sort = req.query.sort || 0;
+        if (theme == undefined) {
+            Play.allList(sort, function(err, playlist) {
+                if (err) {
+                    return next(err);
+                }
+                res.send({
+                    code:1,
+                    results: playlist
+                });
+            });
+        }
         if (theme == 0) { // 뮤지컬 목록
             Play.musicalList(sort, function(err, playlist) {
                 if (err) {
