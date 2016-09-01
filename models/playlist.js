@@ -2,32 +2,39 @@ var path = require('path');
 var url = require('url');
 var async = require('async');
 var dbPool = require('../models/common').dbPool;
-// fixme: 같은 날 다른 시간 공연들 하나로 표시, 시간은 여러개 저장할 수 있도록 하기
+// 같은 날 다른 시간 공연들 하나로 표시, 시간은 여러개 저장할 수 있도록 하기
 // fixme: 쿼리 리팩토링
-// 뮤지컬 목록(정렬 방식에 따른 목록 정렬)
+// 당일 전체 공연 목록
 function allList(sort, callback) {
+    // 공연, 공연장, 이미지 테이블로 공연 목록 정보 제공
+    // substring()으로 T00:00:00.000Z 만 제거
+    // curdate()로 현재 날짜 검색
+    // 별점순
     var sql_star = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-        "VIPprice, Rprice, Sprice, salePer, starScoreAvg, imageName, imageType " +
-        "from play py join place pe on (py.place_id = pe.id) " +
-        "join image i on (i.play_name = py.name) " +
-        "where playDay = curdate() and imageType = 0 " +
-        "group by name " +
-        "order by starScoreAvg desc";
+                    "VIPprice, Rprice, Sprice, salePer, starScoreAvg, imageName, imageType " +
+                    "from play py join place pe on (py.place_id = pe.id) " +
+                    "join image i on (i.play_name = py.name) " +
+                    "where playDay = curdate() and imageType = 0 " +
+                    "group by name " +
+                    "order by starScoreAvg desc";
+    // 최신순
     var sql_time = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-        "VIPprice, Rprice, Sprice, salePer, starScoreAvg, imageName, imageType " +
-        "from play py join place pe on (py.place_id = pe.id) " +
-        "join image i on (i.play_name = py.name) " +
-        "where playDay = curdate() and imageType = 0 " +
-        "group by name " +
-        "order by playTime asc";
+                    "VIPprice, Rprice, Sprice, salePer, starScoreAvg, imageName, imageType " +
+                    "from play py join place pe on (py.place_id = pe.id) " +
+                    "join image i on (i.play_name = py.name) " +
+                    "where playDay = curdate() and imageType = 0 " +
+                    "group by name " +
+                    "order by playTime asc";
+    // 할인순
     var sql_sale = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-        "VIPprice, Rprice, Sprice, salePer, starScoreAvg, imageName, imageType " +
-        "from play py join place pe on (py.place_id = pe.id) " +
-        "join image i on (i.play_name = py.name) " +
-        "where playDay = curdate() and imageType = 0 " +
-        "group by name " +
-        "order by salePer desc";
+                    "VIPprice, Rprice, Sprice, salePer, starScoreAvg, imageName, imageType " +
+                    "from play py join place pe on (py.place_id = pe.id) " +
+                    "join image i on (i.play_name = py.name) " +
+                    "where playDay = curdate() and imageType = 0 " +
+                    "group by name " +
+                    "order by salePer desc";
     // var sql_score = "select sum(starScore)/count(starScore) starAvg from starScore where play_name = ?";
+    // 매개변수로 받은 정렬 값에 따라 쿼리 선택
     var sql = "";
     if (sort == 0)
         sql = sql_star;
@@ -35,20 +42,20 @@ function allList(sort, callback) {
         sql = sql_time;
     if (sort == 2)
         sql = sql_sale;
-
+    // dbPool에서 커넥션을 가져옴
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
             return callback(err);
         }
-        dbConn.query(sql, function (err, results) {
+        dbConn.query(sql, function (err, results) { // 쿼리 실행
             if (err) {
                 dbConn.release();
                 return callback(err);
             }
             var playlist = [];
             var tmpPrice = {};
-            for (var i = 0; i < results.length; i++) {
-                if (results[i].VIPprice === null) {
+            for (var i = 0; i < results.length; i++) { // 결과 갯수만큼 객체들을 만들어 정보를 배열에 저장
+                if (results[i].VIPprice === null) { // 최고가가 없는 경우 처리
                     tmpPrice.price = results[i].Rprice;
                     tmpPrice.salePrice = results[i].Rprice * ((100 - results[i].salePer) / 100);
                 } else {
@@ -75,7 +82,7 @@ function allList(sort, callback) {
 }
 
 function musicalList(sort, callback) {
-    // substring()으로 T00:00:00.000Z 만 제거
+    // 뮤지컬 목록(정렬 방식에 따른 목록 정렬), 쿼리만 다를뿐 전체 목록과 동작과정은 동일
     var sql_star = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
         "VIPprice, Rprice, Sprice, salePer, starScoreAvg, imageName, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
@@ -285,8 +292,9 @@ function concertList(sort, callback) {
     });
 }
 
-// 검색한 구의 공연장에서 하는 공연 목록(장르 구분 없음)
+// 검색한 구의 공연장에서 하는 공연 목록
 function searchLocation(location, callback) {
+    // 당일 검색한 구에 위치한 공연장에서 하는 공연 목록 검색 쿼리
     var sql = "select py.id pid, name, theme, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
         "VIPprice, Rprice, Sprice, salePer, starScoreAvg, imageName, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
@@ -341,8 +349,9 @@ function searchLocation(location, callback) {
     });
 }
 
-// 검색한 키워드와 관련된 공연 목록(장르 구분 없음)
+// 검색한 키워드와 관련된 공연 목록
 function searchKeyword(keyword, callback) {
+    // like를 사용해 검색할 단어와 연관된 공연, 공연장의 공연 목록 제공
     var sql = "select py.id pid, name, theme, placeName, playDay, playTime, VIPprice, Rprice, Sprice, salePer, starScoreAvg, imageName, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
@@ -396,12 +405,15 @@ function searchKeyword(keyword, callback) {
 }
 
 function findPlay(pid, callback) {
+    // 공연정보, 포스터, 출연자 이미지 가져오기
     var sql_info = "select p.id pid, name, theme, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
         "VIPprice, Rprice, Sprice, salePer, starScoreAvg, imageName, imageType " +
         "from play p join image i on (i.play_name = p.name) " +
         "join place pl on (p.place_id = pl.id) " +
         "where p.id = ?";
+    // 당일 두번 이상 공연할 때 시간들 가져오기
     var sql_anoter_time = "select id, substring(playTime, 1, 5) playTime from play where playDay = curdate() and id = ?";
+    // 빈좌석 갯수 가져오기
     var sql_seat = "select " +
         "sum(case when seatClass = 'VIP' then 1 else 0 end) 'VIP', " +
         "sum(case when seatClass = 'R' then 1 else 0 end) 'R', " +
@@ -415,6 +427,7 @@ function findPlay(pid, callback) {
             return callback(err);
         }
         var playlist = {};
+        // async의 parallel로 공연정보, 빈자리 정보 가져오기
         async.parallel([getPlayInfo, getPlaySeat], function(err) {
             dbConn.release();
             if (err) {
@@ -422,7 +435,7 @@ function findPlay(pid, callback) {
             }
             callback(null, playlist);
         });
-
+        // 공연정보 가져오기
         function getPlayInfo(callback) {
             dbConn.query(sql_info, [pid], function(err, playinfo) {
                 if (err) {
@@ -482,17 +495,17 @@ function findPlay(pid, callback) {
                 });
             });
         }
-
+        // 빈자리 정보 가져오기
         function getPlaySeat(callback) {
             dbConn.query(sql_seat, [pid], function(err, seatinfo) {
                 if (err) {
                     dbConn.release();
                     return callback(err);
                 }
-                if (seatinfo.length == 0) {
+                if (seatinfo.length == 0) { // 빈자리가 없으면 매진
                     playlist.usableSeat = "매진";
                 }
-                else {
+                else { // 빈자리가 있으면
                     playlist.usableSeat = [];
                     for (var i = 0; i < seatinfo.length; i++) {
                         playlist.usableSeat.push(seatinfo[i].seatInfo);
