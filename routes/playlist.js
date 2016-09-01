@@ -20,8 +20,7 @@ router.get('/', function (req, res, next) {
                     results: playlist
                 });
             });
-        }
-        if (theme == 0) { // 뮤지컬 목록
+        } else if (theme == 0) { // 뮤지컬 목록
             Play.musicalList(sort, function(err, playlist) {
                 if (err) {
                     return next(err);
