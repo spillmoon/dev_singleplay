@@ -89,7 +89,7 @@ function createWish(userId, playId, callback) {
             });
         });
         function insertWish(callback) { // 트랜잭션 내의 insertWish 함수 정의
-            dbConn.query(sql_insert_wish, [userId, playId], function (err, result) {
+            dbConn.query(sql_insert_wish, [1, playId], function (err, result) {
                 if (err) {
                     return callback(err);
                 }

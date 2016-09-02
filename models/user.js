@@ -107,7 +107,7 @@ function couponList(uid, callback) {
         if (err) {
             return callback(err);
         }
-        dbConn.query(sql_coupon_list, [uid], function(err, results) {
+        dbConn.query(sql_coupon_list, [1], function(err, results) {
             dbConn.release();
             if (err) {
                 return callback(err);

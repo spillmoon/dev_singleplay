@@ -66,7 +66,7 @@ function createRsv(userId, playId, playName, usableSeatNo, seatClass, callback) 
             return callback(err);
         }
         // dbConn 연결 - 매개변수로 회원ID, 공연ID, 공연명, 빈좌석, 좌석등급을 받아 sql 쿼리문을 실행한다.
-        dbConn.query(sql, [userId, playId, playName, usableSeatNo, seatClass], function(err){
+        dbConn.query(sql, [1, playId, playName, usableSeatNo, seatClass], function(err){
             dbConn.release();
             if (err) {
                 return callback(err);
