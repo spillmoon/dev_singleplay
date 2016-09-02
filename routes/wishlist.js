@@ -22,7 +22,7 @@ router.get('/', isSecure,/* isAuthenticated,*/ function(req, res, next) {
 // POST, 위시리스트 추가
 router.post('/', isSecure,/* isAuthenticated,*/ function(req, res, next) {
     // 매개변수를 저장할 변수 선언
-    var userId = req.user.id; // 세션의 user.id -> userId
+    var userId = 1; //req.user.id; // 세션의 user.id -> userId
     var playId = req.body.playId; // body를 통해 공연ID를 매개변수로 받아온다.
 
     // 매개변수를 받아 ../models/wishlist의 createWish 함수 실행

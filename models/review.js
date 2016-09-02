@@ -12,7 +12,7 @@ function createReview(userId, playId, playName, starScore, callback) {
             return callback(err);
         }
         // dbConn 연결 - 매개변수로 회원ID, 공연ID, 공연명, 별점을 받아 'sql' 쿼리문 실행
-        dbConn.query(sql, [1, playId, playName, starScore], function(err) {
+        dbConn.query(sql, [userId, playId, playName, starScore], function(err) {
            if (err) {
                return callback(err);
            }

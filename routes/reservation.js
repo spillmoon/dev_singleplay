@@ -23,7 +23,7 @@ router.get('/', isSecure,/* isAuthenticated,*/ function (req, res, next) {
 // POST, 예약 내역 추가
 router.post('/', isSecure,/* isAuthenticated,*/ function(req, res, next) {
     // 매개변수 받을 변수 선언
-    var userId = req.user.id; // 세션에 있는 user.id 정보 -> userId
+    var userId = 1; //req.user.id; // 세션에 있는 user.id 정보 -> userId
     var playId = req.body.playId; // body를 통해 공연ID을 받아온다.
     var playName = req.body.playName; // body를 통해 공연명을 받아온다.
     var usableSeatNo = req.body.usableSeatNo; // body를 통해 빈좌석번호를 받아온다.
