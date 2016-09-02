@@ -43,7 +43,7 @@ function verifyPassword(password, hashPassword, callback) {
         });
     });
 }
-
+// deserializeUser에서 사용, id를 가지고 user를 복원
 function findUser(userId, callback) {
     var sql = 'SELECT id, userEmail FROM user WHERE id = ?';
     dbPool.getConnection(function(err, dbConn) {
@@ -62,7 +62,7 @@ function findUser(userId, callback) {
         });
     });
 }
-
+// 페이스북 로그인시 회원 테이블에서 아이디를 찾고 없으면 추가, 있으면 기존 id 사용
 function findOrCreate(profile, callback) {
     var sql_findUser = "select id, userEmail, facebookId from user where facebookId = ?";
     var sql_createUser = "insert into user(userEmail, facebookId) values (?, ?)";
