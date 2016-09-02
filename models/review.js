@@ -5,7 +5,7 @@ var dbPool = require('../models/common').dbPool;
 // 리뷰 생성
 function createReview(userId, playId, playName, starScore, callback) {
     var sql = 'insert into starScore(user_id, play_id, play_name, starScore) ' +
-                "values (?, ?, ?, ?)"; // 리뷰 생성하는 쿼리문
+              "values (?, ?, ?, ?)"; // 리뷰 생성하는 쿼리문
 
     dbPool.getConnection(function(err, dbConn) {
         if (err) {

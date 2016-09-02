@@ -8,11 +8,11 @@ var async = require('async');
 // 위시리스트 목록 조회
 function listWish(callback) {
     var sql_select_wishlist = "SELECT w.wishId, p.name, place.placeName, substring(p.playDay, 1, 10) playDay, substring(p.playTime, 1, 5) playTime, " +
-                            "VIPprice, Rprice, Sprice, p.salePer, p.starScoreAvg, i.imageName " +
-                            "FROM play p join wishlist w on (p.id = w.playId) " +
-                            "join place on (place.id = p.place_id)" +
-                            "join image i on (p.name = i.play_name) " +
-                            "group by w.wishId"; // image, place, play, wishlist 테이블을 join하여 필요한 속성 추출하는 쿼리문
+                              "VIPprice, Rprice, Sprice, p.salePer, p.starScoreAvg, i.imageName " +
+                              "FROM play p join wishlist w on (p.id = w.playId) " +
+                              "join place on (place.id = p.place_id)" +
+                              "join image i on (p.name = i.play_name) " +
+                              "group by w.wishId"; // image, place, play, wishlist 테이블을 join하여 필요한 속성 추출하는 쿼리문
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
@@ -63,9 +63,9 @@ function createWish(userId, playId, callback) {
     var sql_insert_wish = 'insert into wishlist(userId, playId) values(?, ?)'; // 위시리스트 추가하는 쿼리문
 
     var sql_select_thumbnail = 'select i.imageName ' +
-        'from wishlist w join play p on (w.playId = p.id) ' +
-        'join image i on (i.play_name = p.name) ' +
-        'group by wishId'; // 위시리스트 추가할 시 나타나는 썸네일 이미지 URL 출력해줄 쿼리문
+                               'from wishlist w join play p on (w.playId = p.id) ' +
+                               'join image i on (i.play_name = p.name) ' +
+                               'group by wishId'; // 위시리스트 추가할 시 나타나는 썸네일 이미지 URL 출력해줄 쿼리문
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
