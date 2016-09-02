@@ -63,9 +63,9 @@ function createWish(userId, playId, callback) {
     var sql_insert_wish = 'insert into wishlist(userId, playId) values(?, ?)'; // 위시리스트 추가하는 쿼리문
 
     var sql_select_thumbnail = 'select i.imageName ' +
-        'from wishlist w join play p on (w.playId = p.id) ' +
-        'join image i on (i.play_name = p.name) ' +
-        'group by wishId'; // 위시리스트 추가할 시 나타나는 썸네일 이미지 URL 출력해줄 쿼리문
+                                'from wishlist w join play p on (w.playId = p.id) ' +
+                                'join image i on (i.play_name = p.name) ' +
+                                'group by wishId'; // 위시리스트 추가할 시 나타나는 썸네일 이미지 URL 출력해줄 쿼리문
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
@@ -90,6 +90,7 @@ function createWish(userId, playId, callback) {
         });
         function insertWish(callback) { // 트랜잭션 내의 insertWish 함수 정의
             dbConn.query(sql_insert_wish, [userId, playId], function (err, result) {
+                dbConn.release();
                 if (err) {
                     return callback(err);
                 }
@@ -101,6 +102,7 @@ function createWish(userId, playId, callback) {
         function selectThumbnail(callback) { // 트랜잭션 내의 selectThumbnail 함수 정의
             // dbConn 연결 - 'sql_select_thumbnail' 실행
             dbConn.query(sql_select_thumbnail, function (err, results) {
+                dbConn.release();
                 if (err) {
                     return callback(err);
                 }
