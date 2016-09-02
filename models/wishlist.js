@@ -90,7 +90,6 @@ function createWish(userId, playId, callback) {
         });
         function insertWish(callback) { // 트랜잭션 내의 insertWish 함수 정의
             dbConn.query(sql_insert_wish, [userId, playId], function (err, result) {
-                dbConn.release();
                 if (err) {
                     return callback(err);
                 }
@@ -102,7 +101,6 @@ function createWish(userId, playId, callback) {
         function selectThumbnail(callback) { // 트랜잭션 내의 selectThumbnail 함수 정의
             // dbConn 연결 - 'sql_select_thumbnail' 실행
             dbConn.query(sql_select_thumbnail, function (err, results) {
-                dbConn.release();
                 if (err) {
                     return callback(err);
                 }

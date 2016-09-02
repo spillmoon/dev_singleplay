@@ -443,11 +443,11 @@ function findPlay(pid, callback) {
                     return callback(err);
                 }
                 var theme = "";
-                if (playinfo[0].theme == '0')
+                if (playinfo[0].theme == 0)
                     theme = "뮤지컬";
-                if (playinfo[0].theme == '1')
+                if (playinfo[0].theme == 1)
                     theme = "오페라";
-                if (playinfo[0].theme == '2')
+                if (playinfo[0].theme == 2)
                     theme = "콘서트";
                 playlist.playId = playinfo[0].pid;
                 playlist.playName = playinfo[0].name;
@@ -460,11 +460,11 @@ function findPlay(pid, callback) {
                     time: playinfo[0].playTime
                 });
                 playlist.VIPprice = playinfo[0].VIPprice;
-                playlist.saleVIPprice = playinfo[0].VIPprice * ((100 - playinfo[0].salePer) / 100);
+                playlist.saleVIPprice = parseInt(playinfo[0].VIPprice * ((100 - playinfo[0].salePer) / 100));
                 playlist.Rprice = playinfo[0].Rprice;
-                playlist.saleRprice = playinfo[0].Rprice * ((100 - playinfo[0].salePer) / 100);
+                playlist.saleRprice = parseInt(playinfo[0].Rprice * ((100 - playinfo[0].salePer) / 100));
                 playlist.Sprice = playinfo[0].Sprice;
-                playlist.saleSprice = playinfo[0].Sprice * ((100 - playinfo[0].salePer) / 100);
+                playlist.saleSprice = parseInt(playinfo[0].Sprice * ((100 - playinfo[0].salePer) / 100));
                 playlist.salePer = playinfo[0].salePer;
                 playlist.starScore = playinfo[0].starScoreAvg;
                 playlist.userCount = 0;
@@ -476,7 +476,7 @@ function findPlay(pid, callback) {
                         // playlist.poster.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(playinfo[i].imageName)));
                     }
                     else {
-                        playlist.cast.push(url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(playinfo[i].imageName)));
+                        playlist.cast.push(url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/castimg/', path.basename(playinfo[i].imageName)));
                         // playlist.cast.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(playinfo[i].imageName)));
                     }
                 }

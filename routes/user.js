@@ -8,7 +8,7 @@ var isAuthenticated = require('./common').isAuthenticated;
 var User = require('../models/user');
 
 // todo: PUT, 프로필, PUSH 수정 구현 에정
-router.put('/me', isSecure, isAuthenticated, function(req, res, next) {
+router.put('/me', isSecure,/* isAuthenticated,*/ function(req, res, next) {
     var action = req.body.action;
     if (action == "push") {
         var pushInfo = {};
@@ -57,7 +57,7 @@ router.put('/me', isSecure, isAuthenticated, function(req, res, next) {
 });
 
 // 쿠폰 목록 조회, https, 로그인 해야 사용 가능
-router.get('/me/coupons', isSecure, isAuthenticated, function(req, res, next) {
+router.get('/me/coupons', isSecure,/* isAuthenticated,*/ function(req, res, next) {
     User.couponList(req.user.id, function(err, coupons) { // 매개변수로 세션을 통해 request객체에 붙은 user의 id 사용
         if (err) {
             return next(err);
