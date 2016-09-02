@@ -7,7 +7,7 @@ var fs = require('fs');
 // 예약 내역 조회
 function listRsv(callback) {
     var sql_select_rsvlist = 'SELECT r.id, p.name, place.placeName, substring(p.playDay, 1, 10) playDay, substring(p.playTime, 1, 5) playTime, ' +
-                            'p.VIPprice, p.Rprice, p.Sprice, p.salePer, p.starScoreAvg, i.imageName ' +
+                            'p.VIPprice, p.Rprice, p.Sprice, p.saveOff, p.starScoreAvg, i.imageName ' +
                             'FROM play p join reservation r on (p.id = r.play_id) ' +
                             'join place on (place.id = p.place_id) ' +
                             'join image i on (p.name = i.play_name) ' +
@@ -32,10 +32,10 @@ function listRsv(callback) {
                 // 예약 목록에 VIPprice와 할인 가격이 표시되어야 하는데 VIPprice가 없는 경우 처리
                 if (results[i].VIPprice === null) { // VIPprice가 없는 경우 Rprice를 결과값으로 한다.
                     tmprsv.price = results[i].Rprice;
-                    tmprsv.salePrice = results[i].Rprice * ((100-results[i].salePer)/100);
+                    tmprsv.salePrice = results[i].Rprice * ((100-results[i].saveOff)/100);
                 } else { // VIPprice가 있으면 VIPprice를 결과값으로 한다.
                     tmprsv.price = results[i].VIPprice;
-                    tmprsv.salePrice = results[i].VIPprice * ((100-results[i].salePer)/100);
+                    tmprsv.salePrice = results[i].VIPprice * ((100-results[i].saveOff)/100);
                 }
                 // 최종 출력될 결과값들을 rsv 배열 객체에 push 한다.
                 rsv.push({
@@ -44,7 +44,7 @@ function listRsv(callback) {
                     placeName: results[i].placeName,
                     playDay: results[i].playDay,
                     playTime: results[i].playTime,
-                    salePer: results[i].salePer,
+                    saveOff: results[i].saveOff,
                     originalPrice: tmprsv.price,
                     salePrice: tmprsv.salePrice,
                     poster: url.resolve('https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/posterimg/', path.basename(results[i].imageName))
@@ -108,13 +108,13 @@ function findRsv(rsvId, callback) {
             // 좌석등급에 따라 결제금액을 처리해준다.
             // 결제금액 = 좌석등급 가격*(100-쿠폰 할인율(%))-회원 마일리지
             if (rsv.seatClass = 'VIP') {
-                rsv.settlement = ((result[0].VIPprice*(100-result[0].salePer)/100)-result[0].mileage)
+                rsv.settlement = ((result[0].VIPprice*(100-result[0].saveOff)/100)-result[0].mileage)
             }
             if (rsv.seatClass = 'R') {
-                rsv.settlement = ((result[0].Rprice*(100-result[0].salePer)/100)-result[0].mileage)
+                rsv.settlement = ((result[0].Rprice*(100-result[0].saveOff)/100)-result[0].mileage)
             }
             if (rsv.seatClass = 'S') {
-                rsv.settlement = ((result[0].Sprice*(100-result[0].salePer)/100)-result[0].mileage)
+                rsv.settlement = ((result[0].Sprice*(100-result[0].saveOff)/100)-result[0].mileage)
             }
             // 예약한 공연의 포스터 이미지
             rsv.poster = url.resolve('https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/posterimg/', path.basename(result[0].imageName));
