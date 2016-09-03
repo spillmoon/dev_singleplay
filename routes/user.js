@@ -9,7 +9,7 @@ var User = require('../models/user');
 
 // todo: PUT, 프로필, PUSH 수정 구현 에정
 router.put('/me', isSecure,/* isAuthenticated,*/ function(req, res, next) {
-    var action = req.body.action;
+    var action = req.query.action;
     if (action == "push") {
         var pushInfo = {};
         pushInfo.days = [];
@@ -28,7 +28,7 @@ router.put('/me', isSecure,/* isAuthenticated,*/ function(req, res, next) {
             code: 1,
             message: "알림 변경 성공"
         });
-    } else {
+    } else if (action == "profile") {
         var form = new formidable.IncomingForm();
         form.uploadDir = path.join(__dirname, '../uploads/images/profile');
         form.keepExtensions = true;
@@ -38,19 +38,21 @@ router.put('/me', isSecure,/* isAuthenticated,*/ function(req, res, next) {
                 return next(err);
             }
             var userInfo = {};
-            userInfo.name = fields.name;
-            userInfo.email = fields.email;
-            userInfo.phone = fields.phone;
-            userInfo.image = files.image;
+            userInfo.userName = fields.userName;
+            userInfo.userEmail = fields.userEmail;
+            userInfo.userPhone = fields.userPhone;
+            userInfo.userImage = files.userImage;
             var name = "";
-            if (userInfo.image)
-                name = userInfo.image.name;
+            if (userInfo.userImage)
+                name = userInfo.userImage.name;
             res.send({
                 code: 1,
-                profileImg: url.resolve("http://127.0.0.1:3000", "/profile/"+ name),
-                userName: userInfo.name,
-                userEmail: userInfo.email,
-                userPhone: userInfo.phone
+                result: {
+                    profileImg: url.resolve("https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:443/profileimg/", name),
+                    userName: userInfo.userName,
+                    userEmail: userInfo.userEmail,
+                    userPhone: userInfo.userPhone
+                }
             });
         });
     }

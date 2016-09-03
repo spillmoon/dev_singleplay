@@ -23,7 +23,6 @@ router.post('/', isSecure,/* isAuthenticated,*/ function (req, res, next) {
             message: "평가해주셔서 감사합니다."
         });
     });
-
 });
 
 module.exports = router;

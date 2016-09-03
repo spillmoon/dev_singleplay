@@ -7,7 +7,7 @@ var async = require('async');
 
 // 위시리스트 목록 조회
 function listWish(callback) {
-    var sql_select_wishlist = "SELECT w.wishId, p.name, place.placeName, substring(p.playDay, 1, 10) playDay, substring(p.playTime, 1, 5) playTime, " +
+    var sql_select_wishlist = "SELECT p.id pid, w.wishId, p.name, place.placeName, substring(p.playDay, 1, 10) playDay, substring(p.playTime, 1, 5) playTime, " +
                             "VIPprice, Rprice, Sprice, p.saveOff, p.starScoreAvg, i.imageName " +
                             "FROM play p join wishlist w on (p.id = w.playId) " +
                             "join place on (place.id = p.place_id)" +
@@ -41,14 +41,14 @@ function listWish(callback) {
                 }
                 // 최종 출력될 결과값들을 wish 배열 객체에 push 한다.
                 wish.push({
+                    playId: results[i].pid,
                     playName : results[i].name,
-                    starScoreAvg : results[i].starScoreAvg,
                     placeName : results[i].placeName,
                     playDay : results[i].playDay,
                     playTime : results[i].playTime,
-                    saveOff : results[i].saveOff,
                     price : tmpwish.price,
                     salePrice : tmpwish.salePrice,
+                    starScore : results[i].starScoreAvg,
                     poster : url.resolve('https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/posterimg/', path.basename(results[i].imageName))
                     // poster : url.resolve('https://127.0.0.1:4433/posterimg/', path.basename(results[i].imageName))
                 });

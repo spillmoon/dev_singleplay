@@ -30,11 +30,11 @@ router.post('/', isSecure,/* isAuthenticated,*/ function(req, res, next) {
     var seatClass = req.body.seatClass; // body를 통해 좌석등급을 받아온다.
 
     // 매개변수를 받아 ../models/reservation의 createRsv 함수 실행
-    Reservation.createRsv(userId, playId, playName, usableSeatNo, seatClass, function(err) {
-       if (err) {
-           return next(err);
-       }
-       // 출력 결과
+    Reservation.createRsv(userId, playId, playName, usableSeatNo, seatClass, function (err) {
+        if (err) {
+            return next(err);
+        }
+        // 출력 결과
         res.send({
             code: 1, // 성공 코드
             message: "예약 성공"
@@ -57,6 +57,19 @@ router.get('/:rid', isSecure,/* isAuthenticated,*/ function(req, res, next) {
             result: result
         });
     })
+});
+
+router.delete('/:rid', isSecure, function(req, res, next) {
+    var rsvId = req.params.rid;
+    Reservation.deleteRsv(rsvId, function(err, result) {
+        if (err) {
+            return next(err);
+        }
+        res.send({
+            code: 1,
+            message: "예약 취소 성공"
+        });
+    });
 });
 
 module.exports = router;

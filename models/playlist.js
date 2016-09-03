@@ -70,7 +70,6 @@ function allList(sort, callback) {
                     playTime: results[i].playTime,
                     price: tmpPrice.price,
                     salePrice: tmpPrice.salePrice,
-                    saveOff: results[i].saveOff,
                     starScore: results[i].starScoreAvg,
                     poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
                     // poster: url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(results[i].imageName))
@@ -134,13 +133,11 @@ function musicalList(sort, callback) {
                 playlist.push({
                     playId: results[i].pid,
                     playName: results[i].name,
-                    theme: "뮤지컬",
                     placeName: results[i].placeName,
                     playDay: results[i].playDay,
                     playTime: results[i].playTime,
                     price: tmpPrice.price,
                     salePrice: tmpPrice.salePrice,
-                    saveOff: results[i].saveOff,
                     starScore: results[i].starScoreAvg,
                     poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
                     // poster: url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(results[i].imageName))
@@ -204,13 +201,11 @@ function operaList(sort, callback) {
                 playlist.push({
                     playId: results[i].pid,
                     playName: results[i].name,
-                    theme: "오페라",
                     placeName: results[i].placeName,
                     playDay: results[i].playDay,
                     playTime: results[i].playTime,
                     price: tmpPrice.price,
                     salePrice: tmpPrice.salePrice,
-                    saveOff: results[i].saveOff,
                     starScore: results[i].starScoreAvg,
                     poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
                     // poster: url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(results[i].imageName))
@@ -275,13 +270,11 @@ function concertList(sort, callback) {
                 playlist.push({
                     playId: results[i].pid,
                     playName: results[i].name,
-                    theme: "콘서트",
                     placeName: results[i].placeName,
                     playDay: results[i].playDay,
                     playTime: results[i].playTime,
                     price: tmpPrice.price,
                     salePrice: tmpPrice.salePrice,
-                    saveOff: results[i].saveOff,
                     starScore: results[i].starScoreAvg,
                     poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
                     // poster: url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(results[i].imageName))
@@ -313,15 +306,9 @@ function searchLocation(location, callback) {
                 return callback(err);
             }
             var playlist = [];
-            var theme = "";
             var tmpPrice = {};
             for (var i = 0; i < results.length; i++) {
-                if (results[i].theme == 0)
-                    theme = "뮤지컬";
-                if (results[i].theme == 1)
-                    theme = "오페라";
-                if (results[i].theme == 2)
-                    theme = "콘서트";
+
                 if (results[i].VIPprice === null) {
                     tmpPrice.price = results[i].Rprice;
                     tmpPrice.salePrice = results[i].Rprice * ((100-results[i].saveOff)/100);
@@ -332,13 +319,11 @@ function searchLocation(location, callback) {
                 playlist.push({
                     playId: results[i].pid,
                     playName: results[i].name,
-                    theme: theme,
                     placeName: results[i].placeName,
                     playDay: results[i].playDay,
                     playTime: results[i].playTime,
                     price: tmpPrice.price,
                     salePrice: tmpPrice.salePrice,
-                    saveOff: results[i].saveOff,
                     starScore: results[i].starScoreAvg,
                     poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
                     // poster: url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(results[i].imageName))
@@ -368,15 +353,8 @@ function searchKeyword(keyword, callback) {
                 return callback(err);
             }
             var playlist = [];
-            var theme = "";
             var tmpPrice = {};
             for (var i = 0; i < results.length; i++) {
-                if (results[i].theme == 0)
-                    theme = "뮤지컬";
-                if (results[i].theme == 1)
-                    theme = "오페라";
-                if (results[i].theme == 2)
-                    theme = "콘서트";
                 if (results[i].VIPprice === null) {
                     tmpPrice.price = results[i].Rprice;
                     tmpPrice.salePrice = results[i].Rprice * ((100-results[i].saveOff)/100);
@@ -387,13 +365,11 @@ function searchKeyword(keyword, callback) {
                 playlist.push({
                     id: results[i].pid,
                     name: results[i].name,
-                    theme: theme,
                     placeName: results[i].placeName,
                     playDay: results[i].playDay,
                     playTime: results[i].playTime,
                     price: tmpPrice.price,
                     salePrice: tmpPrice.salePrice,
-                    saveOff: results[i].saveOff,
                     star: results[i].starScoreAvg,
                     posterUrl: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
                     // poster: url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(results[i].imageName))
@@ -426,14 +402,14 @@ function findPlay(pid, callback) {
         if (err) {
             return callback(err);
         }
-        var playlist = {};
+        var play = {};
         // async의 parallel로 공연정보, 빈자리 정보 가져오기
         async.parallel([getPlayInfo, getPlaySeat], function(err) {
             dbConn.release();
             if (err) {
                 return callback(err);
             }
-            callback(null, playlist);
+            callback(null, play);
         });
         // 공연정보 가져오기
         function getPlayInfo(callback) {
@@ -449,35 +425,31 @@ function findPlay(pid, callback) {
                     theme = "오페라";
                 if (playinfo[0].theme == 2)
                     theme = "콘서트";
-                playlist.playId = playinfo[0].pid;
-                playlist.playName = playinfo[0].name;
-                playlist.theme = theme;
-                playlist.placeName = playinfo[0].placeName;
-                playlist.playDay = playinfo[0].playDay;
-                playlist.playTime = [];
-                playlist.playTime.push({
-                    id: playinfo[0].pid,
-                    time: playinfo[0].playTime
-                });
-                playlist.VIPprice = playinfo[0].VIPprice;
-                playlist.saleVIPprice = parseInt(playinfo[0].VIPprice * ((100 - playinfo[0].saveOff) / 100));
-                playlist.Rprice = playinfo[0].Rprice;
-                playlist.saleRprice = parseInt(playinfo[0].Rprice * ((100 - playinfo[0].saveOff) / 100));
-                playlist.Sprice = playinfo[0].Sprice;
-                playlist.saleSprice = parseInt(playinfo[0].Sprice * ((100 - playinfo[0].saveOff) / 100));
-                playlist.saveOff = playinfo[0].saveOff;
-                playlist.starScore = playinfo[0].starScoreAvg;
-                playlist.userCount = 0;
-                playlist.poster = [];
-                playlist.cast = [];
+                play.playId = playinfo[0].pid;
+                play.isWish = 0;
+                play.playName = playinfo[0].name;
+                play.theme = theme;
+                play.placeName = playinfo[0].placeName;
+                play.playDay = playinfo[0].playDay;
+                play.playTime = playinfo[0].playTime;
+                play.VIPprice = playinfo[0].VIPprice;
+                play.saleVIPprice = parseInt(playinfo[0].VIPprice * ((100 - playinfo[0].saveOff) / 100));
+                play.Rprice = playinfo[0].Rprice;
+                play.saleRprice = parseInt(playinfo[0].Rprice * ((100 - playinfo[0].saveOff) / 100));
+                play.Sprice = playinfo[0].Sprice;
+                play.saleSprice = parseInt(playinfo[0].Sprice * ((100 - playinfo[0].saveOff) / 100));
+                play.starScore = playinfo[0].starScoreAvg;
+                play.userCount = 0;
+                play.poster = [];
+                play.cast = [];
                 for(var i = 0; i < playinfo.length; i++){
                     if (playinfo[i].imageType == 0 ) {
-                        playlist.poster.push(url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(playinfo[i].imageName)));
-                        // playlist.poster.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(playinfo[i].imageName)));
+                        play.poster.push(url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(playinfo[i].imageName)));
+                        // play.poster.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(playinfo[i].imageName)));
                     }
                     else {
-                        playlist.cast.push(url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/castimg/', path.basename(playinfo[i].imageName)));
-                        // playlist.cast.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(playinfo[i].imageName)));
+                        play.cast.push(url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/castimg/', path.basename(playinfo[i].imageName)));
+                        // play.cast.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(playinfo[i].imageName)));
                     }
                 }
                 callback(null);
@@ -487,7 +459,7 @@ function findPlay(pid, callback) {
                 //         return callback(err);
                 //     }
                 //     if (times.length > 1) {
-                //         playlist.playTime.push({
+                //         play.playTime.push({
                 //             id: times[1].id,
                 //             time: times[1].playTime
                 //         });
@@ -506,7 +478,7 @@ function findPlay(pid, callback) {
                 seatCount[0].VIP = seatCount[0].VIP || 0;
                 seatCount[0].R = seatCount[0].R || 0;
                 seatCount[0].S = seatCount[0].S || 0;
-                playlist.usableSeat = [seatCount[0].VIP, seatCount[0].R, seatCount[0].S];
+                play.usableSeat = [seatCount[0].VIP, seatCount[0].R, seatCount[0].S];
                 callback(null);
             });
         }
