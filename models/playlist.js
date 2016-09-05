@@ -395,7 +395,7 @@ function findPlay(pid, callback) {
         "sum(case when seatClass = 'R' then 1 else 0 end) 'R', " +
         "sum(case when seatClass = 'S' then 1 else 0 end) 'S' " +
         "from play p join usableSeat u on (p.id = u.play_id) " +
-        "where p.id = ?";
+        "where p.id = ? and state = 0";
 
 
     dbPool.getConnection(function (err, dbConn) {
