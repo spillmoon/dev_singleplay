@@ -11,28 +11,28 @@ function allList(sort, callback) {
     // curdate()로 현재 날짜 검색
     // 별점순
     var sql_star = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-                    "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
-                    "from play py join place pe on (py.place_id = pe.id) " +
-                    "join image i on (i.play_name = py.name) " +
-                    "where playDay = curdate() and imageType = 0 " +
-                    // "group by name " +
-                    "order by starScoreAvg desc";
+        "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
+        "from play py join place pe on (py.place_id = pe.id) " +
+        "join image i on (i.play_name = py.name) " +
+        "where playDay = curdate() and imageType = 0 " +
+        // "group by name " +
+        "order by starScoreAvg desc";
     // 최신순
     var sql_time = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-                    "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
-                    "from play py join place pe on (py.place_id = pe.id) " +
-                    "join image i on (i.play_name = py.name) " +
-                    "where playDay = curdate() and imageType = 0 " +
-                    // "group by name " +
-                    "order by playTime asc";
+        "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
+        "from play py join place pe on (py.place_id = pe.id) " +
+        "join image i on (i.play_name = py.name) " +
+        "where playDay = curdate() and imageType = 0 " +
+        // "group by name " +
+        "order by playTime asc";
     // 할인순
     var sql_sale = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-                    "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
-                    "from play py join place pe on (py.place_id = pe.id) " +
-                    "join image i on (i.play_name = py.name) " +
-                    "where playDay = curdate() and imageType = 0 " +
-                    // "group by name " +
-                    "order by saveOff desc";
+        "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
+        "from play py join place pe on (py.place_id = pe.id) " +
+        "join image i on (i.play_name = py.name) " +
+        "where playDay = curdate() and imageType = 0 " +
+        // "group by name " +
+        "order by saveOff desc";
     // var sql_score = "select sum(starScore)/count(starScore) starAvg from starScore where play_name = ?";
     // 매개변수로 받은 정렬 값에 따라 쿼리 선택
     var sql = "";
@@ -83,26 +83,26 @@ function allList(sort, callback) {
 function musicalList(sort, callback) {
     // 뮤지컬 목록(정렬 방식에 따른 목록 정렬), 쿼리만 다를뿐 전체 목록과 동작과정은 동일
     var sql_star = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-                    "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
-                    "from play py join place pe on (py.place_id = pe.id) " +
-                    "join image i on (i.play_name = py.name) " +
-                    "where playDay = curdate() and theme = 0 and imageType = 0 " +
-                    // "group by name " +
-                    "order by starScoreAvg desc";
+        "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
+        "from play py join place pe on (py.place_id = pe.id) " +
+        "join image i on (i.play_name = py.name) " +
+        "where playDay = curdate() and theme = 0 and imageType = 0 " +
+        // "group by name " +
+        "order by starScoreAvg desc";
     var sql_time = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-                    "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
-                    "from play py join place pe on (py.place_id = pe.id) " +
-                    "join image i on (i.play_name = py.name) " +
-                    "where playDay = curdate() and theme = 0 and imageType = 0 " +
-                    // "group by name " +
-                    "order by playTime asc";
+        "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
+        "from play py join place pe on (py.place_id = pe.id) " +
+        "join image i on (i.play_name = py.name) " +
+        "where playDay = curdate() and theme = 0 and imageType = 0 " +
+        // "group by name " +
+        "order by playTime asc";
     var sql_sale = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-                    "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
-                    "from play py join place pe on (py.place_id = pe.id) " +
-                    "join image i on (i.play_name = py.name) " +
-                    "where playDay = curdate() and theme = 0 and imageType = 0 " +
-                    // "group by name " +
-                    "order by saveOff desc";
+        "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
+        "from play py join place pe on (py.place_id = pe.id) " +
+        "join image i on (i.play_name = py.name) " +
+        "where playDay = curdate() and theme = 0 and imageType = 0 " +
+        // "group by name " +
+        "order by saveOff desc";
     var sql = "";
     if (sort == 0)
         sql = sql_star;
@@ -125,10 +125,10 @@ function musicalList(sort, callback) {
             for (var i = 0; i < results.length; i++) {
                 if (results[i].VIPprice === null) {
                     tmpPrice.price = results[i].Rprice;
-                    tmpPrice.salePrice = results[i].Rprice * ((100-results[i].saveOff)/100);
+                    tmpPrice.salePrice = results[i].Rprice * ((100 - results[i].saveOff) / 100);
                 } else {
                     tmpPrice.price = results[i].VIPprice;
-                    tmpPrice.salePrice = results[i].VIPprice * ((100-results[i].saveOff)/100);
+                    tmpPrice.salePrice = results[i].VIPprice * ((100 - results[i].saveOff) / 100);
                 }
                 playlist.push({
                     playId: results[i].pid,
@@ -151,26 +151,26 @@ function musicalList(sort, callback) {
 // 오페라 목록(정렬 방식에 따른 목록 정렬)
 function operaList(sort, callback) {
     var sql_star = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-                    "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
-                    "from play py join place pe on (py.place_id = pe.id) " +
-                    "join image i on (i.play_name = py.name) " +
-                    "where playDay = curdate() and theme = 1 and imageType = 0 " +
-                    // "group by name " +
-                    "order by starScoreAvg desc";
+        "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
+        "from play py join place pe on (py.place_id = pe.id) " +
+        "join image i on (i.play_name = py.name) " +
+        "where playDay = curdate() and theme = 1 and imageType = 0 " +
+        // "group by name " +
+        "order by starScoreAvg desc";
     var sql_time = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-                    "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
-                    "from play py join place pe on (py.place_id = pe.id) " +
-                    "join image i on (i.play_name = py.name) " +
-                    "where playDay = curdate() and theme = 1 and imageType = 0 " +
-                    // "group by name " +
-                    "order by playTime asc";
+        "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
+        "from play py join place pe on (py.place_id = pe.id) " +
+        "join image i on (i.play_name = py.name) " +
+        "where playDay = curdate() and theme = 1 and imageType = 0 " +
+        // "group by name " +
+        "order by playTime asc";
     var sql_sale = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-                    "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
-                    "from play py join place pe on (py.place_id = pe.id) " +
-                    "join image i on (i.play_name = py.name) " +
-                    "where playDay = curdate() and theme = 1 and imageType = 0 " +
-                    // "group by name " +
-                    "order by saveOff desc";
+        "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
+        "from play py join place pe on (py.place_id = pe.id) " +
+        "join image i on (i.play_name = py.name) " +
+        "where playDay = curdate() and theme = 1 and imageType = 0 " +
+        // "group by name " +
+        "order by saveOff desc";
     var sql = "";
     if (sort == 0)
         sql = sql_star;
@@ -193,10 +193,10 @@ function operaList(sort, callback) {
             for (var i = 0; i < results.length; i++) {
                 if (results[i].VIPprice === null) {
                     tmpPrice.price = results[i].Rprice;
-                    tmpPrice.salePrice = results[i].Rprice * ((100-results[i].saveOff)/100);
+                    tmpPrice.salePrice = results[i].Rprice * ((100 - results[i].saveOff) / 100);
                 } else {
                     tmpPrice.price = results[i].VIPprice;
-                    tmpPrice.salePrice = results[i].VIPprice * ((100-results[i].saveOff)/100);
+                    tmpPrice.salePrice = results[i].VIPprice * ((100 - results[i].saveOff) / 100);
                 }
                 playlist.push({
                     playId: results[i].pid,
@@ -219,26 +219,26 @@ function operaList(sort, callback) {
 // 콘서트 목록(정렬 방식에 따른 목록 정렬)
 function concertList(sort, callback) {
     var sql_star = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-                    "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
-                    "from play py join place pe on (py.place_id = pe.id) " +
-                    "join image i on (i.play_name = py.name) " +
-                    "where playDay = curdate() and theme = 2 and imageType = 0 " +
-                    // "group by name " +
-                    "order by starScoreAvg desc";
+        "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
+        "from play py join place pe on (py.place_id = pe.id) " +
+        "join image i on (i.play_name = py.name) " +
+        "where playDay = curdate() and theme = 2 and imageType = 0 " +
+        // "group by name " +
+        "order by starScoreAvg desc";
     var sql_time = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-                    "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
-                    "from play py join place pe on (py.place_id = pe.id) " +
-                    "join image i on (i.play_name = py.name) " +
-                    "where playDay = curdate() and theme = 2 and imageType = 0 " +
-                    // "group by name " +
-                    "order by playTime asc";
+        "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
+        "from play py join place pe on (py.place_id = pe.id) " +
+        "join image i on (i.play_name = py.name) " +
+        "where playDay = curdate() and theme = 2 and imageType = 0 " +
+        // "group by name " +
+        "order by playTime asc";
     var sql_sale = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-                    "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
-                    "from play py join place pe on (py.place_id = pe.id) " +
-                    "join image i on (i.play_name = py.name) " +
-                    "where playDay = curdate() and theme = 2 and imageType = 0 " +
-                    // "group by name " +
-                    "order by saveOff desc";
+        "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
+        "from play py join place pe on (py.place_id = pe.id) " +
+        "join image i on (i.play_name = py.name) " +
+        "where playDay = curdate() and theme = 2 and imageType = 0 " +
+        // "group by name " +
+        "order by saveOff desc";
 
     var sql = "";
     if (sort == 0)
@@ -262,10 +262,10 @@ function concertList(sort, callback) {
             for (var i = 0; i < results.length; i++) {
                 if (results[i].VIPprice === null) {
                     tmpPrice.price = results[i].Rprice;
-                    tmpPrice.salePrice = results[i].Rprice * ((100-results[i].saveOff)/100);
+                    tmpPrice.salePrice = results[i].Rprice * ((100 - results[i].saveOff) / 100);
                 } else {
                     tmpPrice.price = results[i].VIPprice;
-                    tmpPrice.salePrice = results[i].VIPprice * ((100-results[i].saveOff)/100);
+                    tmpPrice.salePrice = results[i].VIPprice * ((100 - results[i].saveOff) / 100);
                 }
                 playlist.push({
                     playId: results[i].pid,
@@ -289,12 +289,12 @@ function concertList(sort, callback) {
 function searchLocation(location, callback) {
     // 당일 검색한 구에 위치한 공연장에서 하는 공연 목록 검색 쿼리
     var sql = "select py.id pid, name, theme, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-                "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
-                "from play py join place pe on (py.place_id = pe.id) " +
-                "join image i on (i.play_name = py.name) " +
-                "where playDay = curdate() and address = ? and imageType = 0 " +
-                // "group by name " +
-                "order by playTime asc";
+        "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
+        "from play py join place pe on (py.place_id = pe.id) " +
+        "join image i on (i.play_name = py.name) " +
+        "where playDay = curdate() and address = ? and imageType = 0 " +
+        // "group by name " +
+        "order by playTime asc";
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
@@ -311,10 +311,10 @@ function searchLocation(location, callback) {
 
                 if (results[i].VIPprice === null) {
                     tmpPrice.price = results[i].Rprice;
-                    tmpPrice.salePrice = results[i].Rprice * ((100-results[i].saveOff)/100);
+                    tmpPrice.salePrice = results[i].Rprice * ((100 - results[i].saveOff) / 100);
                 } else {
                     tmpPrice.price = results[i].VIPprice;
-                    tmpPrice.salePrice = results[i].VIPprice * ((100-results[i].saveOff)/100);
+                    tmpPrice.salePrice = results[i].VIPprice * ((100 - results[i].saveOff) / 100);
                 }
                 playlist.push({
                     playId: results[i].pid,
@@ -338,10 +338,10 @@ function searchLocation(location, callback) {
 function searchKeyword(keyword, callback) {
     // like를 사용해 검색할 단어와 연관된 공연, 공연장의 공연 목록 제공
     var sql = "select py.id pid, name, theme, placeName, playDay, playTime, VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
-                "from play py join place pe on (py.place_id = pe.id) " +
-                "join image i on (i.play_name = py.name) " +
-                "where (name like '%" + keyword + "%' or placeName like '%" + keyword + "%') and playDay = curdate() and imageType = 0 "; // +
-                // "group by name";
+        "from play py join place pe on (py.place_id = pe.id) " +
+        "join image i on (i.play_name = py.name) " +
+        "where (name like '%" + keyword + "%' or placeName like '%" + keyword + "%') and playDay = curdate() and imageType = 0 "; // +
+    // "group by name";
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
@@ -357,10 +357,10 @@ function searchKeyword(keyword, callback) {
             for (var i = 0; i < results.length; i++) {
                 if (results[i].VIPprice === null) {
                     tmpPrice.price = results[i].Rprice;
-                    tmpPrice.salePrice = results[i].Rprice * ((100-results[i].saveOff)/100);
+                    tmpPrice.salePrice = results[i].Rprice * ((100 - results[i].saveOff) / 100);
                 } else {
                     tmpPrice.price = results[i].VIPprice;
-                    tmpPrice.salePrice = results[i].VIPprice * ((100-results[i].saveOff)/100);
+                    tmpPrice.salePrice = results[i].VIPprice * ((100 - results[i].saveOff) / 100);
                 }
                 playlist.push({
                     id: results[i].pid,
@@ -404,7 +404,7 @@ function findPlay(pid, callback) {
         }
         var play = {};
         // async의 parallel로 공연정보, 빈자리 정보 가져오기
-        async.parallel([getPlayInfo, getPlaySeat], function(err) {
+        async.parallel([getPlayInfo, getPlaySeat], function (err) {
             dbConn.release();
             if (err) {
                 return callback(err);
@@ -413,7 +413,7 @@ function findPlay(pid, callback) {
         });
         // 공연정보 가져오기
         function getPlayInfo(callback) {
-            dbConn.query(sql_info, [pid], function(err, playinfo) {
+            dbConn.query(sql_info, [pid], function (err, playinfo) {
                 if (err) {
                     dbConn.release();
                     return callback(err);
@@ -440,17 +440,14 @@ function findPlay(pid, callback) {
                 play.saleSprice = parseInt(playinfo[0].Sprice * ((100 - playinfo[0].saveOff) / 100));
                 play.starScore = playinfo[0].starScoreAvg;
                 play.userCount = 0;
-                play.poster = [];
+                if (playinfo[0].imageType === 0) {
+                    play.poster = url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(playinfo[0].imageName));
+                    // play.poster.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(playinfo[i].imageName));
+                }
                 play.cast = [];
-                for(var i = 0; i < playinfo.length; i++){
-                    if (playinfo[i].imageType == 0 ) {
-                        play.poster.push(url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(playinfo[i].imageName)));
-                        // play.poster.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(playinfo[i].imageName)));
-                    }
-                    else {
-                        play.cast.push(url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/castimg/', path.basename(playinfo[i].imageName)));
-                        // play.cast.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(playinfo[i].imageName)));
-                    }
+                for (var i = 0; i < playinfo.length; i++) {
+                    play.cast.push(url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/castimg/', path.basename(playinfo[i].imageName)));
+                    // play.cast.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(playinfo[i].imageName)));
                 }
                 callback(null);
                 // dbConn.query(sql_anoter_time, [playinfo[0].name], function(err, times) {
@@ -468,9 +465,10 @@ function findPlay(pid, callback) {
                 // });
             });
         }
+
         // 빈자리 정보 가져오기
         function getPlaySeat(callback) {
-            dbConn.query(sql_seat, [pid], function(err, seatCount) {
+            dbConn.query(sql_seat, [pid], function (err, seatCount) {
                 if (err) {
                     dbConn.release();
                     return callback(err);
