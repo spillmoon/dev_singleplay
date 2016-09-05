@@ -56,7 +56,7 @@ router.get('/:rid', isSecure,/* isAuthenticated,*/ function(req, res, next) {
             code: 1, // 성공 코드
             result: result
         });
-    })
+    });
 });
 
 router.delete('/:rid', isSecure, function(req, res, next) {

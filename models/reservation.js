@@ -60,11 +60,10 @@ function listRsv(callback) {
 // 예약 내역 추가
 function createRsv(userId, playId, playName, usableSeatNo, seatClass, callback) {
     var sql_insert = 'insert into reservation(user_id, play_id, play_name, usableSeat_usableNo, seatClass) ' +
-                     "values (?, ?, ?, ?, ?)";// 예약을 추가하는 쿼리문
-
+        "values (?, ?, ?, ?, ?)";// 예약을 추가하는 쿼리문
     var sql_update = 'update usableSeat ' +
-                     'set state = 1 ' +
-                     'where state = 0 and usableNo = ?';
+        'set state = 1 ' +
+        'where state = 0 and usableNo = ?';
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
@@ -157,8 +156,48 @@ function findRsv(rsvId, callback) {
     });
 }
 
-function deleteRsv() {
+function deleteRsv(rsvId, callback) {
+    var sql_seat_cancel = "update usableSeat set state = 0 where usableNo = (select usableSeat_usableNo from reservation where id = ?)";
+    var sql_rsv_delete = "delete from reservation where id = ?";
 
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        dbConn.beginTransaction(function(err) {
+            if (err) {
+                return callback(err);
+            }
+            async.series([seatCancel, rsvDelete], function(err, result) {
+                if (err) {
+                    return dbConn.rollback(function() {
+                        dbConn.release();
+                        callback(err);
+                    });
+                }
+                dbConn.commit(function() {
+                    dbConn.release();
+                    callback(null);
+                });
+            });
+        });
+        function seatCancel(callback) {
+            dbConn.query(sql_seat_cancel, [rsvId], function(err, result) {
+                if (err) {
+                    return callback(err);
+                }
+                callback(null);
+            });
+        }
+        function rsvDelete(callback) {
+            dbConn.query(sql_rsv_delete, [rsvId], function(err, result) {
+                if (err) {
+                    return callback(err);
+                }
+                callback(null);
+            });
+        }
+    });
 }
 
 // 함수를 exports 객체로 노출시켜 router에서 사용 가능하게 한다.
