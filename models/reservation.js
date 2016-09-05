@@ -7,11 +7,11 @@ var fs = require('fs');
 // 예약 내역 조회
 function listRsv(callback) {
     var sql_select_rsvlist = 'SELECT r.id, p.name, place.placeName, substring(p.playDay, 1, 10) playDay, substring(p.playTime, 1, 5) playTime, ' +
-                             'p.VIPprice, p.Rprice, p.Sprice, p.salePer, p.starScoreAvg, i.imageName ' +
-                             'FROM play p join reservation r on (p.id = r.play_id) ' +
-                             'join place on (place.id = p.place_id) ' +
-                             'join image i on (p.name = i.play_name) ' +
-                             'group by r.id'; // play, reservation, place, image 테이블을 join하여 필요한 속성을 추출하는 쿼리문
+                            'p.VIPprice, p.Rprice, p.Sprice, p.salePer, p.starScoreAvg, i.imageName ' +
+                            'FROM play p join reservation r on (p.id = r.play_id) ' +
+                            'join place on (place.id = p.place_id) ' +
+                            'join image i on (p.name = i.play_name) ' +
+                            'group by r.id'; // play, reservation, place, image 테이블을 join하여 필요한 속성을 추출하는 쿼리문
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
@@ -59,7 +59,7 @@ function listRsv(callback) {
 // 예약 내역 추가
 function createRsv(userId, playId, playName, usableSeatNo, seatClass, callback) {
     var sql = 'insert into reservation(user_id, play_id, play_name, usableSeat_usableNo, seatClass) ' +
-              "values (?, ?, ?, ?, ?)"; // 예약을 추가하는 쿼리문
+                "values (?, ?, ?, ?, ?)"; // 예약을 추가하는 쿼리문
 
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
@@ -67,6 +67,7 @@ function createRsv(userId, playId, playName, usableSeatNo, seatClass, callback) 
         }
         // dbConn 연결 - 매개변수로 회원ID, 공연ID, 공연명, 빈좌석, 좌석등급을 받아 sql 쿼리문을 실행한다.
         dbConn.query(sql, [userId, playId, playName, usableSeatNo, seatClass], function(err){
+            dbConn.release();
             if (err) {
                 return callback(err);
             }
@@ -78,12 +79,12 @@ function createRsv(userId, playId, playName, usableSeatNo, seatClass, callback) 
 // 예약 내역들 중 하나의 예약 내역 상세보기
 function findRsv(rsvId, callback) {
     var sql = 'select r.id, r.user_id uid, r.play_id , r.play_name, substring(p.playDay, 1, 10) playDay, substring(p.playTime, 1, 5) playTime, ' +
-              "pl.placeName, r.seatClass, u.seatInfo, VIPprice, Rprice, Sprice, i.imageName, concat(date_format(r.rsvDate, '%Y-%m%d'), '-', r.id, r.user_id, r.play_id) rsvNo " +
-              'from reservation r join usableSeat u on (r.usableSeat_usableNo = u.usableNo) ' +
-              'join play p on (p.id = r.play_id) ' +
-              'join place pl on (p.place_id = pl.id) ' +
-              'join image i on (i.play_name = r.play_name) ' +
-              'where r.id = ? and imageType = 0'; // reservation, usableSeat, play, place, image 테이블을 join 하여 필요한 속성을 추출하는 쿼리문
+                "pl.placeName, r.seatClass, u.seatInfo, VIPprice, Rprice, Sprice, i.imageName, concat(date_format(r.rsvDate, '%Y-%m%d'), '-', r.id, r.user_id, r.play_id) rsvNo " +
+                'from reservation r join usableSeat u on (r.usableSeat_usableNo = u.usableNo) ' +
+                'join play p on (p.id = r.play_id) ' +
+                'join place pl on (p.place_id = pl.id) ' +
+                'join image i on (i.play_name = r.play_name) ' +
+                'where r.id = ? and imageType = 0'; // reservation, usableSeat, play, place, image 테이블을 join 하여 필요한 속성을 추출하는 쿼리문
 
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
@@ -91,6 +92,7 @@ function findRsv(rsvId, callback) {
         }
         // dbConn 연결 - 매개변수로 예약ID를 받아 'sql' 쿼리문을 실행한다.
         dbConn.query(sql, [rsvId], function(err, result){
+            dbConn.release();
             if (err) {
                 return callback(err);
             }
