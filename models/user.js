@@ -149,12 +149,25 @@ function discountList(uid, callback) {
             return callback(err);
         }
         var discounts = {};
-        async.parallel([getMileage, getCoupon], function(err, result) {
+        dbConn.beginTransaction(function(err) {
             if (err) {
                 return callback(err);
             }
-            callback(null, discounts);
+            async.parallel([getMileage, getCoupon], function(err, result) {
+                if (err) {
+                    return dbConn.rollback(function() {
+                        dbConn.release();
+                        callback(err);
+                    });
+                }
+                dbConn.commit(function() {
+                    dbConn.release();
+                    callback(null, discounts);
+                });
+
+            });
         });
+
         function getCoupon(callback) {
             dbConn.query(sql_coupon_list, [uid], function(err, results) {
                 dbConn.release();
