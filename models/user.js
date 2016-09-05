@@ -127,8 +127,27 @@ function couponList(uid, callback) {
     });
 }
 
+function getProfile(uid, callback) {
+    var sql = "select id, name, userEmail, userPhone, userImage, mileage, " +
+            "sum(case when couponNo then 1 else 0 end) 'couponCnt' " +
+            "from user u left join coupon c on (u.id = c.user_id) " +
+            "where id = ?";
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        dbConn.query(sql, [uid], function(err, result) {
+            if (err) {
+                return callback(err);
+            }
+            callback(null, result);
+        });
+    });
+}
+
 module.exports.findByEmail = findByEmail;
 module.exports.verifyPassword = verifyPassword;
 module.exports.findUser = findUser;
 module.exports.findOrCreate = findOrCreate;
 module.exports.couponList = couponList;
+module.exports.getProfile = getProfile;

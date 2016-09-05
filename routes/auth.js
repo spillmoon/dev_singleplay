@@ -107,6 +107,22 @@ router.get('/facebook/callback', passport.authenticate('facebook'), function (re
 });
 
 router.post('/facebook/token', passport.authenticate('facebook-token', { scope : ['email']}), function (req, res, next) {
+    if (req.user) {
+        User.getProfile(req.user.id, function(err, info) {
+            if (err) {
+                return next(err);
+            }
+            res.send({
+                code: 1,
+                result: {
+                    name: info[0].name,
+                    profileImg: info[0].userImage,
+                    couponCnt: info[0].couponCnt,
+                    mileage: info[0].mileage
+                }
+            })
+        });
+    }
     res.send(req.user ? '성공' : '실패');
 });
 

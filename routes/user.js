@@ -58,6 +58,19 @@ router.put('/me', isSecure,/* isAuthenticated,*/ function(req, res, next) {
     }
 });
 
+router.get('/me', isSecure,/* isAuthenticated,*/ function(req, res, next) {
+    User.getProfile(1/*req.user.id*/, function(err, info) {
+        if (err) {
+            return next(err);
+        }
+        res.send({
+            name: info[0].name,
+            email: info[0].userEmail,
+            phone: info[0].userPhone
+        });
+    });
+});
+
 // 쿠폰 목록 조회, https, 로그인 해야 사용 가능
 router.get('/me/coupons', isSecure,/* isAuthenticated,*/ function(req, res, next) {
     User.couponList(1/*req.user.id*/, function(err, coupons) { // 매개변수로 세션을 통해 request객체에 붙은 user의 id 사용
