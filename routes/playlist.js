@@ -80,8 +80,8 @@ router.get('/', function (req, res, next) {
 // GET, 공연 상세 정보
 router.get('/:pid', function (req, res, next) {
     var playId = req.params.pid;
-
-    Play.findPlay(playId, function(err, play) {
+    var userId = req.user.id;
+    Play.findPlay(playId, userId, function(err, play) {
         if (err) {
             return next(err);
         }

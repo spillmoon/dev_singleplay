@@ -380,15 +380,15 @@ function searchKeyword(keyword, callback) {
     });
 }
 
-function findPlay(pid, callback) {
+function findPlay(pid, uid, callback) {
     // 공연정보, 포스터, 출연자 이미지 가져오기
     var sql_info = "select p.id pid, name, theme, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
         "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
         "from play p join image i on (i.play_name = p.name) " +
         "join place pl on (p.place_id = pl.id) " +
         "where p.id = ?";
-    // 당일 두번 이상 공연할 때 시간들 가져오기
-    var sql_anoter_time = "select id, substring(playTime, 1, 5) playTime from play where playDay = curdate() and name = ?";
+    // 위시리스트에 있는지 판별
+    var sql_isWish = "select count(wishId) from wishlist where playId = ? and userId = ?";
     // 빈좌석 갯수 가져오기
     var sql_seat = "select " +
         "sum(case when seatClass = 'VIP' then 1 else 0 end) 'VIP', " +
@@ -397,14 +397,13 @@ function findPlay(pid, callback) {
         "from play p join usableSeat u on (p.id = u.play_id) " +
         "where p.id = ? and state = 0";
 
-
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
             return callback(err);
         }
         var play = {};
         // async의 parallel로 공연정보, 빈자리 정보 가져오기
-        async.parallel([getPlayInfo, getPlaySeat], function (err) {
+        async.parallel([getPlayInfo, getPlaySeat, isWish], function (err) {
             dbConn.release();
             if (err) {
                 return callback(err);
@@ -426,7 +425,6 @@ function findPlay(pid, callback) {
                 if (playinfo[0].theme == 2)
                     theme = "콘서트";
                 play.playId = playinfo[0].pid;
-                play.isWish = 0;
                 play.playName = playinfo[0].name;
                 play.theme = theme;
                 play.placeName = playinfo[0].placeName;
@@ -450,19 +448,6 @@ function findPlay(pid, callback) {
                     // play.cast.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(playinfo[i].imageName)));
                 }
                 callback(null);
-                // dbConn.query(sql_anoter_time, [playinfo[0].name], function(err, times) {
-                //     if (err) {
-                //         dbConn.release();
-                //         return callback(err);
-                //     }
-                //     if (times.length > 1) {
-                //         play.playTime.push({
-                //             id: times[1].id,
-                //             time: times[1].playTime
-                //         });
-                //     }
-                //     callback(null);
-                // });
             });
         }
 
@@ -479,6 +464,26 @@ function findPlay(pid, callback) {
                 play.usableSeat = [seatCount[0].VIP, seatCount[0].R, seatCount[0].S];
                 callback(null);
             });
+        }
+
+        function isWish(callback) {
+            if (uid != undefined) {
+                dbConn.query(sql_isWish, [pid, uid], function(err, result) {
+                    if (err) {
+                        dbConn.release();
+                        return callback(err);
+                    }
+                    if (result[0].length == 1)
+                        play.isWish = 1;
+                    else
+                        play.isWish = 0;
+                    callback(null);
+                });
+            }
+            else {
+                play.isWish = 0;
+                callback(null);
+            }
         }
     });
 }
