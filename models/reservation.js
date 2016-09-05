@@ -3,6 +3,7 @@ var dbPool = require('../models/common').dbPool;
 var path = require('path');
 var url = require('url');
 var fs = require('fs');
+var async = require('async');
 
 // 예약 내역 조회
 function listRsv(callback) {
@@ -58,21 +59,52 @@ function listRsv(callback) {
 
 // 예약 내역 추가
 function createRsv(userId, playId, playName, usableSeatNo, seatClass, callback) {
-    var sql = 'insert into reservation(user_id, play_id, play_name, usableSeat_usableNo, seatClass) ' +
-                "values (?, ?, ?, ?, ?)"; // 예약을 추가하는 쿼리문
+    var sql_insert = 'insert into reservation(user_id, play_id, play_name, usableSeat_usableNo, seatClass) ' +
+                     "values (?, ?, ?, ?, ?)";// 예약을 추가하는 쿼리문
 
-    dbPool.getConnection(function(err, dbConn) {
+    var sql_update = 'update usableSeat ' +
+                     'set state = 1 ' +
+                     'where state = 0 and usableNo = ?';
+
+    dbPool.getConnection(function (err, dbConn) {
         if (err) {
             return callback(err);
         }
-        // dbConn 연결 - 매개변수로 회원ID, 공연ID, 공연명, 빈좌석, 좌석등급을 받아 sql 쿼리문을 실행한다.
-        dbConn.query(sql, [userId, playId, playName, usableSeatNo, seatClass], function(err){
-            dbConn.release();
+        dbConn.beginTransaction(function (err) { // 두 개의 행동이 하나의 작업
             if (err) {
                 return callback(err);
             }
-            callback(null); // router에 null->err만 넘겨준다. 결과값 출력X
+            async.series([insertRsv, updateSeatState], function (err, result) {
+                if (err) {
+                    return dbConn.rollback(function () { // 에러가 나면 db 롤백! (주의! autocommit 모드 해제!)
+                        dbConn.release(); // db연결 끊음
+                        callback(err); // callback에 err를 넘겨주고
+                    });
+                }
+                dbConn.commit(function () { // 에러가 아니면 commit
+                    dbConn.release(); // db연결 끊음
+                    callback(null); //
+                })
+            });
         });
+
+        function insertRsv(callback) { // 트랜잭션 내의 함수 정의
+            dbConn.query(sql_insert, [userId, playId, playName, usableSeatNo, seatClass], function (err, result) {
+                if (err) {
+                    return callback(err);
+                }
+                callback(null);
+            });
+        }
+
+        function updateSeatState(callback) { // 트랜잭션 내의 함수 정의
+            dbConn.query(sql_update, [usableSeatNo], function (err, result) {
+                if (err) {
+                    return callback(err);
+                }
+                callback(null);
+            });
+        }
     });
 }
 
@@ -125,7 +157,12 @@ function findRsv(rsvId, callback) {
     });
 }
 
+function deleteRsv() {
+
+}
+
 // 함수를 exports 객체로 노출시켜 router에서 사용 가능하게 한다.
 module.exports.createRsv = createRsv;
 module.exports.listRsv = listRsv;
 module.exports.findRsv = findRsv;
+module.exports.deleteRsv = deleteRsv;

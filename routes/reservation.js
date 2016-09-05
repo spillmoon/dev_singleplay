@@ -61,6 +61,7 @@ router.get('/:rid', isSecure,/* isAuthenticated,*/ function(req, res, next) {
 
 router.delete('/:rid', isSecure, function(req, res, next) {
     var rsvId = req.params.rid;
+
     Reservation.deleteRsv(rsvId, function(err, result) {
         if (err) {
             return next(err);
