@@ -1,10 +1,5 @@
 var dbPool = require('../models/common').dbPool;
-
-var staticUser = {};
-staticUser.name = "한세정";
-staticUser.id = 1;
-staticUser.email = "test@naver.com";
-staticUser.password = "123";
+var async = require('async');
 
 function findByEmail(email, callback) {
     var sql = 'SELECT id, userEmail, password FROM user WHERE userEmail = ?';
@@ -145,9 +140,56 @@ function getProfile(uid, callback) {
     });
 }
 
+function discountList(uid, callback) {
+    var sql_coupon_list = "select couponNo, couponName, saveOff from coupon where user_id = ? and curdate() between periodStart and periodEnd";
+    var sql_mileage = "select mileage from user where id = ?";
+
+    dbPool.getConnection(function (err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        var discounts = {};
+        async.parallel([getMileage, getCoupon], function(err, result) {
+            if (err) {
+                return callback(err);
+            }
+            callback(null, discounts);
+        });
+        function getCoupon(callback) {
+            dbConn.query(sql_coupon_list, [uid], function(err, results) {
+                dbConn.release();
+                if (err) {
+                    return callback(err);
+                }
+                discounts.coupons = [];
+                for(var i = 0; i < results.length; i++) {
+                    discounts.coupons.push({
+                        couponNo: results[i].couponNo,
+                        couponName: results[i].couponName,
+                        saveOff: results[i].saveOff,
+                    });
+                }
+                callback(null);
+            });
+        }
+        function getMileage(callback) {
+            dbConn.query(sql_mileage, [uid], function(err, result) {
+                dbConn.release();
+                if (err) {
+                    return callback(err);
+                }
+                discounts.mileage = result[0].mileage;
+                callback(null);
+            });
+        }
+
+    });
+}
+
 module.exports.findByEmail = findByEmail;
 module.exports.verifyPassword = verifyPassword;
 module.exports.findUser = findUser;
 module.exports.findOrCreate = findOrCreate;
 module.exports.couponList = couponList;
 module.exports.getProfile = getProfile;
+module.exports.discountList = discountList;

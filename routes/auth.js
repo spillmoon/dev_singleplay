@@ -120,10 +120,9 @@ router.post('/facebook/token', passport.authenticate('facebook-token', { scope :
                     couponCnt: info[0].couponCnt,
                     mileage: info[0].mileage
                 }
-            })
+            });
         });
     }
-    res.send(req.user ? '성공' : '실패');
 });
 
 module.exports = router;
