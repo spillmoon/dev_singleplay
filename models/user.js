@@ -99,7 +99,7 @@ function findOrCreate(profile, callback) {
 }
 // 쿠폰함 조회 구현하기
 function couponList(uid, callback) {
-    var sql_coupon_list = "select couponNo, couponName, salePer, substring(periodStart, 1, 10) periodStart, substring(periodEnd, 1, 10) periodEnd " +
+    var sql_coupon_list = "select couponNo, couponName, saveOff, substring(periodStart, 1, 10) periodStart, substring(periodEnd, 1, 10) periodEnd " +
                             "from coupon " +
                             "where user_id = ?";
 
@@ -117,7 +117,7 @@ function couponList(uid, callback) {
                 coupons.push({
                     couponNo: results[i].couponNo,
                     couponName: results[i].couponName,
-                    salePer: results[i].salePer,
+                    saveOff: results[i].saveOff,
                     periodStart: results[i].periodStart,
                     periodEnd: results[i].periodEnd
                 });

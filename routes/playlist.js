@@ -87,7 +87,7 @@ router.get('/:pid', function (req, res, next) {
         }
         res.send({
             code: 1,
-            results: play
+            result: play
         });
     });
 });

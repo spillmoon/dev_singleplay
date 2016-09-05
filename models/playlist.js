@@ -11,7 +11,7 @@ function allList(sort, callback) {
     // curdate()로 현재 날짜 검색
     // 별점순
     var sql_star = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-                    "VIPprice, Rprice, Sprice, salePer, starScoreAvg, imageName, imageType " +
+                    "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
                     "from play py join place pe on (py.place_id = pe.id) " +
                     "join image i on (i.play_name = py.name) " +
                     "where playDay = curdate() and imageType = 0 " +
@@ -19,7 +19,7 @@ function allList(sort, callback) {
                     "order by starScoreAvg desc";
     // 최신순
     var sql_time = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-                    "VIPprice, Rprice, Sprice, salePer, starScoreAvg, imageName, imageType " +
+                    "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
                     "from play py join place pe on (py.place_id = pe.id) " +
                     "join image i on (i.play_name = py.name) " +
                     "where playDay = curdate() and imageType = 0 " +
@@ -27,12 +27,12 @@ function allList(sort, callback) {
                     "order by playTime asc";
     // 할인순
     var sql_sale = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-                    "VIPprice, Rprice, Sprice, salePer, starScoreAvg, imageName, imageType " +
+                    "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
                     "from play py join place pe on (py.place_id = pe.id) " +
                     "join image i on (i.play_name = py.name) " +
                     "where playDay = curdate() and imageType = 0 " +
                     // "group by name " +
-                    "order by salePer desc";
+                    "order by saveOff desc";
     // var sql_score = "select sum(starScore)/count(starScore) starAvg from starScore where play_name = ?";
     // 매개변수로 받은 정렬 값에 따라 쿼리 선택
     var sql = "";
@@ -57,10 +57,10 @@ function allList(sort, callback) {
             for (var i = 0; i < results.length; i++) { // 결과 갯수만큼 객체들을 만들어 정보를 배열에 저장
                 if (results[i].VIPprice === null) { // 최고가가 없는 경우 처리
                     tmpPrice.price = results[i].Rprice;
-                    tmpPrice.salePrice = results[i].Rprice * ((100 - results[i].salePer) / 100);
+                    tmpPrice.salePrice = results[i].Rprice * ((100 - results[i].saveOff) / 100);
                 } else {
                     tmpPrice.price = results[i].VIPprice;
-                    tmpPrice.salePrice = results[i].VIPprice * ((100 - results[i].salePer) / 100);
+                    tmpPrice.salePrice = results[i].VIPprice * ((100 - results[i].saveOff) / 100);
                 }
                 playlist.push({
                     playId: results[i].pid,
@@ -70,7 +70,6 @@ function allList(sort, callback) {
                     playTime: results[i].playTime,
                     price: tmpPrice.price,
                     salePrice: tmpPrice.salePrice,
-                    salePer: results[i].salePer,
                     starScore: results[i].starScoreAvg,
                     poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
                     // poster: url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(results[i].imageName))
@@ -84,26 +83,26 @@ function allList(sort, callback) {
 function musicalList(sort, callback) {
     // 뮤지컬 목록(정렬 방식에 따른 목록 정렬), 쿼리만 다를뿐 전체 목록과 동작과정은 동일
     var sql_star = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-                    "VIPprice, Rprice, Sprice, salePer, starScoreAvg, imageName, imageType " +
+                    "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
                     "from play py join place pe on (py.place_id = pe.id) " +
                     "join image i on (i.play_name = py.name) " +
                     "where playDay = curdate() and theme = 0 and imageType = 0 " +
                     // "group by name " +
                     "order by starScoreAvg desc";
     var sql_time = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-                    "VIPprice, Rprice, Sprice, salePer, starScoreAvg, imageName, imageType " +
+                    "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
                     "from play py join place pe on (py.place_id = pe.id) " +
                     "join image i on (i.play_name = py.name) " +
                     "where playDay = curdate() and theme = 0 and imageType = 0 " +
                     // "group by name " +
                     "order by playTime asc";
     var sql_sale = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-                    "VIPprice, Rprice, Sprice, salePer, starScoreAvg, imageName, imageType " +
+                    "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
                     "from play py join place pe on (py.place_id = pe.id) " +
                     "join image i on (i.play_name = py.name) " +
                     "where playDay = curdate() and theme = 0 and imageType = 0 " +
                     // "group by name " +
-                    "order by salePer desc";
+                    "order by saveOff desc";
     var sql = "";
     if (sort == 0)
         sql = sql_star;
@@ -126,21 +125,19 @@ function musicalList(sort, callback) {
             for (var i = 0; i < results.length; i++) {
                 if (results[i].VIPprice === null) {
                     tmpPrice.price = results[i].Rprice;
-                    tmpPrice.salePrice = results[i].Rprice * ((100-results[i].salePer)/100);
+                    tmpPrice.salePrice = results[i].Rprice * ((100-results[i].saveOff)/100);
                 } else {
                     tmpPrice.price = results[i].VIPprice;
-                    tmpPrice.salePrice = results[i].VIPprice * ((100-results[i].salePer)/100);
+                    tmpPrice.salePrice = results[i].VIPprice * ((100-results[i].saveOff)/100);
                 }
                 playlist.push({
                     playId: results[i].pid,
                     playName: results[i].name,
-                    theme: "뮤지컬",
                     placeName: results[i].placeName,
                     playDay: results[i].playDay,
                     playTime: results[i].playTime,
                     price: tmpPrice.price,
                     salePrice: tmpPrice.salePrice,
-                    salePer: results[i].salePer,
                     starScore: results[i].starScoreAvg,
                     poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
                     // poster: url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(results[i].imageName))
@@ -154,26 +151,26 @@ function musicalList(sort, callback) {
 // 오페라 목록(정렬 방식에 따른 목록 정렬)
 function operaList(sort, callback) {
     var sql_star = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-                    "VIPprice, Rprice, Sprice, salePer, starScoreAvg, imageName, imageType " +
+                    "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
                     "from play py join place pe on (py.place_id = pe.id) " +
                     "join image i on (i.play_name = py.name) " +
                     "where playDay = curdate() and theme = 1 and imageType = 0 " +
                     // "group by name " +
                     "order by starScoreAvg desc";
     var sql_time = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-                    "VIPprice, Rprice, Sprice, salePer, starScoreAvg, imageName, imageType " +
+                    "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
                     "from play py join place pe on (py.place_id = pe.id) " +
                     "join image i on (i.play_name = py.name) " +
                     "where playDay = curdate() and theme = 1 and imageType = 0 " +
                     // "group by name " +
                     "order by playTime asc";
     var sql_sale = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-                    "VIPprice, Rprice, Sprice, salePer, starScoreAvg, imageName, imageType " +
+                    "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
                     "from play py join place pe on (py.place_id = pe.id) " +
                     "join image i on (i.play_name = py.name) " +
                     "where playDay = curdate() and theme = 1 and imageType = 0 " +
                     // "group by name " +
-                    "order by salePer desc";
+                    "order by saveOff desc";
     var sql = "";
     if (sort == 0)
         sql = sql_star;
@@ -196,21 +193,19 @@ function operaList(sort, callback) {
             for (var i = 0; i < results.length; i++) {
                 if (results[i].VIPprice === null) {
                     tmpPrice.price = results[i].Rprice;
-                    tmpPrice.salePrice = results[i].Rprice * ((100-results[i].salePer)/100);
+                    tmpPrice.salePrice = results[i].Rprice * ((100-results[i].saveOff)/100);
                 } else {
                     tmpPrice.price = results[i].VIPprice;
-                    tmpPrice.salePrice = results[i].VIPprice * ((100-results[i].salePer)/100);
+                    tmpPrice.salePrice = results[i].VIPprice * ((100-results[i].saveOff)/100);
                 }
                 playlist.push({
                     playId: results[i].pid,
                     playName: results[i].name,
-                    theme: "오페라",
                     placeName: results[i].placeName,
                     playDay: results[i].playDay,
                     playTime: results[i].playTime,
                     price: tmpPrice.price,
                     salePrice: tmpPrice.salePrice,
-                    salePer: results[i].salePer,
                     starScore: results[i].starScoreAvg,
                     poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
                     // poster: url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(results[i].imageName))
@@ -224,26 +219,26 @@ function operaList(sort, callback) {
 // 콘서트 목록(정렬 방식에 따른 목록 정렬)
 function concertList(sort, callback) {
     var sql_star = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-                    "VIPprice, Rprice, Sprice, salePer, starScoreAvg, imageName, imageType " +
+                    "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
                     "from play py join place pe on (py.place_id = pe.id) " +
                     "join image i on (i.play_name = py.name) " +
                     "where playDay = curdate() and theme = 2 and imageType = 0 " +
                     // "group by name " +
                     "order by starScoreAvg desc";
     var sql_time = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-                    "VIPprice, Rprice, Sprice, salePer, starScoreAvg, imageName, imageType " +
+                    "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
                     "from play py join place pe on (py.place_id = pe.id) " +
                     "join image i on (i.play_name = py.name) " +
                     "where playDay = curdate() and theme = 2 and imageType = 0 " +
                     // "group by name " +
                     "order by playTime asc";
     var sql_sale = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-                    "VIPprice, Rprice, Sprice, salePer, starScoreAvg, imageName, imageType " +
+                    "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
                     "from play py join place pe on (py.place_id = pe.id) " +
                     "join image i on (i.play_name = py.name) " +
                     "where playDay = curdate() and theme = 2 and imageType = 0 " +
                     // "group by name " +
-                    "order by salePer desc";
+                    "order by saveOff desc";
 
     var sql = "";
     if (sort == 0)
@@ -267,21 +262,19 @@ function concertList(sort, callback) {
             for (var i = 0; i < results.length; i++) {
                 if (results[i].VIPprice === null) {
                     tmpPrice.price = results[i].Rprice;
-                    tmpPrice.salePrice = results[i].Rprice * ((100-results[i].salePer)/100);
+                    tmpPrice.salePrice = results[i].Rprice * ((100-results[i].saveOff)/100);
                 } else {
                     tmpPrice.price = results[i].VIPprice;
-                    tmpPrice.salePrice = results[i].VIPprice * ((100-results[i].salePer)/100);
+                    tmpPrice.salePrice = results[i].VIPprice * ((100-results[i].saveOff)/100);
                 }
                 playlist.push({
                     playId: results[i].pid,
                     playName: results[i].name,
-                    theme: "콘서트",
                     placeName: results[i].placeName,
                     playDay: results[i].playDay,
                     playTime: results[i].playTime,
                     price: tmpPrice.price,
                     salePrice: tmpPrice.salePrice,
-                    salePer: results[i].salePer,
                     starScore: results[i].starScoreAvg,
                     poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
                     // poster: url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(results[i].imageName))
@@ -296,7 +289,7 @@ function concertList(sort, callback) {
 function searchLocation(location, callback) {
     // 당일 검색한 구에 위치한 공연장에서 하는 공연 목록 검색 쿼리
     var sql = "select py.id pid, name, theme, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-                "VIPprice, Rprice, Sprice, salePer, starScoreAvg, imageName, imageType " +
+                "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
                 "from play py join place pe on (py.place_id = pe.id) " +
                 "join image i on (i.play_name = py.name) " +
                 "where playDay = curdate() and address = ? and imageType = 0 " +
@@ -313,32 +306,24 @@ function searchLocation(location, callback) {
                 return callback(err);
             }
             var playlist = [];
-            var theme = "";
             var tmpPrice = {};
             for (var i = 0; i < results.length; i++) {
-                if (results[i].theme == 0)
-                    theme = "뮤지컬";
-                if (results[i].theme == 1)
-                    theme = "오페라";
-                if (results[i].theme == 2)
-                    theme = "콘서트";
+
                 if (results[i].VIPprice === null) {
                     tmpPrice.price = results[i].Rprice;
-                    tmpPrice.salePrice = results[i].Rprice * ((100-results[i].salePer)/100);
+                    tmpPrice.salePrice = results[i].Rprice * ((100-results[i].saveOff)/100);
                 } else {
                     tmpPrice.price = results[i].VIPprice;
-                    tmpPrice.salePrice = results[i].VIPprice * ((100-results[i].salePer)/100);
+                    tmpPrice.salePrice = results[i].VIPprice * ((100-results[i].saveOff)/100);
                 }
                 playlist.push({
                     playId: results[i].pid,
                     playName: results[i].name,
-                    theme: theme,
                     placeName: results[i].placeName,
                     playDay: results[i].playDay,
                     playTime: results[i].playTime,
                     price: tmpPrice.price,
                     salePrice: tmpPrice.salePrice,
-                    salePer: results[i].salePer,
                     starScore: results[i].starScoreAvg,
                     poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
                     // poster: url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(results[i].imageName))
@@ -352,7 +337,7 @@ function searchLocation(location, callback) {
 // 검색한 키워드와 관련된 공연 목록
 function searchKeyword(keyword, callback) {
     // like를 사용해 검색할 단어와 연관된 공연, 공연장의 공연 목록 제공
-    var sql = "select py.id pid, name, theme, placeName, playDay, playTime, VIPprice, Rprice, Sprice, salePer, starScoreAvg, imageName, imageType " +
+    var sql = "select py.id pid, name, theme, placeName, playDay, playTime, VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
                 "from play py join place pe on (py.place_id = pe.id) " +
                 "join image i on (i.play_name = py.name) " +
                 "where (name like '%" + keyword + "%' or placeName like '%" + keyword + "%') and playDay = curdate() and imageType = 0 "; // +
@@ -368,32 +353,23 @@ function searchKeyword(keyword, callback) {
                 return callback(err);
             }
             var playlist = [];
-            var theme = "";
             var tmpPrice = {};
             for (var i = 0; i < results.length; i++) {
-                if (results[i].theme == 0)
-                    theme = "뮤지컬";
-                if (results[i].theme == 1)
-                    theme = "오페라";
-                if (results[i].theme == 2)
-                    theme = "콘서트";
                 if (results[i].VIPprice === null) {
                     tmpPrice.price = results[i].Rprice;
-                    tmpPrice.salePrice = results[i].Rprice * ((100-results[i].salePer)/100);
+                    tmpPrice.salePrice = results[i].Rprice * ((100-results[i].saveOff)/100);
                 } else {
                     tmpPrice.price = results[i].VIPprice;
-                    tmpPrice.salePrice = results[i].VIPprice * ((100-results[i].salePer)/100);
+                    tmpPrice.salePrice = results[i].VIPprice * ((100-results[i].saveOff)/100);
                 }
                 playlist.push({
                     id: results[i].pid,
                     name: results[i].name,
-                    theme: theme,
                     placeName: results[i].placeName,
                     playDay: results[i].playDay,
                     playTime: results[i].playTime,
                     price: tmpPrice.price,
                     salePrice: tmpPrice.salePrice,
-                    salePer: results[i].salePer,
                     star: results[i].starScoreAvg,
                     posterUrl: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
                     // poster: url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(results[i].imageName))
@@ -407,7 +383,7 @@ function searchKeyword(keyword, callback) {
 function findPlay(pid, callback) {
     // 공연정보, 포스터, 출연자 이미지 가져오기
     var sql_info = "select p.id pid, name, theme, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-        "VIPprice, Rprice, Sprice, salePer, starScoreAvg, imageName, imageType " +
+        "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
         "from play p join image i on (i.play_name = p.name) " +
         "join place pl on (p.place_id = pl.id) " +
         "where p.id = ?";
@@ -426,14 +402,14 @@ function findPlay(pid, callback) {
         if (err) {
             return callback(err);
         }
-        var playlist = {};
+        var play = {};
         // async의 parallel로 공연정보, 빈자리 정보 가져오기
         async.parallel([getPlayInfo, getPlaySeat], function(err) {
             dbConn.release();
             if (err) {
                 return callback(err);
             }
-            callback(null, playlist);
+            callback(null, play);
         });
         // 공연정보 가져오기
         function getPlayInfo(callback) {
@@ -443,41 +419,37 @@ function findPlay(pid, callback) {
                     return callback(err);
                 }
                 var theme = "";
-                if (playinfo[0].theme == '0')
+                if (playinfo[0].theme == 0)
                     theme = "뮤지컬";
-                if (playinfo[0].theme == '1')
+                if (playinfo[0].theme == 1)
                     theme = "오페라";
-                if (playinfo[0].theme == '2')
+                if (playinfo[0].theme == 2)
                     theme = "콘서트";
-                playlist.playId = playinfo[0].pid;
-                playlist.playName = playinfo[0].name;
-                playlist.theme = theme;
-                playlist.placeName = playinfo[0].placeName;
-                playlist.playDay = playinfo[0].playDay;
-                playlist.playTime = [];
-                playlist.playTime.push({
-                    id: playinfo[0].pid,
-                    time: playinfo[0].playTime
-                });
-                playlist.VIPprice = playinfo[0].VIPprice;
-                playlist.saleVIPprice = playinfo[0].VIPprice * ((100 - playinfo[0].salePer) / 100);
-                playlist.Rprice = playinfo[0].Rprice;
-                playlist.saleRprice = playinfo[0].Rprice * ((100 - playinfo[0].salePer) / 100);
-                playlist.Sprice = playinfo[0].Sprice;
-                playlist.saleSprice = playinfo[0].Sprice * ((100 - playinfo[0].salePer) / 100);
-                playlist.salePer = playinfo[0].salePer;
-                playlist.starScore = playinfo[0].starScoreAvg;
-                playlist.userCount = 0;
-                playlist.poster = [];
-                playlist.cast = [];
+                play.playId = playinfo[0].pid;
+                play.isWish = 0;
+                play.playName = playinfo[0].name;
+                play.theme = theme;
+                play.placeName = playinfo[0].placeName;
+                play.playDay = playinfo[0].playDay;
+                play.playTime = playinfo[0].playTime;
+                play.VIPprice = playinfo[0].VIPprice;
+                play.saleVIPprice = parseInt(playinfo[0].VIPprice * ((100 - playinfo[0].saveOff) / 100));
+                play.Rprice = playinfo[0].Rprice;
+                play.saleRprice = parseInt(playinfo[0].Rprice * ((100 - playinfo[0].saveOff) / 100));
+                play.Sprice = playinfo[0].Sprice;
+                play.saleSprice = parseInt(playinfo[0].Sprice * ((100 - playinfo[0].saveOff) / 100));
+                play.starScore = playinfo[0].starScoreAvg;
+                play.userCount = 0;
+                play.poster = [];
+                play.cast = [];
                 for(var i = 0; i < playinfo.length; i++){
                     if (playinfo[i].imageType == 0 ) {
-                        playlist.poster.push(url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(playinfo[i].imageName)));
-                        // playlist.poster.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(playinfo[i].imageName)));
+                        play.poster.push(url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(playinfo[i].imageName)));
+                        // play.poster.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(playinfo[i].imageName)));
                     }
                     else {
-                        playlist.cast.push(url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(playinfo[i].imageName)));
-                        // playlist.cast.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(playinfo[i].imageName)));
+                        play.cast.push(url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/castimg/', path.basename(playinfo[i].imageName)));
+                        // play.cast.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(playinfo[i].imageName)));
                     }
                 }
                 callback(null);
@@ -487,7 +459,7 @@ function findPlay(pid, callback) {
                 //         return callback(err);
                 //     }
                 //     if (times.length > 1) {
-                //         playlist.playTime.push({
+                //         play.playTime.push({
                 //             id: times[1].id,
                 //             time: times[1].playTime
                 //         });
@@ -506,7 +478,7 @@ function findPlay(pid, callback) {
                 seatCount[0].VIP = seatCount[0].VIP || 0;
                 seatCount[0].R = seatCount[0].R || 0;
                 seatCount[0].S = seatCount[0].S || 0;
-                playlist.usableSeat = [seatCount[0].VIP, seatCount[0].R, seatCount[0].S];
+                play.usableSeat = [seatCount[0].VIP, seatCount[0].R, seatCount[0].S];
                 callback(null);
             });
         }

@@ -7,8 +7,8 @@ var async = require('async');
 
 // 위시리스트 목록 조회
 function listWish(callback) {
-    var sql_select_wishlist = "SELECT w.wishId, p.name, place.placeName, substring(p.playDay, 1, 10) playDay, substring(p.playTime, 1, 5) playTime, " +
-                            "VIPprice, Rprice, Sprice, p.salePer, p.starScoreAvg, i.imageName " +
+    var sql_select_wishlist = "SELECT p.id pid, w.wishId, p.name, place.placeName, substring(p.playDay, 1, 10) playDay, substring(p.playTime, 1, 5) playTime, " +
+                            "VIPprice, Rprice, Sprice, p.saveOff, p.starScoreAvg, i.imageName " +
                             "FROM play p join wishlist w on (p.id = w.playId) " +
                             "join place on (place.id = p.place_id)" +
                             "join image i on (p.name = i.play_name) " +
@@ -34,21 +34,21 @@ function listWish(callback) {
                 // 위시리스트 목록에 VIPprice와 할인 가격이 표시되어야 하는데 VIPprice가 없는 경우 처리
                 if (results[i] === null) { // VIPprice가 없는 경우 Rprice를 결과값으로 한다.
                     tmpwish.price = results[i].VIPprice;
-                    tmpwish.salePrice = results[i].VIPprice * ((100-results[i].salePer)/100);
+                    tmpwish.salePrice = results[i].VIPprice * ((100-results[i].saveOff)/100);
                 } else { // VIPprice가 있으면 VIPprice를 결과값으로 한다.
                     tmpwish.price = results[i].Rprice;
-                    tmpwish.salePrice = results[i].Rprice * ((100-results[i].salePer)/100);
+                    tmpwish.salePrice = results[i].Rprice * ((100-results[i].saveOff)/100);
                 }
                 // 최종 출력될 결과값들을 wish 배열 객체에 push 한다.
                 wish.push({
+                    playId: results[i].pid,
                     playName : results[i].name,
-                    starScoreAvg : results[i].starScoreAvg,
                     placeName : results[i].placeName,
                     playDay : results[i].playDay,
                     playTime : results[i].playTime,
-                    salePer : results[i].salePer,
                     price : tmpwish.price,
                     salePrice : tmpwish.salePrice,
+                    starScore : results[i].starScoreAvg,
                     poster : url.resolve('https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/posterimg/', path.basename(results[i].imageName))
                     // poster : url.resolve('https://127.0.0.1:4433/posterimg/', path.basename(results[i].imageName))
                 });
@@ -90,7 +90,6 @@ function createWish(userId, playId, callback) {
         });
         function insertWish(callback) { // 트랜잭션 내의 insertWish 함수 정의
             dbConn.query(sql_insert_wish, [userId, playId], function (err, result) {
-                dbConn.release();
                 if (err) {
                     return callback(err);
                 }
@@ -102,7 +101,6 @@ function createWish(userId, playId, callback) {
         function selectThumbnail(callback) { // 트랜잭션 내의 selectThumbnail 함수 정의
             // dbConn 연결 - 'sql_select_thumbnail' 실행
             dbConn.query(sql_select_thumbnail, function (err, results) {
-                dbConn.release();
                 if (err) {
                     return callback(err);
                 }
