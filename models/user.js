@@ -6,6 +6,7 @@ var mysql = require('mysql');
 var url = require('url');
 var fs = require('fs');
 
+// 로컬로그인에 사용 추후 삭제
 function findByEmail(email, callback) {
     var sql = 'SELECT id, userEmail, password FROM user WHERE userEmail = ?';
     dbPool.getConnection(function(err, dbConn) {
@@ -24,7 +25,7 @@ function findByEmail(email, callback) {
         })
     });
 }
-
+// 로컬로그인에 사용 추후 삭제
 function verifyPassword(password, hashPassword, callback) {
     var sql = 'SELECT SHA2(?, 256) password';
     dbPool.getConnection(function(err, dbConn){
@@ -43,7 +44,6 @@ function verifyPassword(password, hashPassword, callback) {
         });
     });
 }
-
 // deserializeUser에서 사용, id를 가지고 user를 복원
 function findUser(userId, callback) {
     var sql = 'SELECT id, userEmail FROM user WHERE id = ?';
@@ -63,7 +63,6 @@ function findUser(userId, callback) {
         });
     });
 }
-
 // 페이스북 로그인시 회원 테이블에서 아이디를 찾고 없으면 추가, 있으면 기존 id 사용
 function findOrCreate(profile, callback) {
     var sql_findUser = "select id, userEmail, facebookId from user where facebookId = ?";
@@ -99,7 +98,6 @@ function findOrCreate(profile, callback) {
         });
     });
 }
-
 // 쿠폰함 조회 구현하기
 function couponList(uid, callback) {
     var sql_coupon_list = "select couponNo, couponName, saveOff, substring(periodStart, 1, 10) periodStart, substring(periodEnd, 1, 10) periodEnd " +
@@ -129,7 +127,7 @@ function couponList(uid, callback) {
         });
     });
 }
-
+// 사용자 정보 가져오기
 function getProfile(uid, callback) {
     var sql = "select id, name, userEmail, userPhone, userImage, mileage, " +
             "sum(case when couponNo then 1 else 0 end) 'couponCnt' " +
@@ -147,7 +145,7 @@ function getProfile(uid, callback) {
         });
     });
 }
-
+// 할인할 수 있는 정보들
 function discountList(uid, callback) {
     var sql_coupon_list = "select couponNo, couponName, saveOff from coupon where user_id = ? and curdate() between periodStart and periodEnd";
     var sql_mileage = "select mileage from user where id = ?";
@@ -203,7 +201,6 @@ function discountList(uid, callback) {
         }
     });
 }
-
 // 프로필 수정
 function updateProfile(userInfo, callback) {
     var sql_select_profile = 'select userImage, name, userPhone, userEmail ' +
@@ -240,13 +237,13 @@ function updateProfile(userInfo, callback) {
                 if (err) {
                     return callback(err);
                 }
-                var imagePath = path.join(__dirname, '../uploads/images/profile', result[0].userImage);
-                if (result[0].userImage!=='defaultProfile.jpg') {
-                    fs.unlink(imagePath, function (err) {
+                var image = path.join(__dirname, '../uploads/images/profile', result[0].userImage);
+                if (result[0].userImage !== 'defaultProfile.jpg') {
+                    fs.unlink(image, function (err) {
                         if (err) {
-                            return callback("프로필사진 변경 실패");
+                            return callback(err);
                         }
-                        console.log('프로필 사진 삭제 성공');
+                        console.log('success delete real profile image');
                     });
                 }
                 callback(null);
@@ -275,3 +272,4 @@ module.exports.getProfile = getProfile;
 module.exports.discountList = discountList;
 module.exports.updateProfile = updateProfile;
 module.exports.updatePush = updatePush;
+
