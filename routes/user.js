@@ -7,7 +7,8 @@ var isSecure = require('./common').isSecure;
 var isAuthenticated = require('./common').isAuthenticated;
 var User = require('../models/user');
 
-// todo: PUSH 수정 구현 예정
+
+// todo: PUSH 구현 예정
 router.put('/me', isSecure,/* isAuthenticated,*/ function(req, res, next) {
     var action = req.query.action;
     if (action == "push") {

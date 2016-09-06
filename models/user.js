@@ -5,6 +5,7 @@ var async = require('async');
 var mysql = require('mysql');
 var url = require('url');
 var fs = require('fs');
+
 // 로컬로그인에 사용 추후 삭제
 function findByEmail(email, callback) {
     var sql = 'SELECT id, userEmail, password FROM user WHERE userEmail = ?';
