@@ -44,7 +44,7 @@ function selectSeat(playId, callback) {
                 info.placeAddress = results[i].address;
                 info.placeName = results[i].placeName;
                 info.seatInfo.push({
-                    usableSeatNo: results[i].usableSeatNo,
+                    usableSeatNo: results[i].usableNo,
                     seatClass: results[i].seatClass,
                     seatInfo: results[i].seatInfo,
                     price: price
