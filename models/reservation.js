@@ -59,9 +59,9 @@ function listRsv(uid, callback) {
 }
 
 // 예약 내역 추가
-function createRsv(userId, playId, playName, usableSeatNo, seatClass, callback) {
-    var sql_insert = 'insert into reservation(user_id, play_id, play_name, usableSeat_usableNo, seatClass) ' +
-        "values (?, ?, ?, ?, ?)";// 예약을 추가하는 쿼리문
+function createRsv(userId, playId, playName, usableSeatNo, seatClass, booker, bookerPhone, bookerEmail, callback) {
+    var sql_insert = 'insert into reservation(user_id, play_id, play_name, usableSeat_usableNo, seatClass, booker, bookerPhone, bookerEmail) ' +
+        "values (?, ?, ?, ?, ?, ?, ?, ?)";// 예약을 추가하는 쿼리문
     var sql_update = 'update usableSeat ' +
         'set state = 1 ' +
         'where state = 0 and usableNo = ?';
@@ -89,7 +89,7 @@ function createRsv(userId, playId, playName, usableSeatNo, seatClass, callback) 
         });
 
         function insertRsv(callback) { // 트랜잭션 내의 함수 정의
-            dbConn.query(sql_insert, [userId, playId, playName, usableSeatNo, seatClass], function (err, result) {
+            dbConn.query(sql_insert, [userId, playId, playName, usableSeatNo, seatClass, booker, bookerPhone, bookerEmail], function (err) {
                 if (err) {
                     return callback(err);
                 }
@@ -98,7 +98,7 @@ function createRsv(userId, playId, playName, usableSeatNo, seatClass, callback) 
         }
 
         function updateSeatState(callback) { // 트랜잭션 내의 함수 정의
-            dbConn.query(sql_update, [usableSeatNo], function (err, result) {
+            dbConn.query(sql_update, [usableSeatNo], function (err) {
                 if (err) {
                     return callback(err);
                 }
