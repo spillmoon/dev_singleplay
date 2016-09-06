@@ -38,13 +38,11 @@ router.put('/me', isSecure,/* isAuthenticated,*/ function(req, res, next) {
                 return next(err);
             }
             var userInfo = {};
-            userInfo.userId = fields.userId;
+            userInfo.userId = req.user.id;
             userInfo.userName = fields.userName;
             userInfo.userEmail = fields.userEmail;
             userInfo.userPhone = fields.userPhone;
-            userInfo.uploadImage = files.uploadImage;
-
-            userInfo.userImage = path.basename(userInfo.uploadImage.path);
+            userInfo.userImage = path.basename(files.userImage.path);
 
             console.log(path.join(__dirname, '../uploads/images/profile', userInfo.userImage));
 
@@ -52,23 +50,18 @@ router.put('/me', isSecure,/* isAuthenticated,*/ function(req, res, next) {
                 if (err) {
                     return next(err);
                 }
-
-                // var name = "";
-                // if (userInfo.userImage)
-                //    name = userInfo.userImage.name;
                 res.send({
                     code: 1,
                     result: {
                         message: '프로필 변경 완료',
-                        //profileImg: url.resolve("https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:443/profileimg/", userInfo.userImage),
-                        profileImg: url.resolve("https://127.0.0.1:4433/profileimg/", userInfo.userImage),
+                        profileImg: url.resolve("http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/profileimg/", userInfo.userImage),
+                        // profileImg: url.resolve("https://127.0.0.1:4433/profileimg/", userInfo.userImage),
                         userName: userInfo.userName,
                         userEmail: userInfo.userEmail,
                         userPhone: userInfo.userPhone
                     }
                 });
             });
-
         });
     }
 });
@@ -79,9 +72,12 @@ router.get('/me', isSecure,/* isAuthenticated, */function(req, res, next) {
             return next(err);
         }
         res.send({
-            name: info[0].name,
-            email: info[0].userEmail,
-            phone: info[0].userPhone
+            code: 1,
+            result: {
+                name: info[0].name,
+                email: info[0].userEmail,
+                phone: info[0].userPhone
+            }
         });
     });
 });
