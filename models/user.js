@@ -172,13 +172,21 @@ function discountList(uid, callback) {
                     dbConn.release();
                     callback(null, discounts);
                 });
-
             });
         });
 
+        function getMileage(callback) {
+            dbConn.query(sql_mileage, [uid], function(err, result) {
+                if (err) {
+                    return callback(err);
+                }
+                discounts.mileage = result[0].mileage;
+                callback(null);
+            });
+        }
+
         function getCoupon(callback) {
             dbConn.query(sql_coupon_list, [uid], function(err, results) {
-                dbConn.release();
                 if (err) {
                     return callback(err);
                 }
@@ -193,17 +201,6 @@ function discountList(uid, callback) {
                 callback(null);
             });
         }
-        function getMileage(callback) {
-            dbConn.query(sql_mileage, [uid], function(err, result) {
-                dbConn.release();
-                if (err) {
-                    return callback(err);
-                }
-                discounts.mileage = result[0].mileage;
-                callback(null);
-            });
-        }
-
     });
 }
 

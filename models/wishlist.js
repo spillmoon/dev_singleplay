@@ -102,7 +102,7 @@ function createWish(userId, playId, callback) {
 
         function selectThumbnail(callback) { // 트랜잭션 내의 selectThumbnail 함수 정의
             // dbConn 연결 - 'sql_select_thumbnail' 실행
-            dbConn.query(sql_select_thumbnail, [uid], function (err, results) {
+            dbConn.query(sql_select_thumbnail, [userId], function (err, results) {
                 if (err) {
                     return callback(err);
                 }

@@ -7,7 +7,8 @@ var Wishlist = require('../models/wishlist');
 // GET, 위시리스트 목록 조회
 router.get('/', isSecure, isAuthenticated, function(req, res, next) {
     // ../models/wishlist의 listWish 함수 실행
-    Wishlist.listWish(1/*req.user.id*/, function (err, wishlist) {
+    var userId = req.user.id;
+    Wishlist.listWish(userId, function (err, wishlist) {
         if (err) {
             return next(err);
         }
@@ -22,7 +23,7 @@ router.get('/', isSecure, isAuthenticated, function(req, res, next) {
 // POST, 위시리스트 추가
 router.post('/', isSecure, isAuthenticated, function(req, res, next) {
     // 매개변수를 저장할 변수 선언
-    var userId = 1; //req.user.id; // 세션의 user.id -> userId
+    var userId = req.user.id; // 세션의 user.id -> userId
     var playId = req.body.playId; // body를 통해 공연ID를 매개변수로 받아온다.
 
     // 매개변수를 받아 ../models/wishlist의 createWish 함수 실행

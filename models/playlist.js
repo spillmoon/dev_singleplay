@@ -395,7 +395,7 @@ function findPlay(pid, uid, callback) {
         "sum(case when seatClass = 'R' then 1 else 0 end) 'R', " +
         "sum(case when seatClass = 'S' then 1 else 0 end) 'S' " +
         "from play p join usableSeat u on (p.id = u.play_id) " +
-        "where p.id = ? and state = 0";
+        "where p.id = ? and u.state = 0";
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
@@ -403,18 +403,28 @@ function findPlay(pid, uid, callback) {
         }
         var play = {};
         // async의 parallel로 공연정보, 빈자리 정보 가져오기
-        async.parallel([getPlayInfo, getPlaySeat, isWish], function (err) {
-            dbConn.release();
+        dbConn.beginTransaction(function(err) {
             if (err) {
                 return callback(err);
             }
-            callback(null, play);
+            async.parallel([getPlayInfo, getPlaySeat, isWish], function (err) {
+                if (err) {
+                    return dbConn.rollback(function() {
+                        dbConn.release();
+                        callback(err);
+                    });
+                }
+                dbConn.commit(function() {
+                    dbConn.release();
+                    callback(null, play);
+                });
+            });
         });
+
         // 공연정보 가져오기
         function getPlayInfo(callback) {
             dbConn.query(sql_info, [pid], function (err, playinfo) {
                 if (err) {
-                    dbConn.release();
                     return callback(err);
                 }
                 var theme = "";
@@ -455,7 +465,6 @@ function findPlay(pid, uid, callback) {
         function getPlaySeat(callback) {
             dbConn.query(sql_seat, [pid], function (err, seatCount) {
                 if (err) {
-                    dbConn.release();
                     return callback(err);
                 }
                 seatCount[0].VIP = seatCount[0].VIP || 0;
@@ -470,7 +479,6 @@ function findPlay(pid, uid, callback) {
             if (uid != undefined) {
                 dbConn.query(sql_isWish, [pid, uid], function(err, result) {
                     if (err) {
-                        dbConn.release();
                         return callback(err);
                     }
                     if (result[0].length == 1)
