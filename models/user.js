@@ -240,14 +240,16 @@ function updateProfile(userInfo, callback) {
                 if (err) {
                     return callback(err);
                 }
-                var image = path.join(__dirname, '../uploads/images/profile', userInfo.userImage);
-                fs.unlink(image, function (err) {
-                    if (err) {
-                        return callback(err);
-                    }
-                    console.log('success delete real profile image');
-                    callback(null);
-                });
+                var imagePath = path.join(__dirname, '../uploads/images/profile', result[0].userImage);
+                if (result[0].userImage!=='defaultProfile.jpg') {
+                    fs.unlink(imagePath, function (err) {
+                        if (err) {
+                            return callback("프로필사진 변경 실패");
+                        }
+                        console.log('프로필 사진 삭제 성공');
+                    });
+                }
+                callback(null);
             });
         }
 
