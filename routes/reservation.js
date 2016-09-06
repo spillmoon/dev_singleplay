@@ -32,16 +32,21 @@ router.post('/', isSecure, /*isAuthenticated, */function(req, res, next) {
     var booker = req.body.booker;
     var bookerPhone = req.body.bookerPhone;
     var bookerEmail = req.body.bookerEmail;
+    var useMileage = req.body.useMileage;
+    var useCoupon = req.body.useCoupon;
+    var settlement = req.body.settlement;
 
     // 매개변수를 받아 ../models/reservation의 createRsv 함수 실행
-    Reservation.createRsv(userId, playId, playName, usableSeatNo, seatClass, booker, bookerPhone, bookerEmail, function (err) {
+    Reservation.createRsv(userId, playId, playName, usableSeatNo, seatClass, booker, bookerPhone, bookerEmail, useMileage, useCoupon, settlement, function (err, rid) {
         if (err) {
             return next(err);
         }
-        // 출력 결과
-        res.send({
-            code: 1, // 성공 코드
-            message: "예약 성공"
+        Reservation.findRsv(rid,function(err, result) {
+            // 출력 결과
+            res.send({
+                code: 1, // 성공 코드
+                result: result
+            });
         });
     });
 });

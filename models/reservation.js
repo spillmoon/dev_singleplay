@@ -59,12 +59,11 @@ function listRsv(uid, callback) {
 }
 
 // 예약 내역 추가
-function createRsv(userId, playId, playName, usableSeatNo, seatClass, booker, bookerPhone, bookerEmail, callback) {
-    var sql_insert = 'insert into reservation(user_id, play_id, play_name, usableSeat_usableNo, seatClass, booker, bookerPhone, bookerEmail) ' +
-        "values (?, ?, ?, ?, ?, ?, ?, ?)";// 예약을 추가하는 쿼리문
-    var sql_update = 'update usableSeat ' +
-        'set state = 1 ' +
-        'where state = 0 and usableNo = ?';
+function createRsv(userId, playId, playName, usableSeatNo, seatClass, booker, bookerPhone, bookerEmail, useMileage, useCoupon, settlement, callback) {
+    var sql_insert = 'insert into reservation(user_id, play_id, play_name, usableSeat_usableNo, seatClass, booker, bookerPhone, bookerEmail, ' +
+        'useMileage, useCoupon, settlement) ' +
+        "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";// 예약을 추가하는 쿼리문
+    var sql_update = 'update usableSeat set state = 1 where state = 0 and usableNo = ?';
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
@@ -83,17 +82,18 @@ function createRsv(userId, playId, playName, usableSeatNo, seatClass, booker, bo
                 }
                 dbConn.commit(function () { // 에러가 아니면 commit
                     dbConn.release(); // db연결 끊음
-                    callback(null); //
+                    callback(null, result[0]); //
                 })
             });
         });
 
         function insertRsv(callback) { // 트랜잭션 내의 함수 정의
-            dbConn.query(sql_insert, [userId, playId, playName, usableSeatNo, seatClass, booker, bookerPhone, bookerEmail], function (err) {
+            dbConn.query(sql_insert, [userId, playId, playName, usableSeatNo, seatClass, booker, bookerPhone, bookerEmail,
+                useMileage, useCoupon, settlement], function (err, result) {
                 if (err) {
                     return callback(err);
                 }
-                callback(null);
+                callback(null, result.insertId);
             });
         }
 
@@ -110,8 +110,8 @@ function createRsv(userId, playId, playName, usableSeatNo, seatClass, booker, bo
 
 // 예약 내역들 중 하나의 예약 내역 상세보기
 function findRsv(rsvId, callback) {
-    var sql = 'select r.id rid, r.user_id uid, r.play_id , r.play_name, substring(p.playDay, 1, 10) playDay, substring(p.playTime, 1, 5) playTime, ' +
-                "pl.placeName, r.seatClass, u.seatInfo, VIPprice, Rprice, Sprice, i.imageName, concat(date_format(r.rsvDate, '%Y-%m%d'), '-', r.id, r.user_id, r.play_id) rsvNo " +
+    var sql = 'select r.id rid, r.play_name, substring(p.playDay, 1, 10) playDay, substring(p.playTime, 1, 5) playTime, ' +
+                "pl.placeName, r.seatClass, u.seatInfo, i.imageName, concat(date_format(r.rsvDate, '%Y-%m%d'), '-', r.id, r.user_id, r.play_id) rsvNo, r.settlement " +
                 'from reservation r join usableSeat u on (r.usableSeat_usableNo = u.usableNo) ' +
                 'join play p on (p.id = r.play_id) ' +
                 'join place pl on (p.place_id = pl.id) ' +
@@ -138,17 +138,18 @@ function findRsv(rsvId, callback) {
             rsv.playTime = result[0].playTime;
             rsv.seatClass = result[0].seatClass;
             rsv.seatInfo = result[0].seatInfo;
+            rsv.settlement = result[0].settlement;
             // 좌석등급에 따라 결제금액을 처리해준다.
             // 결제금액 = 좌석등급 가격*(100-쿠폰 할인율(%))-회원 마일리지
-            if (rsv.seatClass = 'VIP') {
-                rsv.settlement = ((result[0].VIPprice*(100-result[0].saveOff)/100)-result[0].mileage)
-            }
-            if (rsv.seatClass = 'R') {
-                rsv.settlement = ((result[0].Rprice*(100-result[0].saveOff)/100)-result[0].mileage)
-            }
-            if (rsv.seatClass = 'S') {
-                rsv.settlement = ((result[0].Sprice*(100-result[0].saveOff)/100)-result[0].mileage)
-            }
+            // if (rsv.seatClass === 'VIP') {
+            //     rsv.settlement = ((result[0].VIPprice*(100-result[0].saveOff)/100)-result[0].mileage)
+            // }
+            // if (rsv.seatClass === 'R') {
+            //     rsv.settlement = ((result[0].Rprice*(100-result[0].saveOff)/100)-result[0].mileage)
+            // }
+            // if (rsv.seatClass === 'S') {
+            //     rsv.settlement = ((result[0].Sprice*(100-result[0].saveOff)/100)-result[0].mileage)
+            // }
             // 예약한 공연의 포스터 이미지
             rsv.poster = url.resolve('https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/posterimg/', path.basename(result[0].imageName));
             // rsv.poster = url.resolve('https://127.0.0.1:4433/posterimg/', path.basename(result[0].imageName));
