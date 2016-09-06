@@ -7,7 +7,7 @@ var isSecure = require('./common').isSecure;
 var isAuthenticated = require('./common').isAuthenticated;
 var User = require('../models/user');
 
-// todo: PUT, 프로필, PUSH 수정 구현 에정
+// todo: PUT, PUSH 수정 구현 에정
 router.put('/me', isSecure,/* isAuthenticated,*/ function(req, res, next) {
     var action = req.query.action;
     if (action == "push") {
@@ -30,30 +30,45 @@ router.put('/me', isSecure,/* isAuthenticated,*/ function(req, res, next) {
         });
     } else if (action == "profile") {
         var form = new formidable.IncomingForm();
-        form.uploadDir = path.join(__dirname, '../uploads/images/profile');
+        form.uploadDir = path.join(__dirname, '../uploads/images/profile'); // 파일이 업로드될 위치
         form.keepExtensions = true;
-        form.multiples = true;
+        form.multiples = false;
         form.parse(req, function(err, fields, files) {
             if (err) {
                 return next(err);
             }
             var userInfo = {};
+            userInfo.userId = fields.userId;
             userInfo.userName = fields.userName;
             userInfo.userEmail = fields.userEmail;
             userInfo.userPhone = fields.userPhone;
-            userInfo.userImage = files.userImage;
-            var name = "";
-            if (userInfo.userImage)
-                name = userInfo.userImage.name;
-            res.send({
-                code: 1,
-                result: {
-                    profileImg: url.resolve("https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:443/profileimg/", name),
-                    userName: userInfo.userName,
-                    userEmail: userInfo.userEmail,
-                    userPhone: userInfo.userPhone
+            userInfo.uploadImage = files.uploadImage;
+
+            userInfo.userImage = path.basename(userInfo.uploadImage.path);
+
+            console.log(path.join(__dirname, '../uploads/images/profile', userInfo.userImage));
+
+            User.updateProfile(userInfo, function(err) {
+                if (err) {
+                    return next(err);
                 }
+
+                // var name = "";
+                // if (userInfo.userImage)
+                //    name = userInfo.userImage.name;
+                res.send({
+                    code: 1,
+                    result: {
+                        message: '프로필 변경 완료',
+                        //profileImg: url.resolve("https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:443/profileimg/", userInfo.userImage),
+                        profileImg: url.resolve("https://127.0.0.1:4433/profileimg/", userInfo.userImage),
+                        userName: userInfo.userName,
+                        userEmail: userInfo.userEmail,
+                        userPhone: userInfo.userPhone
+                    }
+                });
             });
+
         });
     }
 });

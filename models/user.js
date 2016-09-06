@@ -1,5 +1,10 @@
+var util = require('util');
+var path = require('path');
 var dbPool = require('../models/common').dbPool;
 var async = require('async');
+var mysql = require('mysql');
+var url = require('url');
+var fs = require('fs');
 
 function findByEmail(email, callback) {
     var sql = 'SELECT id, userEmail, password FROM user WHERE userEmail = ?';
@@ -38,6 +43,7 @@ function verifyPassword(password, hashPassword, callback) {
         });
     });
 }
+
 // deserializeUser에서 사용, id를 가지고 user를 복원
 function findUser(userId, callback) {
     var sql = 'SELECT id, userEmail FROM user WHERE id = ?';
@@ -57,6 +63,7 @@ function findUser(userId, callback) {
         });
     });
 }
+
 // 페이스북 로그인시 회원 테이블에서 아이디를 찾고 없으면 추가, 있으면 기존 id 사용
 function findOrCreate(profile, callback) {
     var sql_findUser = "select id, userEmail, facebookId from user where facebookId = ?";
@@ -92,6 +99,7 @@ function findOrCreate(profile, callback) {
         });
     });
 }
+
 // 쿠폰함 조회 구현하기
 function couponList(uid, callback) {
     var sql_coupon_list = "select couponNo, couponName, saveOff, substring(periodStart, 1, 10) periodStart, substring(periodEnd, 1, 10) periodEnd " +
@@ -199,6 +207,65 @@ function discountList(uid, callback) {
     });
 }
 
+function updateProfile(userInfo, callback) {
+    var sql_select_profile = 'select userImage, name, userPhone, userEmail ' +
+        'from user ' +
+        'where id=?';
+    var sql_update_profile = 'update user ' +
+        "set name = ?, userEmail = ?, userImage = ?, userPhone = ? " +
+        "where id =?";
+
+    dbPool.getConnection(function (err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        dbConn.beginTransaction(function (err) { // 두 개의 행동이 하나의 작업
+            if (err) {
+                return callback(err); // createWish의 callback에 err를 넘겨줌
+            }
+            async.series([deleteRealFile, updateProfile], function (err, result) { // insertWish, selectThumbnail 함수를 순차실행
+                if (err) {
+                    return dbConn.rollback(function () { // 에러가 나면 db 롤백! (주의! autocommit 모드 해제!)
+                        dbConn.release(); // db연결 끊음
+                        callback(err); // callback에 err를 넘겨주고
+                    });
+                }
+                dbConn.commit(function () { // 에러가 아니면 commit
+                    dbConn.release(); // db연결 끊음
+                    callback(null, result); // 두번째 함수의 result가 router의 createWish 함수에 전달 됨.
+                });
+            });
+        });
+
+        function deleteRealFile(callback) {
+            dbConn.query(sql_select_profile, [userInfo.userId], function (err, result){
+                if (err) {
+                    return callback(err);
+                }
+                var image = path.join(__dirname, '../uploads/images/profile', userInfo.userImage);
+                fs.unlink(image, function (err) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    console.log('success delete real profile image');
+                    callback(null);
+                });
+            });
+        }
+
+        function updateProfile(callback) {
+            dbConn.query(sql_update_profile, [userInfo.userName, userInfo.userEmail, userInfo.userImage, userInfo.userPhone, userInfo.userId], function(err) {
+                if (err) {
+                    return callback(err);
+                }
+                callback(null);
+            });
+        }
+    });
+}
+
+function updatePush() {}
+
 module.exports.findByEmail = findByEmail;
 module.exports.verifyPassword = verifyPassword;
 module.exports.findUser = findUser;
@@ -206,3 +273,5 @@ module.exports.findOrCreate = findOrCreate;
 module.exports.couponList = couponList;
 module.exports.getProfile = getProfile;
 module.exports.discountList = discountList;
+module.exports.updateProfile = updateProfile;
+module.exports.updatePush = updatePush;
