@@ -3,7 +3,7 @@ var url = require('url');
 var async = require('async');
 var dbPool = require('../models/common').dbPool;
 // 같은 날 다른 시간 공연들 하나로 표시, 시간은 여러개 저장할 수 있도록 하기
-// fixme: 쿼리 리팩토링
+
 // 당일 전체 공연 목록
 function allList(sort, callback) {
     // 공연, 공연장, 이미지 테이블로 공연 목록 정보 제공
@@ -147,7 +147,7 @@ function musicalList(sort, callback) {
         });
     });
 }
-// fixme: 쿼리 리팩토링
+
 // 오페라 목록(정렬 방식에 따른 목록 정렬)
 function operaList(sort, callback) {
     var sql_star = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
@@ -215,7 +215,7 @@ function operaList(sort, callback) {
         });
     });
 }
-// fixme: 쿼리 리팩토링
+
 // 콘서트 목록(정렬 방식에 따른 목록 정렬)
 function concertList(sort, callback) {
     var sql_star = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
