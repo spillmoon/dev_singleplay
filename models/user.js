@@ -204,6 +204,7 @@ function discountList(uid, callback) {
     });
 }
 
+// 프로필 수정
 function updateProfile(userInfo, callback) {
     var sql_select_profile = 'select userImage, name, userPhone, userEmail ' +
         'from user ' +
