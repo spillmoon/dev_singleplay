@@ -4,7 +4,7 @@ var isSecure = require('./common').isSecure;
 var isAuthenticated = require('./common').isAuthenticated;
 var Usableseat = require('../models/usableseat');
 
-router.get('/:pid', isSecure,/* isAuthenticated,*/ function(req, res, next) {
+router.get('/:pid', isSecure, isAuthenticated, function(req, res, next) {
     var playId = req.params.pid;
 
     Usableseat.selectSeat(playId, function(err, info) {

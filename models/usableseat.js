@@ -5,7 +5,9 @@ var url = require('url');
 var fs = require('fs');
 
 function selectSeat(playId, callback) {
-    var sql = "select p.theme, p.name, substring(p.playDay, 1, 10) playDay, substring(p.playTime, 1, 5) playTime, pl.address, pl.placeName, p.placeImageName, u.seatClass, u.seatInfo, (p.VIPprice*(100-p.saveOff)/100) VIPprice, (p.Rprice*(100-p.saveOff)/100) Rprice, (p.Sprice*(100-p.saveOff)/100) Sprice " +
+    var sql = "select p.theme, p.name, substring(p.playDay, 1, 10) playDay, substring(p.playTime, 1, 5) playTime, pl.address, pl.placeName, " +
+        "p.placeImageName, u.seatClass, u.seatInfo, (p.VIPprice*(100-p.saveOff)/100) VIPprice, (p.Rprice*(100-p.saveOff)/100) Rprice, " +
+        "(p.Sprice*(100-p.saveOff)/100) Sprice, u.usableNo " +
               "from play p join place pl on (pl.id = p.place_id) " +
               "join usableSeat u on (u.play_id = p.id) " +
               "where p.playDay=curdate() and p.id=? and u.state=0";
@@ -35,6 +37,7 @@ function selectSeat(playId, callback) {
                 info.placeAddress = results[i].address;
                 info.placeName = results[i].placeName;
                 info.seatInfo.push({
+                    usableSeatNo: results[0].usableSeatNo,
                     seatClass : results[i].seatClass,
                     seatInfo : results[i].seatInfo
                 });

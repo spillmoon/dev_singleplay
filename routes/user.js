@@ -8,12 +8,14 @@ var isAuthenticated = require('./common').isAuthenticated;
 var User = require('../models/user');
 
 // todo: PUT, 프로필, PUSH 수정 구현 에정
-router.put('/me', isSecure,/* isAuthenticated,*/ function(req, res, next) {
+router.put('/me', isSecure, isAuthenticated, function(req, res, next) {
     var action = req.query.action;
     if (action == "push") {
         var pushInfo = {};
         pushInfo.days = [];
         pushInfo.theme = [];
+        console.log(req.body.day);
+        console.log(req.body.theme);
         for(var i = 0; i < req.body.day.length; i++){
             pushInfo.days.push({
                 day: req.body.day[i]
@@ -44,22 +46,25 @@ router.put('/me', isSecure,/* isAuthenticated,*/ function(req, res, next) {
             userInfo.userImage = files.userImage;
             var name = "";
             if (userInfo.userImage)
-                name = userInfo.userImage.name;
-            res.send({
-                code: 1,
-                result: {
-                    profileImg: url.resolve("https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:443/profileimg/", name),
-                    userName: userInfo.userName,
-                    userEmail: userInfo.userEmail,
-                    userPhone: userInfo.userPhone
-                }
-            });
+                name = path.basename(userInfo.userImage.path);
+
+                res.send({
+                    code: 1,
+                    result: {
+                        profileImg: "http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/profileimg/" + name,
+                        userName: userInfo.userName,
+                        userEmail: userInfo.userEmail,
+                        userPhone: userInfo.userPhone
+                    }
+                });
+
         });
     }
 });
 
-router.get('/me', isSecure,/* isAuthenticated, */function(req, res, next) {
-    User.getProfile(1/*req.user.id*/, function(err, info) {
+router.get('/me', isSecure, isAuthenticated, function(req, res, next) {
+    var userId = req.user.id;
+    User.getProfile(userId, function(err, info) {
         if (err) {
             return next(err);
         }
@@ -72,8 +77,9 @@ router.get('/me', isSecure,/* isAuthenticated, */function(req, res, next) {
 });
 
 // 쿠폰 목록 조회, https, 로그인 해야 사용 가능
-router.get('/me/coupons', isSecure, /*isAuthenticated,*/ function(req, res, next) {
-    User.couponList(1/*req.user.id*/, function(err, coupons) { // 매개변수로 세션을 통해 request객체에 붙은 user의 id 사용
+router.get('/me/coupons', isSecure, isAuthenticated, function(req, res, next) {
+    var userId = req.user.id;
+    User.couponList(userId, function(err, coupons) { // 매개변수로 세션을 통해 request객체에 붙은 user의 id 사용
         if (err) {
             return next(err);
         }
@@ -84,8 +90,9 @@ router.get('/me/coupons', isSecure, /*isAuthenticated,*/ function(req, res, next
     });
 });
 
-router.get('/me/discounts', isSecure, /*isAuthenticated,*/ function(req, res, next) {
-    User.discountList(1/*req.user.id*/, function(err, discounts) { // 매개변수로 세션을 통해 request객체에 붙은 user의 id 사용
+router.get('/me/discounts', isSecure, isAuthenticated, function(req, res, next) {
+    var userId = req.user.id;
+    User.discountList(userId, function(err, discounts) { // 매개변수로 세션을 통해 request객체에 붙은 user의 id 사용
         if (err) {
             return next(err);
         }

@@ -116,7 +116,7 @@ router.post('/facebook/token', passport.authenticate('facebook-token', { scope :
                 code: 1,
                 result: {
                     name: info[0].name,
-                    profileImg: info[0].userImage,
+                    profileImg: "http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/profileimg/" + info[0].userImage,
                     couponCnt: info[0].couponCnt,
                     mileage: info[0].mileage
                 }

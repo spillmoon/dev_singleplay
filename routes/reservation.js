@@ -6,9 +6,10 @@ var Reservation = require('../models/reservation');
 
 
 // GET, 예약 내역 조회
-router.get('/', isSecure,/* isAuthenticated, */function (req, res, next) {
+router.get('/', isSecure, isAuthenticated, function (req, res, next) {
     // ../models/reservation의 listRsv 함수 실행
-    Reservation.listRsv(1/*req.user.id*/, function (err, results) {
+    var userId = req.user.id;
+    Reservation.listRsv(userId, function (err, results) {
         if (err) {
             return next(err);
         }
@@ -21,9 +22,9 @@ router.get('/', isSecure,/* isAuthenticated, */function (req, res, next) {
 });
 
 // POST, 예약 내역 추가
-router.post('/', isSecure, /*isAuthenticated,*/ function(req, res, next) {
+router.post('/', isSecure, isAuthenticated, function(req, res, next) {
     // 매개변수 받을 변수 선언
-    var userId = 1; //req.user.id; // 세션에 있는 user.id 정보 -> userId
+    var userId = req.user.id; // 세션에 있는 user.id 정보 -> userId
     var playId = req.body.playId; // body를 통해 공연ID을 받아온다.
     var playName = req.body.playName; // body를 통해 공연명을 받아온다.
     var usableSeatNo = req.body.usableSeatNo; // body를 통해 빈좌석번호를 받아온다.
@@ -43,7 +44,7 @@ router.post('/', isSecure, /*isAuthenticated,*/ function(req, res, next) {
 });
 
 // GET, 예약 내역 상세보기
-router.get('/:rid', isSecure, /*isAuthenticated,*/ function(req, res, next) {
+router.get('/:rid', isSecure, isAuthenticated, function(req, res, next) {
     var rsvId = req.params.rid; // 동적 파라미터로 :rid 입력 -> rsvId
 
     // findRsv 함수 실행, ../models/reservation의 findRsv 함수 결과가 null->err, rsv->result로 넘어온다.
@@ -59,7 +60,7 @@ router.get('/:rid', isSecure, /*isAuthenticated,*/ function(req, res, next) {
     });
 });
 
-router.delete('/:rid', isSecure,/* isAuthenticated,*/ function(req, res, next) {
+router.delete('/:rid', isSecure, isAuthenticated, function(req, res, next) {
     var rsvId = req.params.rid;
 
     Reservation.deleteRsv(rsvId, function(err, result) {

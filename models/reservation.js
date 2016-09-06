@@ -6,7 +6,7 @@ var fs = require('fs');
 var async = require('async');
 
 // 예약 내역 조회
-function listRsv(callback) {
+function listRsv(uid, callback) {
     var sql_select_rsvlist = 'SELECT r.id rid, p.name, place.placeName, substring(p.playDay, 1, 10) playDay, substring(p.playTime, 1, 5) playTime, ' +
                             'p.VIPprice, p.Rprice, p.Sprice, p.saveOff, p.starScoreAvg, i.imageName ' +
                             'FROM play p join reservation r on (p.id = r.play_id) ' +
@@ -20,7 +20,7 @@ function listRsv(callback) {
             return callback(err);
         }
         // dbConn 연결 - 'sql_select_rsvlist' 쿼리문 실행
-        dbConn.query(sql_select_rsvlist, function (err, results) {
+        dbConn.query(sql_select_rsvlist, [uid], function (err, results) {
             dbConn.release();
             if (err) {
                 return callback(err);
