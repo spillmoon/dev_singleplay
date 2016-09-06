@@ -22,16 +22,19 @@ router.get('/', isSecure, isAuthenticated, function (req, res, next) {
 });
 
 // POST, 예약 내역 추가
-router.post('/', isSecure, isAuthenticated, function(req, res, next) {
+router.post('/', isSecure, /*isAuthenticated, */function(req, res, next) {
     // 매개변수 받을 변수 선언
-    var userId = req.user.id; // 세션에 있는 user.id 정보 -> userId
+    var userId = 1; // 세션에 있는 user.id 정보 -> userId
     var playId = req.body.playId; // body를 통해 공연ID을 받아온다.
     var playName = req.body.playName; // body를 통해 공연명을 받아온다.
     var usableSeatNo = req.body.usableSeatNo; // body를 통해 빈좌석번호를 받아온다.
     var seatClass = req.body.seatClass; // body를 통해 좌석등급을 받아온다.
+    var booker = req.body.booker;
+    var bookerPhone = req.body.bookerPhone;
+    var bookerEmail = req.body.bookerEmail;
 
     // 매개변수를 받아 ../models/reservation의 createRsv 함수 실행
-    Reservation.createRsv(userId, playId, playName, usableSeatNo, seatClass, function (err) {
+    Reservation.createRsv(userId, playId, playName, usableSeatNo, seatClass, booker, bookerPhone, bookerEmail, function (err) {
         if (err) {
             return next(err);
         }
