@@ -261,7 +261,29 @@ function updateProfile(userInfo, callback) {
     });
 }
 
-function updatePush() {}
+function updatePush(userId, sql_theme, sql_day, callback) {
+    var sql_reset = "update user set musical = 0, opera = 0, concert = 0, mon = 0, tue = 0, wed = 0, thu = 0, fri = 0, sat = 0, sun = 0 where id = ?";
+    var sql_change = "update user set " + sql_theme + sql_day + " where id = ?";
+    console.log(sql_change);
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        dbConn.query(sql_reset, [userId], function(err, result) {
+            if (err) {
+                dbConn.release();
+                return callback(err);
+            }
+            dbConn.query(sql_change, [userId], function(err, result) {
+                dbConn.release();
+                if (err) {
+                    return callback(err);
+                }
+                callback(null);
+            });
+        });
+    });
+}
 
 module.exports.findByEmail = findByEmail;
 module.exports.verifyPassword = verifyPassword;

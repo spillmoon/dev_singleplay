@@ -8,26 +8,50 @@ var isAuthenticated = require('./common').isAuthenticated;
 var User = require('../models/user');
 
 
-// todo: PUSH 구현 예정
+// PUSH 구현 예정
 router.put('/me', isSecure,/* isAuthenticated,*/ function(req, res, next) {
     var action = req.query.action;
+    var userId = 1; //req.user.id;
     if (action == "push") {
-        var pushInfo = {};
-        pushInfo.days = [];
-        pushInfo.theme = [];
-        for(var i = 0; i < req.body.day.length; i++){
-            pushInfo.days.push({
-                day: req.body.day[i]
-            });
+        var theme = req.body.theme;
+        var day = req.body.day;
+        var sql_theme = "";
+        var sql_day = "";
+        for(var i = 0; i < theme.length; i++) {
+            if (theme[i] == '0')
+                sql_theme += "musical = 1, ";
+            if (theme[i] == '1')
+                sql_theme += "opera = 1, ";
+            if (theme[i] == '2')
+                sql_theme += "concert = 1, ";
         }
-        for(var i = 0; i < req.body.theme.length; i++){
-            pushInfo.theme.push({
-                theme: req.body.theme[i]
-            });
+        for(var i = 0; i < day.length; i++) {
+            if (day[i] == '0')
+                sql_day += "sun = 1, ";
+            if (day[i] == '1')
+                sql_day += "mon = 1, ";
+            if (day[i] == '2')
+                sql_day += "tue = 1, ";
+            if (day[i] == '3')
+                sql_day += "wed = 1, ";
+            if (day[i] == '4')
+                sql_day += "thu = 1, ";
+            if (day[i] == '5')
+                sql_day += "fri = 1, ";
+            if (day[i] == '6')
+                sql_day += "sat = 1, ";
         }
-        res.send({
-            code: 1,
-            message: "알림 변경 성공"
+        sql_day = sql_day.substr(0, sql_day.length-2);
+        console.log(sql_theme);
+        console.log(sql_day);
+        User.updatePush(userId, sql_theme, sql_day, function(err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.send({
+                code: 1,
+                message: "알림 변경 성공"
+            });
         });
     } else if (action == "profile") {
         var form = new formidable.IncomingForm();
@@ -44,9 +68,6 @@ router.put('/me', isSecure,/* isAuthenticated,*/ function(req, res, next) {
             userInfo.userEmail = fields.userEmail;
             userInfo.userPhone = fields.userPhone;
             userInfo.userImage = path.basename(files.userImage.path);
-
-            console.log(path.join(__dirname, '../uploads/images/profile', userInfo.userImage));
-
             User.updateProfile(userInfo, function(err) {
                 if (err) {
                     return next(err);
