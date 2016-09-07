@@ -210,7 +210,7 @@ function discountList(uid, callback) {
 // 프로필 수정
 function updateProfile(userInfo, callback) {
     var sql_update_profile = 'update user ' +
-        "set name = ?, userEmail = ?, userImage = ?, userPhone = ? " +
+        "set name = ?, userEmail = ?, userPhone = ? " +
         "where id =?";
 
     dbPool.getConnection(function (err, dbConn) {

@@ -54,35 +54,22 @@ router.put('/me', isSecure,/* isAuthenticated,*/ function(req, res, next) {
             });
         });
     } else if (action == "profile") {
-        var form = new formidable.IncomingForm();
-        form.uploadDir = path.join(__dirname, '../uploads/images/profile'); // 파일이 업로드될 위치
-        form.keepExtensions = true;
-        form.multiples = false;
-        form.parse(req, function(err, fields, files) {
+        var userInfo = {};
+        userInfo.userName = req.body.userName;
+        userInfo.userEmail = req.body.userEmail;
+        userInfo.userPhone = req.body.userPhone;
+        User.updateProfile(userInfo, function (err) {
             if (err) {
                 return next(err);
             }
-            var userInfo = {};
-            userInfo.userId = req.user.id;
-            userInfo.userName = fields.userName;
-            userInfo.userEmail = fields.userEmail;
-            userInfo.userPhone = fields.userPhone;
-            userInfo.userImage = path.basename(files.userImage.path);
-            User.updateProfile(userInfo, function(err) {
-                if (err) {
-                    return next(err);
+            res.send({
+                code: 1,
+                result: {
+                    message: '프로필 변경 완료',
+                    userName: userInfo.userName,
+                    userEmail: userInfo.userEmail,
+                    userPhone: userInfo.userPhone
                 }
-                res.send({
-                    code: 1,
-                    result: {
-                        message: '프로필 변경 완료',
-                        profileImg: url.resolve("http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/profileimg/", userInfo.userImage),
-                        // profileImg: url.resolve("https://127.0.0.1:4433/profileimg/", userInfo.userImage),
-                        userName: userInfo.userName,
-                        userEmail: userInfo.userEmail,
-                        userPhone: userInfo.userPhone
-                    }
-                });
             });
         });
     }

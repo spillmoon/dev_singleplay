@@ -312,7 +312,7 @@ function searchLocation(location, callback) {
         if (err) {
             return callback("DB CONNECTION FAIL");
         }
-        dbConn.query(sql, function (err, results) {
+        dbConn.query(sql, location, function (err, results) {
             dbConn.release();
             if (err) {
                 return callback("지역 검색 실패");
