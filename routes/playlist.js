@@ -90,7 +90,7 @@ router.get('/', function (req, res, next) {
 // GET, 공연 상세 정보
 router.get('/:pid', function (req, res, next) {
     var playId = req.params.pid;
-    var userId = req.user.id;
+    var userId = (req.user) ? req.user.id : 0;
 
     logger.log('debug', 'sessionId: %s', userId);
     logger.log('debug', 'method: %s', req.method);

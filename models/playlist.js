@@ -406,7 +406,7 @@ function findPlay(pid, uid, callback) {
         "join place pl on (p.place_id = pl.id) " +
         "where p.id = ?";
     // 위시리스트에 있는지 판별
-    var sql_isWish = "select count(wishId) from wishlist where playId = ? and userId = ?";
+    var sql_isWish = "select wishId from wishlist where playId = ? and userId = ?";
     // 빈좌석 갯수 가져오기
     var sql_seat = "select " +
         "sum(case when seatClass = 'VIP' then 1 else 0 end) 'VIP', " +
@@ -497,22 +497,16 @@ function findPlay(pid, uid, callback) {
         }
 
         function isWish(callback) {
-            if (uid != undefined) {
-                dbConn.query(sql_isWish, [pid, uid], function(err, result) {
-                    if (err) {
-                        return callback("SQL isWISH FAIL");
-                    }
-                    if (result.length == 1)
-                        play.isWish = 1;
-                    else
-                        play.isWish = 0;
-                    callback(null);
-                });
-            }
-            else {
-                play.isWish = 0;
+            dbConn.query(sql_isWish, [pid, uid], function (err, result) {
+                if (err) {
+                    return callback("SQL isWISH FAIL");
+                }
+                if (result.length == 1)
+                    play.isWish = 1;
+                else
+                    play.isWish = 0;
                 callback(null);
-            }
+            });
         }
     });
 }
