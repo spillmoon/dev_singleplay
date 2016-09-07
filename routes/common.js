@@ -1,7 +1,7 @@
 function isAuthenticated(req, res, next) {
     if (!req.user) {
         return res.status(401).send({
-            message: 'login required'
+            message: '로그인을 해주세요.'
         });
     }
     next();
