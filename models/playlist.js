@@ -501,8 +501,10 @@ function findPlay(pid, uid, callback) {
                 if (err) {
                     return callback("SQL isWISH FAIL");
                 }
-                if (result.length == 1)
+                if (result.length == 1) {
                     play.isWish = 1;
+                    play.wid = result[0].wishId;
+                }
                 else
                     play.isWish = 0;
                 callback(null);
