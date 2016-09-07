@@ -9,14 +9,15 @@ function createReview(userId, playId, playName, starScore, callback) {
 
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
-            return callback(err);
+            return callback("DB 연결 실패");
         }
         // dbConn 연결 - 매개변수로 회원ID, 공연ID, 공연명, 별점을 받아 'sql' 쿼리문 실행
         dbConn.query(sql, [userId, playId, playName, starScore], function(err) {
-           if (err) {
-               return callback(err);
-           }
-           callback(null); // router에 null->err를 넘겨준다.
+            dbConn.release();
+            if (err) {
+               return callback("평가 입력 실패");
+            }
+            callback(null); // router에 null->err를 넘겨준다.
         });
     });
 }

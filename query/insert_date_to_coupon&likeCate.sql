@@ -1,9 +1,9 @@
 // coupon 테이블 insert문
-insert into coupon(couponName, salePer, user_id, periodStart, periodEnd)
+insert into coupon(couponName, saveOff, user_id, periodStart, periodEnd)
 values('누적 다운로드 10만 돌파기념 쿠폰', 10, 1, '2016-09-01', '2016-09-30');
-insert into coupon(couponName, salePer, user_id, periodStart, periodEnd)
+insert into coupon(couponName, saveOff, user_id, periodStart, periodEnd)
 values('추석맞이 할인 정기 쿠폰', 15, 1, '2016-09-12', '2016-09-18');
-insert into coupon(couponName, salePer, user_id, periodStart, periodEnd)
+insert into coupon(couponName, saveOff, user_id, periodStart, periodEnd)
 values('카톡 플친맺기 이벤트 쿠폰', 8, 1, '2016-09-09', '2016-09-13');
 
 

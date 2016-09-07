@@ -11,26 +11,31 @@ function listBoards(callback) {
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
-            return callback(err);
+            return callback("DB 연결 실패");
         }
         // dbConn 연결 - 'sql' 쿼리문을 실행한다.
         dbConn.query(sql, function (err, results) {
             dbConn.release();
             if (err) {
-                return callback(err);
+                return callback("공지사항, 이벤트 목록 조회 실패");
             }
-            var board = []; // 공지사항, 이벤트 목록을 담을 배열 객체 생성
 
-            // 쿼리문을 통해 select된 results(배열 객체)의 길이만큼 for문 실행
-            for (var i=0; i<results.length; i++) {
-                // 배열 안에 출력 될 게시글 번호와 titleNameImage를 push한다.
-                board.push({ // 공지사항과 이벤트 목록은 title 이미지로 출력한다.
-                    boardNo: results[i].boardNo,
-                    image : url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/boardimg/', path.basename(results[i].titleFileName))
-                    //image : url.resolve('http://127.0.0.1:8080/boardimg/', path.basename(results[i].titleFileName))
-                });
+            if(results.length === 0) {
+                return callback("조회 목록이 없습니다.");
+            } else {
+                var board = []; // 공지사항, 이벤트 목록을 담을 배열 객체 생성
+
+                for (var i=0; i<results.length; i++) {
+                    // 배열 안에 출력 될 게시글 번호와 titleNameImage를 push한다.
+                    board.push({ // 공지사항과 이벤트 목록은 title 이미지로 출력한다.
+                        boardNo: results[i].boardNo,
+                        image : url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/boardimg/', path.basename(results[i].titleFileName))
+                        //image : url.resolve('http://127.0.0.1:8080/boardimg/', path.basename(results[i].titleFileName))
+                    });
+                }
+                callback(null, board); // router에 err->null, results->board 배열 객체를 넘겨준다.
             }
-            callback(null, board); // router에 err->null, results->board 배열 객체를 넘겨준다.
+            // 쿼리문을 통해 select된 results(배열 객체)의 길이만큼 for문 실행
         });
     })
 }
@@ -41,19 +46,23 @@ function findBoard(boardNo, callback) {
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
-            return callback(err);
+            return callback("DB 연결 실패");
         }
         // dbConn 연결 - 매개변수로 게시물번호를 받아 'sql' 쿼리문을 실행한다.
         dbConn.query(sql, [boardNo], function (err, result) {
             dbConn.release();
             if (err) {
-                return callback(err);
+                return callback("이미지 불러오기 실패");
             }
 
+            if(result.length === 0) {
+                return callback("이미지를 불러올 수 없습니다.");
+            } else {
+                var board = url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/boardimg/', path.basename(result[0].fileName)); // 하나의 결과 담긴 result 배열 객체의 index 0
+                // var board = url.resolve('http://127.0.0.1:8080/boardimg/', path.basename(result[0].filePath));
+                callback(null, board); // router에 err->null, result->board 객체를 넘겨준다.
+            }
             // 쿼리문의 결과를 담을 board 객체 생성 - 결과 이미지로 보여줌
-            var board = url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/boardimg/', path.basename(result[0].fileName)); // 하나의 결과 담긴 result 배열 객체의 index 0
-            // var board = url.resolve('http://127.0.0.1:8080/boardimg/', path.basename(result[0].filePath));
-            callback(null, board); // router에 err->null, result->board 객체를 넘겨준다.
         });
     });
 }

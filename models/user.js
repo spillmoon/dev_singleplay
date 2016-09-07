@@ -6,6 +6,7 @@ var mysql = require('mysql');
 var url = require('url');
 var fs = require('fs');
 
+// TODO : 프로필 수정 빼고 에러 처리 해야 함.
 // 로컬로그인에 사용 추후 삭제
 function findByEmail(email, callback) {
     var sql = 'SELECT id, userEmail, password FROM user WHERE userEmail = ?';
@@ -201,63 +202,24 @@ function discountList(uid, callback) {
         }
     });
 }
+
 // 프로필 수정
 function updateProfile(userInfo, callback) {
-    var sql_select_profile = 'select userImage, name, userPhone, userEmail ' +
-        'from user ' +
-        'where id=?';
     var sql_update_profile = 'update user ' +
         "set name = ?, userEmail = ?, userImage = ?, userPhone = ? " +
         "where id =?";
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
-            return callback(err);
+            return callback("DB 연결 실패");
         }
-        dbConn.beginTransaction(function (err) { // 두 개의 행동이 하나의 작업
+        dbConn.query(sql_update_profile, [userInfo.userName, userInfo.userEmail, userInfo.userPhone, userInfo.userId], function(err) {
+            dbConn.release();
             if (err) {
-                return callback(err); // createWish의 callback에 err를 넘겨줌
+                return callback("프로필 변경 실패");
             }
-            async.series([deleteRealFile, updateProfile], function (err, result) { // insertWish, selectThumbnail 함수를 순차실행
-                if (err) {
-                    return dbConn.rollback(function () { // 에러가 나면 db 롤백! (주의! autocommit 모드 해제!)
-                        dbConn.release(); // db연결 끊음
-                        callback(err); // callback에 err를 넘겨주고
-                    });
-                }
-                dbConn.commit(function () { // 에러가 아니면 commit
-                    dbConn.release(); // db연결 끊음
-                    callback(null, result); // 두번째 함수의 result가 router의 createWish 함수에 전달 됨.
-                });
-            });
+            callback(null);
         });
-
-        function deleteRealFile(callback) {
-            dbConn.query(sql_select_profile, [userInfo.userId], function (err, result){
-                if (err) {
-                    return callback(err);
-                }
-                var image = path.join(__dirname, '../uploads/images/profile', result[0].userImage);
-                if (result[0].userImage !== 'defaultProfile.jpg') {
-                    fs.unlink(image, function (err) {
-                        if (err) {
-                            return callback(err);
-                        }
-                        console.log('success delete real profile image');
-                    });
-                }
-                callback(null);
-            });
-        }
-
-        function updateProfile(callback) {
-            dbConn.query(sql_update_profile, [userInfo.userName, userInfo.userEmail, userInfo.userImage, userInfo.userPhone, userInfo.userId], function(err) {
-                if (err) {
-                    return callback(err);
-                }
-                callback(null);
-            });
-        }
     });
 }
 

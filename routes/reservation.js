@@ -6,9 +6,9 @@ var Reservation = require('../models/reservation');
 
 
 // GET, 예약 내역 조회
-router.get('/', isSecure, isAuthenticated, function (req, res, next) {
+router.get('/', isSecure, /*isAuthenticated, */function (req, res, next) {
     // ../models/reservation의 listRsv 함수 실행
-    var userId = req.user.id;
+    var userId = 1; //req.user.id;
     Reservation.listRsv(userId, function (err, results) {
         if (err) {
             return next(err);
@@ -52,7 +52,7 @@ router.post('/', isSecure, /*isAuthenticated, */function(req, res, next) {
 });
 
 // GET, 예약 내역 상세보기
-router.get('/:rid', isSecure, isAuthenticated, function(req, res, next) {
+router.get('/:rid', isSecure, /*isAuthenticated, */function(req, res, next) {
     var rsvId = req.params.rid; // 동적 파라미터로 :rid 입력 -> rsvId
 
     // findRsv 함수 실행, ../models/reservation의 findRsv 함수 결과가 null->err, rsv->result로 넘어온다.
@@ -68,7 +68,7 @@ router.get('/:rid', isSecure, isAuthenticated, function(req, res, next) {
     });
 });
 
-router.delete('/:rid', isSecure, isAuthenticated, function(req, res, next) {
+router.delete('/:rid', isSecure, /*isAuthenticated, */function(req, res, next) {
     var rsvId = req.params.rid;
 
     Reservation.deleteRsv(rsvId, function(err, result) {
