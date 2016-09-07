@@ -47,7 +47,8 @@ function verifyPassword(password, hashPassword, callback) {
 }
 // deserializeUser에서 사용, id를 가지고 user를 복원
 function findUser(userId, callback) {
-    var sql = 'SELECT id, userEmail FROM user WHERE id = ?';
+    var sql = "select id, name, userEmail, facebookId from user where id = ?";
+
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
             return callback("DB CONNECTION FAIL");
@@ -59,15 +60,18 @@ function findUser(userId, callback) {
             }
             var user = {};
             user.id = results[0].id;
-            user.email = results[0].email;
+            user.name = results[0].name;
+            user.email = results[0].userEmail;
+            user.facebookId = results[0].facebookId;
             callback(null, user);
         });
     });
 }
 // 페이스북 로그인시 회원 테이블에서 아이디를 찾고 없으면 추가, 있으면 기존 id 사용
 function findOrCreate(profile, callback) {
-    var sql_findUser = "select id, userEmail, facebookId from user where facebookId = ?";
-    var sql_createUser = "insert into user(userEmail, facebookId) values (?, ?)";
+    var sql_findUser = "select id, name, userEmail, facebookId from user where facebookId = ?";
+
+    var sql_createUser = "insert into user(name, userEmail, facebookId) values(?, ?, ?)";
 
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
@@ -81,17 +85,19 @@ function findOrCreate(profile, callback) {
                 dbConn.release();
                 var user = {};
                 user.id = results[0].id;
+                user.name = results[0].name;
                 user.email = results[0].userEmail;
                 user.facebookId = results[0].facebookId;
                 return callback(null, user);
             }
-            dbConn.query(sql_createUser, [profile.emails[0].value, profile.id], function(err, result) {
+            dbConn.query(sql_createUser, [profile.displayName, profile.emails[0].value, profile.id], function(err, result) {
                 dbConn.release();
                 if (err) {
                     return callback("SQL CREATE USER FAIL");
                 }
                 var user = {};
                 user.id = result.insertId;
+                user.name = profile.displayName;
                 user.email = profile.emails[0].value;
                 user.facebookId = profile.id;
                 callback(null, user);

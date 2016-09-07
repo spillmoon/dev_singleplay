@@ -5,6 +5,7 @@ var LocalStrategy = require('passport-local').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
 var FacebookTokenStrategy = require('passport-facebook-token');
 var User = require('../models/user');
+var logger = require('../config/logger');
 
 passport.serializeUser(function (user, done) {
     done(null, user.id);
@@ -51,7 +52,7 @@ passport.use(new FacebookTokenStrategy({
 //         })
 //     });
 // }));
-
+//
 // passport.use(new FacebookStrategy({
 //         clientID: process.env.FACEBOOK_APP_ID,
 //         clientSecret: process.env.FACEBOOK_APP_SECRET,

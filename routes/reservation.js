@@ -3,12 +3,23 @@ var router = express.Router();
 var isSecure = require('./common').isSecure;
 var isAuthenticated = require('./common').isAuthenticated;
 var Reservation = require('../models/reservation');
-
+var logger = require('../config/logger');
 
 // GET, 예약 내역 조회
-router.get('/', isSecure, /*isAuthenticated, */function (req, res, next) {
+router.get('/', isSecure, isAuthenticated, function (req, res, next) {
     // ../models/reservation의 listRsv 함수 실행
-    var userId = 1; //req.user.id;
+    var userId = req.user.id;
+
+    logger.log('debug', 'sessionId: %s', userId);
+    logger.log('debug', 'method: %s', req.method);
+    logger.log('debug', 'protocol: %s', req.protocol);
+    logger.log('debug', 'host: %s', req.headers['host']);
+    logger.log('debug', 'originalUrl: %s', req.originalUrl);
+    logger.log('debug', 'baseUrl: %s', req.baseUrl);
+    logger.log('debug', 'url: %s', req.url);
+    logger.log('debug', 'query: %j', req.query, {});
+    logger.log('debug', '%s %s://%s%s', req.method, req.protocol, req.headers['host'], req.originalUrl);
+
     Reservation.listRsv(userId, function (err, results) {
         if (err) {
             return next(err);
@@ -22,9 +33,9 @@ router.get('/', isSecure, /*isAuthenticated, */function (req, res, next) {
 });
 
 // POST, 예약 내역 추가
-router.post('/', isSecure, /*isAuthenticated, */function(req, res, next) {
+router.post('/', isSecure, isAuthenticated, function(req, res, next) {
     // 매개변수 받을 변수 선언
-    var userId = 1; // 세션에 있는 user.id 정보 -> userId
+    var userId = req.user.id; // 세션에 있는 user.id 정보 -> userId
     var playId = req.body.playId; // body를 통해 공연ID을 받아온다.
     var playName = req.body.playName; // body를 통해 공연명을 받아온다.
     var usableSeatNo = req.body.usableSeatNo; // body를 통해 빈좌석번호를 받아온다.
@@ -36,12 +47,22 @@ router.post('/', isSecure, /*isAuthenticated, */function(req, res, next) {
     var useCoupon = req.body.useCoupon;
     var settlement = req.body.settlement;
 
+    logger.log('debug', 'sessionId: %s', userId);
+    logger.log('debug', 'method: %s', req.method);
+    logger.log('debug', 'protocol: %s', req.protocol);
+    logger.log('debug', 'host: %s', req.headers['host']);
+    logger.log('debug', 'originalUrl: %s', req.originalUrl);
+    logger.log('debug', 'baseUrl: %s', req.baseUrl);
+    logger.log('debug', 'url: %s', req.url);
+    logger.log('debug', 'body: %j', req.body, {});
+    logger.log('debug', '%s %s://%s%s', req.method, req.protocol, req.headers['host'], req.originalUrl);
+
     // 매개변수를 받아 ../models/reservation의 createRsv 함수 실행
     Reservation.createRsv(userId, playId, playName, usableSeatNo, seatClass, booker, bookerPhone, bookerEmail, useMileage, useCoupon, settlement, function (err, rid) {
         if (err) {
             return next(err);
         }
-        Reservation.findRsv(rid,function(err, result) {
+        Reservation.findRsv(rid, function(err, result) {
             // 출력 결과
             res.send({
                 code: 1, // 성공 코드
@@ -52,8 +73,17 @@ router.post('/', isSecure, /*isAuthenticated, */function(req, res, next) {
 });
 
 // GET, 예약 내역 상세보기
-router.get('/:rid', isSecure, /*isAuthenticated, */function(req, res, next) {
+router.get('/:rid', isSecure, isAuthenticated, function(req, res, next) {
     var rsvId = req.params.rid; // 동적 파라미터로 :rid 입력 -> rsvId
+
+    logger.log('debug', 'method: %s', req.method);
+    logger.log('debug', 'protocol: %s', req.protocol);
+    logger.log('debug', 'host: %s', req.headers['host']);
+    logger.log('debug', 'originalUrl: %s', req.originalUrl);
+    logger.log('debug', 'baseUrl: %s', req.baseUrl);
+    logger.log('debug', 'url: %s', req.url);
+    logger.log('debug', 'params: %j', req.params, {});
+    logger.log('debug', '%s %s://%s%s', req.method, req.protocol, req.headers['host'], req.originalUrl);
 
     // findRsv 함수 실행, ../models/reservation의 findRsv 함수 결과가 null->err, rsv->result로 넘어온다.
     Reservation.findRsv(rsvId, function(err, result) {
@@ -68,8 +98,17 @@ router.get('/:rid', isSecure, /*isAuthenticated, */function(req, res, next) {
     });
 });
 
-router.delete('/:rid', isSecure, /*isAuthenticated, */function(req, res, next) {
+router.delete('/:rid', isSecure, isAuthenticated, function(req, res, next) {
     var rsvId = req.params.rid;
+
+    logger.log('debug', 'method: %s', req.method);
+    logger.log('debug', 'protocol: %s', req.protocol);
+    logger.log('debug', 'host: %s', req.headers['host']);
+    logger.log('debug', 'originalUrl: %s', req.originalUrl);
+    logger.log('debug', 'baseUrl: %s', req.baseUrl);
+    logger.log('debug', 'url: %s', req.url);
+    logger.log('debug', 'params: %j', req.params, {});
+    logger.log('debug', '%s %s://%s%s', req.method, req.protocol, req.headers['host'], req.originalUrl);
 
     Reservation.deleteRsv(rsvId, function(err, result) {
         if (err) {

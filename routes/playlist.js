@@ -1,10 +1,20 @@
 var express = require('express');
 var router = express.Router();
 var Play = require('../models/playlist');
+var logger = require('../config/logger');
 
 // GET, 항목별 정렬된 공연 목록
 router.get('/', function (req, res, next) {
     var action = req.query.action;
+
+    logger.log('debug', 'method: %s', req.method);
+    logger.log('debug', 'protocol: %s', req.protocol);
+    logger.log('debug', 'host: %s', req.headers['host']);
+    logger.log('debug', 'originalUrl: %s', req.originalUrl);
+    logger.log('debug', 'baseUrl: %s', req.baseUrl);
+    logger.log('debug', 'url: %s', req.url);
+    logger.log('debug', 'query: %j', req.query, {});
+    logger.log('debug', '%s %s://%s%s', req.method, req.protocol, req.headers['host'], req.originalUrl);
 
     if (action == 0) { // 항목별 검색
         var theme = req.query.theme; // undefined: 전체, 0: 뮤지컬, 1: 오페라, 2:콘서트
@@ -81,6 +91,17 @@ router.get('/', function (req, res, next) {
 router.get('/:pid', function (req, res, next) {
     var playId = req.params.pid;
     var userId = req.user.id;
+
+    logger.log('debug', 'sessionId: %s', userId);
+    logger.log('debug', 'method: %s', req.method);
+    logger.log('debug', 'protocol: %s', req.protocol);
+    logger.log('debug', 'host: %s', req.headers['host']);
+    logger.log('debug', 'originalUrl: %s', req.originalUrl);
+    logger.log('debug', 'baseUrl: %s', req.baseUrl);
+    logger.log('debug', 'url: %s', req.url);
+    logger.log('debug', 'params: %j', req.params, {});
+    logger.log('debug', '%s %s://%s%s', req.method, req.protocol, req.headers['host'], req.originalUrl);
+
     Play.findPlay(playId, userId, function(err, play) {
         if (err) {
             return next(err);
