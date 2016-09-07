@@ -6,7 +6,7 @@ var mysql = require('mysql');
 var url = require('url');
 var fs = require('fs');
 
-// TODO : 프로필 수정 빼고 에러 처리 해야 함.
+// 프로필 수정 빼고 에러 처리 해야 함.
 // 로컬로그인에 사용 추후 삭제
 function findByEmail(email, callback) {
     var sql = 'SELECT id, userEmail, password FROM user WHERE userEmail = ?';
@@ -50,12 +50,12 @@ function findUser(userId, callback) {
     var sql = 'SELECT id, userEmail FROM user WHERE id = ?';
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
-            return callback(err);
+            return callback("DB CONNECTION FAIL");
         }
         dbConn.query(sql, [userId], function(err, results) {
             dbConn.release();
             if (err) {
-                return callback(err);
+                return callback("로그인 실패");
             }
             var user = {};
             user.id = results[0].id;
@@ -71,11 +71,11 @@ function findOrCreate(profile, callback) {
 
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
-            return callback(err);
+            return callback("DB CONNECTION FAIL");
         }
         dbConn.query(sql_findUser, [profile.id], function(err, results) {
             if (err) {
-                return callback(err);
+                return callback("SQL FIND USER FAIL");
             }
             if (results.length !== 0) {
                 dbConn.release();
@@ -88,7 +88,7 @@ function findOrCreate(profile, callback) {
             dbConn.query(sql_createUser, [profile.emails[0].value, profile.id], function(err, result) {
                 dbConn.release();
                 if (err) {
-                    return callback(err);
+                    return callback("SQL CREATE USER FAIL");
                 }
                 var user = {};
                 user.id = result.insertId;
@@ -107,12 +107,12 @@ function couponList(uid, callback) {
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
-            return callback(err);
+            return callback("DB CONNECTION FAIL");
         }
         dbConn.query(sql_coupon_list, [uid], function(err, results) {
             dbConn.release();
             if (err) {
-                return callback(err);
+                return callback("쿠폰함 조회 실패");
             }
             var coupons = [];
             for(var i = 0; i < results.length; i++) {
@@ -136,11 +136,11 @@ function getProfile(uid, callback) {
             "where id = ?";
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
-            return callback(err);
+            return callback("DB CONNECTION FAIL");
         }
         dbConn.query(sql, [uid], function(err, result) {
             if (err) {
-                return callback(err);
+                return callback("사용자 정보 가져오기 실패");
             }
             callback(null, result);
         });
@@ -153,18 +153,18 @@ function discountList(uid, callback) {
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
-            return callback(err);
+            return callback("DB CONNECTION FAIL");
         }
         var discounts = {};
         dbConn.beginTransaction(function(err) {
             if (err) {
-                return callback(err);
+                return callback("TRANSACTION FAIL");
             }
             async.parallel([getMileage, getCoupon], function(err, result) {
                 if (err) {
                     return dbConn.rollback(function() {
                         dbConn.release();
-                        callback(err);
+                        callback("할인 목록 가져오기 실패");
                     });
                 }
                 dbConn.commit(function() {
@@ -177,9 +177,9 @@ function discountList(uid, callback) {
         function getMileage(callback) {
             dbConn.query(sql_mileage, [uid], function(err, result) {
                 if (err) {
-                    return callback(err);
+                    return callback("SQL MILEAGE FAIL");
                 }
-                discounts.mileage = result[0].mileage;
+                discounts.mileage = result[0].mileage || 0;
                 callback(null);
             });
         }
@@ -187,17 +187,21 @@ function discountList(uid, callback) {
         function getCoupon(callback) {
             dbConn.query(sql_coupon_list, [uid], function(err, results) {
                 if (err) {
-                    return callback(err);
+                    return callback("SQL COUPON FAIL");
                 }
                 discounts.coupons = [];
-                for(var i = 0; i < results.length; i++) {
-                    discounts.coupons.push({
-                        couponNo: results[i].couponNo,
-                        couponName: results[i].couponName,
-                        saveOff: results[i].saveOff,
-                    });
+                if (results.length !== 0) {
+                    for(var i = 0; i < results.length; i++) {
+                        discounts.coupons.push({
+                            couponNo: results[i].couponNo,
+                            couponName: results[i].couponName,
+                            saveOff: results[i].saveOff,
+                        });
+                    }
+                    callback(null);
                 }
-                callback(null);
+                else
+                    callback(null);
             });
         }
     });
@@ -229,17 +233,17 @@ function updatePush(userId, sql_theme, sql_day, callback) {
     console.log(sql_change);
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
-            return callback(err);
+            return callback("DB CONNECTION FAIL");
         }
         dbConn.query(sql_reset, [userId], function(err, result) {
             if (err) {
                 dbConn.release();
-                return callback(err);
+                return callback("RESET FAIL");
             }
             dbConn.query(sql_change, [userId], function(err, result) {
                 dbConn.release();
                 if (err) {
-                    return callback(err);
+                    return callback("알림 설정 변경 실패");
                 }
                 callback(null);
             });

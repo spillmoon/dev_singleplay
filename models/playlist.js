@@ -45,12 +45,15 @@ function allList(sort, callback) {
     // dbPool에서 커넥션을 가져옴
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
-            return callback(err);
+            return callback("DB CONNECTION FAIL");
         }
-        dbConn.query(sql, function (err, results) { // 쿼리 실행
+        dbConn.query(sql, function (err, results) {
+            dbConn.release();
             if (err) {
-                dbConn.release();
-                return callback(err);
+                return callback("목록 조회 실패");
+            }
+            if (results.length == 0) {
+                return callback("오늘 공연은 없습니다.");
             }
             var playlist = [];
             var tmpPrice = {};
@@ -113,12 +116,15 @@ function musicalList(sort, callback) {
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
-            return callback(err);
+            return callback("DB CONNECTION FAIL");
         }
         dbConn.query(sql, function (err, results) {
             dbConn.release();
             if (err) {
-                return callback(err);
+                return callback("목록 조회 실패");
+            }
+            if (results.length == 0) {
+                return callback("오늘 공연은 없습니다.");
             }
             var playlist = [];
             var tmpPrice = {};
@@ -181,12 +187,15 @@ function operaList(sort, callback) {
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
-            return callback(err);
+            return callback("DB CONNECTION FAIL");
         }
         dbConn.query(sql, function (err, results) {
             dbConn.release();
             if (err) {
-                return callback(err);
+                return callback("목록 조회 실패");
+            }
+            if (results.length == 0) {
+                return callback("오늘 공연은 없습니다.");
             }
             var playlist = [];
             var tmpPrice = {};
@@ -250,12 +259,15 @@ function concertList(sort, callback) {
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
-            return callback(err);
+            return callback("DB CONNECTION FAIL");
         }
         dbConn.query(sql, function (err, results) {
             dbConn.release();
             if (err) {
-                return callback(err);
+                return callback("목록 조회 실패");
+            }
+            if (results.length == 0) {
+                return callback("오늘 공연은 없습니다.");
             }
             var playlist = [];
             var tmpPrice = {};
@@ -298,12 +310,15 @@ function searchLocation(location, callback) {
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
-            return callback(err);
+            return callback("DB CONNECTION FAIL");
         }
-        dbConn.query(sql, [location], function (err, results) {
+        dbConn.query(sql, function (err, results) {
             dbConn.release();
             if (err) {
-                return callback(err);
+                return callback("지역 검색 실패");
+            }
+            if (results.length == 0) {
+                return callback("검색 결과가 없습니다.");
             }
             var playlist = [];
             var tmpPrice = {};
@@ -345,12 +360,15 @@ function searchKeyword(keyword, callback) {
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
-            return callback(err);
+            return callback("DB CONNECTION FAIL");
         }
-        dbConn.query(sql, [keyword], function (err, results) {
+        dbConn.query(sql, function (err, results) {
             dbConn.release();
             if (err) {
-                return callback(err);
+                return callback("키워드 검색 실패");
+            }
+            if (results.length == 0) {
+                return callback("검색 결과가 없습니다.");
             }
             var playlist = [];
             var tmpPrice = {};
@@ -399,19 +417,19 @@ function findPlay(pid, uid, callback) {
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
-            return callback(err);
+            return callback("DB CONNECTION FAIL");
         }
         var play = {};
         // async의 parallel로 공연정보, 빈자리 정보 가져오기
         dbConn.beginTransaction(function(err) {
             if (err) {
-                return callback(err);
+                return callback("TRANSACTION FAIL");
             }
             async.parallel([getPlayInfo, getPlaySeat, isWish], function (err) {
                 if (err) {
                     return dbConn.rollback(function() {
                         dbConn.release();
-                        callback(err);
+                        callback("공연 상세 조회 실패");
                     });
                 }
                 dbConn.commit(function() {
@@ -425,7 +443,10 @@ function findPlay(pid, uid, callback) {
         function getPlayInfo(callback) {
             dbConn.query(sql_info, [pid], function (err, playinfo) {
                 if (err) {
-                    return callback(err);
+                    return callback("SQL INFO FAIL");
+                }
+                if (playinfo.length == 0) {
+                    return callback("공연 조회 실패")
                 }
                 var theme = "";
                 if (playinfo[0].theme == 0)
@@ -465,7 +486,7 @@ function findPlay(pid, uid, callback) {
         function getPlaySeat(callback) {
             dbConn.query(sql_seat, [pid], function (err, seatCount) {
                 if (err) {
-                    return callback(err);
+                    return callback("SQL SEAT FAIL");
                 }
                 seatCount[0].VIP = seatCount[0].VIP || 0;
                 seatCount[0].R = seatCount[0].R || 0;
@@ -479,9 +500,9 @@ function findPlay(pid, uid, callback) {
             if (uid != undefined) {
                 dbConn.query(sql_isWish, [pid, uid], function(err, result) {
                     if (err) {
-                        return callback(err);
+                        return callback("SQL isWISH FAIL");
                     }
-                    if (result[0].length == 1)
+                    if (result.length == 1)
                         play.isWish = 1;
                     else
                         play.isWish = 0;
