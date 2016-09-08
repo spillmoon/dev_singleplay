@@ -7,44 +7,6 @@ var url = require('url');
 var fs = require('fs');
 
 // 프로필 수정 빼고 에러 처리 해야 함.
-// 로컬로그인에 사용 추후 삭제
-function findByEmail(email, callback) {
-    var sql = 'SELECT id, userEmail, password FROM user WHERE userEmail = ?';
-    dbPool.getConnection(function(err, dbConn) {
-        if (err) {
-            return callback(err);
-        }
-        dbConn.query(sql, [email], function(err, results) {
-            dbConn.release();
-            if (err) {
-                return callback(err);
-            }
-            if (results.length === 0) {
-                return callback(null, null);
-            }
-            callback(null, results[0]);
-        })
-    });
-}
-// 로컬로그인에 사용 추후 삭제
-function verifyPassword(password, hashPassword, callback) {
-    var sql = 'SELECT SHA2(?, 256) password';
-    dbPool.getConnection(function(err, dbConn){
-        if (err) {
-            return callback(err);
-        }
-        dbConn.query(sql, [password], function(err, results) {
-            dbConn.release();
-            if (err) {
-                return callback(err);
-            }
-            if (results[0].password !== hashPassword) {
-                return callback(null, false)
-            }
-            callback(null, true);
-        });
-    });
-}
 // deserializeUser에서 사용, id를 가지고 user를 복원
 function findUser(userId, callback) {
     var sql = "select id, name, userEmail, facebookId from user where id = ?";
@@ -70,7 +32,6 @@ function findUser(userId, callback) {
 // 페이스북 로그인시 회원 테이블에서 아이디를 찾고 없으면 추가, 있으면 기존 id 사용
 function findOrCreate(profile, callback) {
     var sql_findUser = "select id, name, userEmail, facebookId from user where facebookId = ?";
-
     var sql_createUser = "insert into user(name, userEmail, facebookId) values(?, ?, ?)";
 
     dbPool.getConnection(function(err, dbConn) {
@@ -204,10 +165,8 @@ function discountList(uid, callback) {
                             saveOff: results[i].saveOff,
                         });
                     }
-                    callback(null);
                 }
-                else
-                    callback(null);
+                callback(null);
             });
         }
     });
@@ -221,7 +180,7 @@ function updateProfile(userInfo, callback) {
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
-            return callback("DB 연결 실패");
+            return callback("DB CONNECTION FAIL");
         }
         dbConn.query(sql_update_profile, [userInfo.userName, userInfo.userEmail, userInfo.userPhone, userInfo.userId], function(err) {
             dbConn.release();
@@ -257,8 +216,6 @@ function updatePush(userId, sql_theme, sql_day, callback) {
     });
 }
 
-module.exports.findByEmail = findByEmail;
-module.exports.verifyPassword = verifyPassword;
 module.exports.findUser = findUser;
 module.exports.findOrCreate = findOrCreate;
 module.exports.couponList = couponList;

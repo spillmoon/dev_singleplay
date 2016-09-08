@@ -4,7 +4,7 @@ var isSecure = require('./common').isSecure;
 var isAuthenticated = require('./common').isAuthenticated;
 var Usableseat = require('../models/usableseat');
 var logger = require('../config/logger');
-
+// 공연의 빈자리 정보 가져오기
 router.get('/:pid', isSecure, isAuthenticated, function(req, res, next) {
     var playId = req.params.pid;
 
@@ -19,7 +19,10 @@ router.get('/:pid', isSecure, isAuthenticated, function(req, res, next) {
 
     Usableseat.selectSeat(playId, function(err, info) {
         if (err) {
-            return next(err);
+            res.send({
+                code: 0,
+                error: "빈자리 정보 제공 실패"
+            });
         }
         // 출력 결과
         res.send({

@@ -14,39 +14,38 @@ function selectSeat(playId, callback) {
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
-            return callback("DB 연결 실패");
+            return callback("DB CONNECTION FAIL");
         }
         dbConn.query(sql, [playId], function (err, results) {
             dbConn.release();
             if (err) {
                 return callback("빈자리 정보 제공 실패");
             }
-
+            var info = {};
+            if (results[0].theme == 0)
+                info.theme = "뮤지컬";
+            if (results[0].theme == 1)
+                info.theme = "오페라";
+            if (results[0].theme == 2)
+                info.theme = "콘서트";
+            info.playName = results[0].name;
+            info.playDay = results[0].playDay;
+            info.playTime = results[0].playTime;
+            info.placeImage = url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/placeimg/', path.basename(results[0].placeImageName));
+            info.placeAddress = results[0].address;
+            info.placeName = results[0].placeName;
+            info.seatInfo = [];
             if (results.length === 0) {
-                return callback("예약 가능한 빈자리가 없습니다.")
+                callback(null, info);
             } else {
-                var info = {};
-                info.seatInfo = [];
                 var price = 0;
                 for (var i = 0; i < results.length; i++) {
-                    if (results[i].theme == 0)
-                        info.theme = "뮤지컬";
-                    if (results[i].theme == 1)
-                        info.theme = "오페라";
-                    if (results[i].theme == 2)
-                        info.theme = "콘서트";
                     if (results[i].seatClass == "VIP")
                         price = results[i].VIPprice;
                     if (results[i].seatClass == "R")
                         price = results[i].Rprice;
                     if (results[i].seatClass == "S")
                         price = results[i].Sprice;
-                    info.playName = results[i].name;
-                    info.playDay = results[i].playDay;
-                    info.playTime = results[i].playTime;
-                    info.placeImage = url.resolve('https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/placeimg/', path.basename(results[0].placeImageName));
-                    info.placeAddress = results[i].address;
-                    info.placeName = results[i].placeName;
                     info.seatInfo.push({
                         usableSeatNo: results[i].usableNo,
                         seatClass: results[i].seatClass,

@@ -22,7 +22,10 @@ router.get('/', isSecure, isAuthenticated, function (req, res, next) {
 
     Reservation.listRsv(userId, function (err, results) {
         if (err) {
-            return next(err);
+            res.send({
+                code: 0,
+                error: "예약 내역 조회 실패"
+            });
         }
         // 출력 결과
         res.send({
@@ -60,7 +63,10 @@ router.post('/', isSecure, isAuthenticated, function(req, res, next) {
     // 매개변수를 받아 ../models/reservation의 createRsv 함수 실행
     Reservation.createRsv(userId, playId, playName, usableSeatNo, seatClass, booker, bookerPhone, bookerEmail, useMileage, useCoupon, settlement, function (err, rid) {
         if (err) {
-            return next(err);
+            res.send({
+                code: 0,
+                error: "예약 실패"
+            });
         }
         Reservation.findRsv(rid, function(err, result) {
             // 출력 결과
@@ -88,7 +94,10 @@ router.get('/:rid', isSecure, isAuthenticated, function(req, res, next) {
     // findRsv 함수 실행, ../models/reservation의 findRsv 함수 결과가 null->err, rsv->result로 넘어온다.
     Reservation.findRsv(rsvId, function(err, result) {
         if (err) {
-            return next(err);
+            res.send({
+                code: 0,
+                error: "예약 상세 조회 실패"
+            });
         }
         // 출력 결과
         res.send({
@@ -112,7 +121,10 @@ router.delete('/:rid', isSecure, isAuthenticated, function(req, res, next) {
 
     Reservation.deleteRsv(rsvId, function(err, result) {
         if (err) {
-            return next(err);
+            res.send({
+                code: 0,
+                error: "예약 취소 실패"
+            });
         }
         res.send({
             code: 1,

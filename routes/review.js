@@ -26,7 +26,10 @@ router.post('/', isSecure, isAuthenticated, function (req, res, next) {
     // 매개변수를 받아 ../models/review의 createReview 함수 실행
     Review.createReview(userId, playId, playName, starScore, function (err) {
         if (err) {
-            return next(err);
+            res.send({
+                code: 0,
+                error: "평가 입력 실패"
+            });
         }
         // 출력 결과
         res.send({

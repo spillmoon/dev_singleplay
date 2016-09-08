@@ -97,8 +97,18 @@ router.post('/local/login', function (req, res, next) {
 });
 
 router.get('/logout', function (req, res, next) {
-    req.logout();
-    res.send({message: 'local logout'});
+    if (req.logout()) {
+        res.send({
+            code: 1,
+            message: '로그아웃 성공'
+        });
+    } else {
+        res.send({
+            code: 0,
+            message: '로그아웃 실패'
+        });
+    }
+
 });
 
 router.get('/facebook', passport.authenticate('facebook', { scope : ['email']}));
@@ -111,7 +121,10 @@ router.post('/facebook/token', passport.authenticate('facebook-token', { scope :
     if (req.user) {
         User.getProfile(req.user.id, function(err, info) {
             if (err) {
-                return next(err);
+                res.send({
+                    code: 0,
+                    error: "로그인 실패"
+                })
             }
             res.send({
                 code: 1,

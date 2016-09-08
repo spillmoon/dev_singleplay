@@ -52,9 +52,6 @@ function allList(sort, callback) {
             if (err) {
                 return callback("목록 조회 실패");
             }
-            if (results.length == 0) {
-                return callback("오늘 공연은 없습니다.");
-            }
             var playlist = [];
             var tmpPrice = {};
             for (var i = 0; i < results.length; i++) { // 결과 갯수만큼 객체들을 만들어 정보를 배열에 저장
@@ -123,9 +120,6 @@ function musicalList(sort, callback) {
             if (err) {
                 return callback("목록 조회 실패");
             }
-            if (results.length == 0) {
-                return callback("오늘 공연은 없습니다.");
-            }
             var playlist = [];
             var tmpPrice = {};
             for (var i = 0; i < results.length; i++) {
@@ -193,9 +187,6 @@ function operaList(sort, callback) {
             dbConn.release();
             if (err) {
                 return callback("목록 조회 실패");
-            }
-            if (results.length == 0) {
-                return callback("오늘 공연은 없습니다.");
             }
             var playlist = [];
             var tmpPrice = {};
@@ -266,9 +257,6 @@ function concertList(sort, callback) {
             if (err) {
                 return callback("목록 조회 실패");
             }
-            if (results.length == 0) {
-                return callback("오늘 공연은 없습니다.");
-            }
             var playlist = [];
             var tmpPrice = {};
             for (var i = 0; i < results.length; i++) {
@@ -317,9 +305,6 @@ function searchLocation(location, callback) {
             if (err) {
                 return callback("지역 검색 실패");
             }
-            if (results.length == 0) {
-                return callback("검색 결과가 없습니다.");
-            }
             var playlist = [];
             var tmpPrice = {};
             for (var i = 0; i < results.length; i++) {
@@ -366,9 +351,6 @@ function searchKeyword(keyword, callback) {
             dbConn.release();
             if (err) {
                 return callback("키워드 검색 실패");
-            }
-            if (results.length == 0) {
-                return callback("검색 결과가 없습니다.");
             }
             var playlist = [];
             var tmpPrice = {};
