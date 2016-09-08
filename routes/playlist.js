@@ -22,7 +22,7 @@ router.get('/', function (req, res, next) {
         if (theme == undefined) { // 장르 구분없는 공연 목록
             Play.allList(sort, function(err, playlist) {
                 if (err) {
-                    res.send({
+                    return res.send({
                         code: 0,
                         error: "공연 목록 조회 실패"
                     });
@@ -35,7 +35,7 @@ router.get('/', function (req, res, next) {
         } else if (theme == 0) { // 뮤지컬 목록
             Play.musicalList(sort, function(err, playlist) {
                 if (err) {
-                    res.send({
+                    return res.send({
                         code: 0,
                         error: "공연 목록 조회 실패"
                     });
@@ -48,7 +48,7 @@ router.get('/', function (req, res, next) {
         } else if (theme == 1) { // 오페라 목록
             Play.operaList(sort, function(err, playlist) {
                 if (err) {
-                    res.send({
+                    return res.send({
                         code: 0,
                         error: "공연 목록 조회 실패"
                     });
@@ -61,7 +61,7 @@ router.get('/', function (req, res, next) {
         } else { // 콘서트 목록
             Play.concertList(sort, function(err, playlist) {
                 if (err) {
-                    res.send({
+                    return res.send({
                         code: 0,
                         error: "공연 목록 조회 실패"
                     });
@@ -77,7 +77,7 @@ router.get('/', function (req, res, next) {
         var location = req.query.location;
         Play.searchLocation(location, function(err, playlist) {
             if (err) {
-                res.send({
+                return res.send({
                     code: 0,
                     error: "지역 검색 실패"
                 });
@@ -92,7 +92,7 @@ router.get('/', function (req, res, next) {
         var keyword = req.query.keyword;
         Play.searchKeyword(keyword, function(err, playlist) {
             if (err) {
-                res.send({
+                return res.send({
                     code: 0,
                     error: "키워드 검색 실패"
                 });
@@ -108,7 +108,7 @@ router.get('/', function (req, res, next) {
 // GET, 공연 상세 정보
 router.get('/:pid', function (req, res, next) {
     var playId = req.params.pid;
-    var userId = (req.user) ? req.user.id : 0;
+    var userId = (req.user) ? 1 /*req.user.id*/ : 0;
 
     logger.log('debug', 'sessionId: %s', userId);
     logger.log('debug', 'method: %s', req.method);
@@ -122,7 +122,7 @@ router.get('/:pid', function (req, res, next) {
 
     Play.findPlay(playId, userId, function(err, play) {
         if (err) {
-            res.send({
+            return res.send({
                 code: 0,
                 error: "공연 상세 조회 실패"
             });

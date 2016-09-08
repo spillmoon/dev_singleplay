@@ -6,9 +6,9 @@ var Reservation = require('../models/reservation');
 var logger = require('../config/logger');
 
 // GET, 예약 내역 조회
-router.get('/', isSecure, isAuthenticated, function (req, res, next) {
+router.get('/', isSecure, /*isAuthenticated,*/ function (req, res, next) {
     // ../models/reservation의 listRsv 함수 실행
-    var userId = req.user.id;
+    var userId = 1; //req.user.id;
 
     logger.log('debug', 'sessionId: %s', userId);
     logger.log('debug', 'method: %s', req.method);
@@ -22,7 +22,7 @@ router.get('/', isSecure, isAuthenticated, function (req, res, next) {
 
     Reservation.listRsv(userId, function (err, results) {
         if (err) {
-            res.send({
+            return res.send({
                 code: 0,
                 error: "예약 내역 조회 실패"
             });
@@ -36,9 +36,9 @@ router.get('/', isSecure, isAuthenticated, function (req, res, next) {
 });
 
 // POST, 예약 내역 추가
-router.post('/', isSecure, isAuthenticated, function(req, res, next) {
+router.post('/', isSecure, /*isAuthenticated,*/ function(req, res, next) {
     // 매개변수 받을 변수 선언
-    var userId = req.user.id; // 세션에 있는 user.id 정보 -> userId
+    var userId = 1; //req.user.id; // 세션에 있는 user.id 정보 -> userId
     var playId = req.body.playId; // body를 통해 공연ID을 받아온다.
     var playName = req.body.playName; // body를 통해 공연명을 받아온다.
     var usableSeatNo = req.body.usableSeatNo; // body를 통해 빈좌석번호를 받아온다.
@@ -63,12 +63,18 @@ router.post('/', isSecure, isAuthenticated, function(req, res, next) {
     // 매개변수를 받아 ../models/reservation의 createRsv 함수 실행
     Reservation.createRsv(userId, playId, playName, usableSeatNo, seatClass, booker, bookerPhone, bookerEmail, useMileage, useCoupon, settlement, function (err, rid) {
         if (err) {
-            res.send({
+            return res.send({
                 code: 0,
                 error: "예약 실패"
             });
         }
         Reservation.findRsv(rid, function(err, result) {
+            if (err) {
+                return res.send({
+                    code: 0,
+                    error: "예약 내역 출력 실패"
+                });
+            }
             // 출력 결과
             res.send({
                 code: 1, // 성공 코드
@@ -79,7 +85,7 @@ router.post('/', isSecure, isAuthenticated, function(req, res, next) {
 });
 
 // GET, 예약 내역 상세보기
-router.get('/:rid', isSecure, isAuthenticated, function(req, res, next) {
+router.get('/:rid', isSecure, /*isAuthenticated,*/ function(req, res, next) {
     var rsvId = req.params.rid; // 동적 파라미터로 :rid 입력 -> rsvId
 
     logger.log('debug', 'method: %s', req.method);
@@ -94,7 +100,7 @@ router.get('/:rid', isSecure, isAuthenticated, function(req, res, next) {
     // findRsv 함수 실행, ../models/reservation의 findRsv 함수 결과가 null->err, rsv->result로 넘어온다.
     Reservation.findRsv(rsvId, function(err, result) {
         if (err) {
-            res.send({
+            return res.send({
                 code: 0,
                 error: "예약 상세 조회 실패"
             });
@@ -107,7 +113,7 @@ router.get('/:rid', isSecure, isAuthenticated, function(req, res, next) {
     });
 });
 
-router.delete('/:rid', isSecure, isAuthenticated, function(req, res, next) {
+router.delete('/:rid', isSecure, /*isAuthenticated,*/ function(req, res, next) {
     var rsvId = req.params.rid;
 
     logger.log('debug', 'method: %s', req.method);
@@ -121,7 +127,7 @@ router.delete('/:rid', isSecure, isAuthenticated, function(req, res, next) {
 
     Reservation.deleteRsv(rsvId, function(err, result) {
         if (err) {
-            res.send({
+            return res.send({
                 code: 0,
                 error: "예약 취소 실패"
             });

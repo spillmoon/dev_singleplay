@@ -456,7 +456,7 @@ function findPlay(pid, uid, callback) {
                     // play.poster.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(playinfo[i].imageName));
                 }
                 play.cast = [];
-                for (var i = 0; i < playinfo.length; i++) {
+                for (var i = 1; i < playinfo.length; i++) {
                     play.cast.push(url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/castimg/', path.basename(playinfo[i].imageName)));
                     // play.cast.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(playinfo[i].imageName)));
                 }

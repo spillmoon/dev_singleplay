@@ -6,9 +6,9 @@ var Wishlist = require('../models/wishlist');
 var logger = require('../config/logger');
 
 // GET, 위시리스트 목록 조회
-router.get('/', isSecure, isAuthenticated, function(req, res, next) {
+router.get('/', isSecure, /*isAuthenticated,*/ function(req, res, next) {
     // user session id
-    var userId = req.user.id;
+    var userId = 1; //req.user.id;
 
     logger.log('debug', 'sessionId: %s', userId);
     logger.log('debug', 'method: %s', req.method);
@@ -22,7 +22,7 @@ router.get('/', isSecure, isAuthenticated, function(req, res, next) {
 
     Wishlist.listWish(userId, function (err, wishlist) {
         if (err) {
-            res.send({
+            return res.send({
                 code: 0,
                 error: "위시리스트 조회 실패"
             });
@@ -36,8 +36,8 @@ router.get('/', isSecure, isAuthenticated, function(req, res, next) {
 });
 
 // POST, 위시리스트 추가
-router.post('/', isSecure, isAuthenticated, function(req, res, next) {
-    var userId = req.user.id; // 세션의 user.id -> userId
+router.post('/', isSecure, /*isAuthenticated,*/ function(req, res, next) {
+    var userId = 1; //req.user.id; // 세션의 user.id -> userId
     var playId = req.body.playId; // body를 통해 공연ID를 매개변수로 받아온다.
 
     logger.log('debug', 'sessionId: %s', userId);
@@ -53,7 +53,7 @@ router.post('/', isSecure, isAuthenticated, function(req, res, next) {
     // 매개변수를 받아 ../models/wishlist의 createWish 함수 실행
     Wishlist.createWish(userId, playId, function (err, thumbnail) {
         if (err) {
-            res.send({
+            return res.send({
                 code: 0,
                 error: "위시리스트 추가 실패"
             });
@@ -67,7 +67,7 @@ router.post('/', isSecure, isAuthenticated, function(req, res, next) {
 });
 
 // DELETE, 위시리스트 삭제
-router.delete('/:wid', isSecure, isAuthenticated, function(req, res, next) {
+router.delete('/:wid', isSecure, /*isAuthenticated,*/ function(req, res, next) {
     var wishId = req.params.wid; // 매개변수를 동적 파라미터 :wid 입력 -> wishId(위시ID)
 
     logger.log('debug', 'method: %s', req.method);
@@ -82,7 +82,7 @@ router.delete('/:wid', isSecure, isAuthenticated, function(req, res, next) {
     // 매개변수를 받아 ../models/wishlist의 deleteWish 함수 실행
     Wishlist.deleteWish(wishId, function(err) {
         if (err) {
-            res.send({
+            return res.send({
                 code: 0,
                 error: "위시리스트 삭제 실패"
             });

@@ -119,9 +119,9 @@ router.get('/facebook/callback', passport.authenticate('facebook'), function (re
 
 router.post('/facebook/token', passport.authenticate('facebook-token', { scope : ['email']}), function (req, res, next) {
     if (req.user) {
-        User.getProfile(req.user.id, function(err, info) {
+        User.getProfile(1 /*req.user.id*/, function(err, info) {
             if (err) {
-                res.send({
+                return res.send({
                     code: 0,
                     error: "로그인 실패"
                 })

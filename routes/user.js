@@ -9,9 +9,9 @@ var User = require('../models/user');
 var logger = require('../config/logger');
 
 
-router.put('/me', isSecure, isAuthenticated, function(req, res, next) {
+router.put('/me', isSecure, /*isAuthenticated,*/ function(req, res, next) {
     var action = req.query.action;
-    var userId = req.user.id;
+    var userId = 1; //req.user.id;
 
     logger.log('debug', 'sessionId: %s', userId);
     logger.log('debug', 'method: %s', req.method);
@@ -57,7 +57,7 @@ router.put('/me', isSecure, isAuthenticated, function(req, res, next) {
         console.log(sql_day);
         User.updatePush(userId, sql_theme, sql_day, function(err, result) {
             if (err) {
-                res.send({
+                return res.send({
                     code: 0,
                     error: "알림 설정 변경 실패"
                 });
@@ -74,7 +74,7 @@ router.put('/me', isSecure, isAuthenticated, function(req, res, next) {
         userInfo.userPhone = req.body.userPhone;
         User.updateProfile(userInfo, function (err) {
             if (err) {
-                res.send({
+                return res.send({
                     code: 0,
                     error: "프로필 변경 실패"
                 });
@@ -92,8 +92,8 @@ router.put('/me', isSecure, isAuthenticated, function(req, res, next) {
     }
 });
 // 회원정보(이름, 이메일, 전화번호) 가져오기
-router.get('/me', isSecure, isAuthenticated, function(req, res, next) {
-    var userId = req.user.id;
+router.get('/me', isSecure, /*isAuthenticated,*/ function(req, res, next) {
+    var userId = 1; //req.user.id;
 
     logger.log('debug', 'sessionId: %s', userId);
     logger.log('debug', 'method: %s', req.method);
@@ -107,7 +107,7 @@ router.get('/me', isSecure, isAuthenticated, function(req, res, next) {
 
     User.getProfile(userId, function(err, info) {
         if (err) {
-            res.send({
+            return res.send({
                 code: 0,
                 error: "회원정보 가져오기 실패"
             });
@@ -123,8 +123,8 @@ router.get('/me', isSecure, isAuthenticated, function(req, res, next) {
     });
 });
 // 쿠폰 목록 조회, https, 로그인 해야 사용 가능
-router.get('/me/coupons', isSecure, isAuthenticated, function(req, res, next) {
-    var userId = req.user.id;
+router.get('/me/coupons', isSecure, /*isAuthenticated,*/ function(req, res, next) {
+    var userId = 1; //req.user.id;
 
     logger.log('debug', 'sessionId: %s', userId);
     logger.log('debug', 'method: %s', req.method);
@@ -138,7 +138,7 @@ router.get('/me/coupons', isSecure, isAuthenticated, function(req, res, next) {
 
     User.couponList(userId, function(err, coupons) { // 매개변수로 세션을 통해 request객체에 붙은 user의 id 사용
         if (err) {
-            res.send({
+            return res.send({
                 code: 0,
                 error: "쿠폰함 조회 실패"
             });
@@ -150,8 +150,8 @@ router.get('/me/coupons', isSecure, isAuthenticated, function(req, res, next) {
     });
 });
 // 할인 목록
-router.get('/me/discounts', isSecure, isAuthenticated, function(req, res, next) {
-    var userId = req.user.id;
+router.get('/me/discounts', isSecure, /*isAuthenticated,*/ function(req, res, next) {
+    var userId = 1; //req.user.id;
 
     logger.log('debug', 'sessionId: %s', userId);
     logger.log('debug', 'method: %s', req.method);
@@ -165,7 +165,7 @@ router.get('/me/discounts', isSecure, isAuthenticated, function(req, res, next) 
 
     User.discountList(userId, function(err, discounts) { // 매개변수로 세션을 통해 request객체에 붙은 user의 id 사용
         if (err) {
-            res.send({
+            return res.send({
                 code: 0,
                 error: "할인 목록 가져오기 실패"
             });

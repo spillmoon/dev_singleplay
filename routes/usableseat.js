@@ -19,7 +19,7 @@ router.get('/:pid', isSecure, isAuthenticated, function(req, res, next) {
 
     Usableseat.selectSeat(playId, function(err, info) {
         if (err) {
-            res.send({
+            return res.send({
                 code: 0,
                 error: "빈자리 정보 제공 실패"
             });

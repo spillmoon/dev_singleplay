@@ -18,7 +18,7 @@ router.get('/', function (req, res, next) {
     // listBoards 함수 실행, ../models/board의 listBoards 함수 결과가 null->err, board->boardListInfo로 넘어온다.
     Board.listBoards(function (err, boardListInfo) {
         if (err) {
-            res.send({
+            return res.send({
                 code: 0,
                 error: "공지사항, 이벤트 목록 조회 실패"
             });
@@ -47,7 +47,7 @@ router.get('/:bid', function (req, res, next) {
     // findBoard 함수 실행, ../models/board의 findBoard 함수 결과가 null->err, board->boardImageUrl로 넘어온다.
     Board.findBoard(boardNo, function (err, boardImageUrl) {
         if (err) {
-            res.send({
+            return res.send({
                 code: 0,
                 error: "이미지 불러오기 실패"
             });
