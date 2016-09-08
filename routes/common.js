@@ -11,7 +11,7 @@ function isAuthenticated(req, res, next) {
 
 function isSecure(req, res, next) {
     if (!req.secure) {
-        return res. status(426).send({
+        return res.status(426).send({
             message: 'upgrade required!!!'
         });
     }
