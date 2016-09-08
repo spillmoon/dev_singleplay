@@ -288,48 +288,67 @@ function concertList(sort, callback) {
 // 검색한 구의 공연장에서 하는 공연 목록
 function searchLocation(location, callback) {
     // 당일 검색한 구에 위치한 공연장에서 하는 공연 목록 검색 쿼리
-    var sql = "select py.id pid, name, theme, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-        "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
-        "from play py join place pe on (py.place_id = pe.id) " +
-        "join image i on (i.play_name = py.name) " +
-        "where playDay = curdate() and address = ? and imageType = 0 " +
-        // "group by name " +
-        "order by playTime asc";
+    var sql_get_address = "select address from place where match(address, location) against(? in boolean mode) group by address";
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
             return callback("DB CONNECTION FAIL");
         }
-        dbConn.query(sql, location, function (err, results) {
-            dbConn.release();
+        dbConn.query(sql_get_address, [location], function (err, results) {
             if (err) {
-                return callback("지역 검색 실패");
+                dbConn.release();
+                return callback("지역 선택 실패");
             }
-            var playlist = [];
-            var tmpPrice = {};
-            for (var i = 0; i < results.length; i++) {
-
-                if (results[i].VIPprice === null) {
-                    tmpPrice.price = results[i].Rprice;
-                    tmpPrice.salePrice = results[i].Rprice * ((100 - results[i].saveOff) / 100);
-                } else {
-                    tmpPrice.price = results[i].VIPprice;
-                    tmpPrice.salePrice = results[i].VIPprice * ((100 - results[i].saveOff) / 100);
+            var queryObj = [];
+            if (results.length == 0) {
+                dbConn.release();
+                return callback("공연장 없음");
+            } else {
+                var sql = "select py.id pid, name, theme, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
+                    "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
+                    "from play py join place pe on (py.place_id = pe.id) " +
+                    "join image i on (i.play_name = py.name) " +
+                    "where playDay = curdate() and imageType = 0 and (";
+                var tmp = "";
+                for (var i = 0; i < results.length; i++) {
+                    queryObj.push({
+                        address: results[i].address
+                    });
+                    tmp = tmp + "? or ";
                 }
-                playlist.push({
-                    playId: results[i].pid,
-                    playName: results[i].name,
-                    placeName: results[i].placeName,
-                    playDay: results[i].playDay,
-                    playTime: results[i].playTime,
-                    price: tmpPrice.price,
-                    salePrice: tmpPrice.salePrice,
-                    starScore: results[i].starScoreAvg,
-                    poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
-                    // poster: url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(results[i].imageName))
-                });
+                sql = sql+tmp;
+                sql = sql.substring(0, sql.length-3) + ") order by playTime asc";
             }
-            callback(null, playlist);
+            dbConn.query(sql, queryObj, function(err, results) {
+                dbConn.release();
+                if (err) {
+                    return callback("공연장 없음");
+                }
+                var playlist = [];
+                var tmpPrice = {};
+                for (var i = 0; i < results.length; i++) {
+                    if (results[i].VIPprice === null) {
+                        tmpPrice.price = results[i].Rprice;
+                        tmpPrice.salePrice = results[i].Rprice * ((100 - results[i].saveOff) / 100);
+                    } else {
+                        tmpPrice.price = results[i].VIPprice;
+                        tmpPrice.salePrice = results[i].VIPprice * ((100 - results[i].saveOff) / 100);
+                    }
+                    playlist.push({
+                        playId: results[i].pid,
+                        playName: results[i].name,
+                        placeName: results[i].placeName,
+                        playDay: results[i].playDay,
+                        playTime: results[i].playTime,
+                        price: tmpPrice.price,
+                        salePrice: tmpPrice.salePrice,
+                        starScore: results[i].starScoreAvg,
+                        poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
+                        // poster: url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(results[i].imageName))
+                    });
+                }
+                callback(null, playlist);
+            });
         });
     });
 }
