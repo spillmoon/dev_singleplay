@@ -97,18 +97,11 @@ router.post('/local/login', function (req, res, next) {
 });
 
 router.get('/logout', function (req, res, next) {
-    if (req.logout()) {
-        res.send({
-            code: 1,
-            message: '로그아웃 성공'
-        });
-    } else {
-        res.send({
-            code: 0,
-            message: '로그아웃 실패'
-        });
-    }
-
+    req.logout();
+    res.send({
+        code: 1,
+        message: '로그아웃 성공'
+    });
 });
 
 router.get('/facebook', passport.authenticate('facebook', { scope : ['email']}));
@@ -119,18 +112,17 @@ router.get('/facebook/callback', passport.authenticate('facebook'), function (re
 
 router.post('/facebook/token', passport.authenticate('facebook-token', { scope : ['email']}), function (req, res, next) {
     if (req.user) {
-        User.getProfile(1 /*req.user.id*/, function(err, info) {
+        User.getProfile(1 /*req.user.id*/, function (err, info) {
             if (err) {
                 return res.send({
                     code: 0,
                     error: "로그인 실패"
-                })
+                });
             }
             res.send({
                 code: 1,
                 result: {
                     name: info[0].name,
-                    profileImg: "http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/profileimg/" + info[0].userImage,
                     couponCnt: info[0].couponCnt,
                     mileage: info[0].mileage
                 }

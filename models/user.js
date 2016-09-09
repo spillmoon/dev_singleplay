@@ -97,7 +97,7 @@ function couponList(uid, callback) {
 }
 // 사용자 정보 가져오기
 function getProfile(uid, callback) {
-    var sql = "select id, name, userEmail, userPhone, userImage, mileage, " +
+    var sql = "select id, name, userEmail, userPhone, mileage, " +
             "sum(case when couponNo then 1 else 0 end) 'couponCnt' " +
             "from user u left join coupon c on (u.id = c.user_id) " +
             "where id = ?";

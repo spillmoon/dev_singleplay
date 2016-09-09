@@ -9,7 +9,7 @@ var User = require('../models/user');
 var logger = require('../config/logger');
 
 
-router.put('/me', isSecure, /*isAuthenticated,*/ function(req, res, next) {
+router.put('/me', isSecure, isAuthenticated, function(req, res, next) {
     var action = req.query.action;
     var userId = 1; //req.user.id;
 
@@ -69,6 +69,7 @@ router.put('/me', isSecure, /*isAuthenticated,*/ function(req, res, next) {
         });
     } else if (action == "profile") { // 프로필 변경
         var userInfo = {};
+        userInfo.userId = userId;
         userInfo.userName = req.body.userName;
         userInfo.userEmail = req.body.userEmail;
         userInfo.userPhone = req.body.userPhone;
@@ -92,7 +93,7 @@ router.put('/me', isSecure, /*isAuthenticated,*/ function(req, res, next) {
     }
 });
 // 회원정보(이름, 이메일, 전화번호) 가져오기
-router.get('/me', isSecure, /*isAuthenticated,*/ function(req, res, next) {
+router.get('/me', isSecure, isAuthenticated, function(req, res, next) {
     var userId = 1; //req.user.id;
 
     logger.log('debug', 'sessionId: %s', userId);
@@ -123,7 +124,7 @@ router.get('/me', isSecure, /*isAuthenticated,*/ function(req, res, next) {
     });
 });
 // 쿠폰 목록 조회, https, 로그인 해야 사용 가능
-router.get('/me/coupons', isSecure, /*isAuthenticated,*/ function(req, res, next) {
+router.get('/me/coupons', isSecure, isAuthenticated, function(req, res, next) {
     var userId = 1; //req.user.id;
 
     logger.log('debug', 'sessionId: %s', userId);
@@ -150,7 +151,7 @@ router.get('/me/coupons', isSecure, /*isAuthenticated,*/ function(req, res, next
     });
 });
 // 할인 목록
-router.get('/me/discounts', isSecure, /*isAuthenticated,*/ function(req, res, next) {
+router.get('/me/discounts', isSecure, isAuthenticated, function(req, res, next) {
     var userId = 1; //req.user.id;
 
     logger.log('debug', 'sessionId: %s', userId);

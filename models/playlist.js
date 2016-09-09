@@ -288,7 +288,7 @@ function concertList(sort, callback) {
 // 검색한 구의 공연장에서 하는 공연 목록
 function searchLocation(location, callback) {
     // 당일 검색한 구에 위치한 공연장에서 하는 공연 목록 검색 쿼리
-    var sql_get_address = "select address from place where match(address, location) against(? in boolean mode) group by address";
+    var sql_get_address = "select address from place where match(location) against(? in boolean mode) group by address";
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
@@ -318,37 +318,39 @@ function searchLocation(location, callback) {
                 }
                 sql = sql+tmp;
                 sql = sql.substring(0, sql.length-3) + ") order by playTime asc";
-            }
-            dbConn.query(sql, queryObj, function(err, results) {
-                dbConn.release();
-                if (err) {
-                    return callback("공연장 없음");
-                }
-                var playlist = [];
-                var tmpPrice = {};
-                for (var i = 0; i < results.length; i++) {
-                    if (results[i].VIPprice === null) {
-                        tmpPrice.price = results[i].Rprice;
-                        tmpPrice.salePrice = results[i].Rprice * ((100 - results[i].saveOff) / 100);
-                    } else {
-                        tmpPrice.price = results[i].VIPprice;
-                        tmpPrice.salePrice = results[i].VIPprice * ((100 - results[i].saveOff) / 100);
+
+                dbConn.query(sql, queryObj, function(err, results) {
+                    dbConn.release();
+                    if (err) {
+                        return callback("공연장 없음");
                     }
-                    playlist.push({
-                        playId: results[i].pid,
-                        playName: results[i].name,
-                        placeName: results[i].placeName,
-                        playDay: results[i].playDay,
-                        playTime: results[i].playTime,
-                        price: tmpPrice.price,
-                        salePrice: tmpPrice.salePrice,
-                        starScore: results[i].starScoreAvg,
-                        poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
-                        // poster: url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(results[i].imageName))
-                    });
-                }
-                callback(null, playlist);
-            });
+                    var playlist = [];
+                    var tmpPrice = {};
+                    for (var i = 0; i < results.length; i++) {
+                        if (results[i].VIPprice === null) {
+                            tmpPrice.price = results[i].Rprice;
+                            tmpPrice.salePrice = results[i].Rprice * ((100 - results[i].saveOff) / 100);
+                        } else {
+                            tmpPrice.price = results[i].VIPprice;
+                            tmpPrice.salePrice = results[i].VIPprice * ((100 - results[i].saveOff) / 100);
+                        }
+                        playlist.push({
+                            playId: results[i].pid,
+                            playName: results[i].name,
+                            placeName: results[i].placeName,
+                            playDay: results[i].playDay,
+                            playTime: results[i].playTime,
+                            price: tmpPrice.price,
+                            salePrice: tmpPrice.salePrice,
+                            starScore: results[i].starScoreAvg,
+                            poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
+                            // poster: url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(results[i].imageName))
+                        });
+                    }
+                    callback(null, playlist);
+                });
+            }
+
         });
     });
 }
