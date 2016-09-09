@@ -404,7 +404,8 @@ function searchKeyword(keyword, callback) {
 function findPlay(pid, uid, callback) {
     // 공연정보, 포스터, 출연자 이미지 가져오기
     var sql_info = "select p.id pid, name, theme, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-        "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
+        "VIPprice, Rprice, Sprice, p.saveOff, (select sum(s.starScore)/count(s.user_id) starScoreAvg from play p join starScore s on (p.id = s.play_id) where p.id=?) starScoreAvg, imageName, imageType, " +
+        "(select count(*) userCount from play p join starScore s on (p.id = s.play_id) where p.id=?) userCount " +
         "from play p join image i on (i.play_name = p.name) " +
         "join place pl on (p.place_id = pl.id) " +
         "where p.id = ?";
@@ -444,7 +445,7 @@ function findPlay(pid, uid, callback) {
 
         // 공연정보 가져오기
         function getPlayInfo(callback) {
-            dbConn.query(sql_info, [pid], function (err, playinfo) {
+            dbConn.query(sql_info, [pid, pid, pid], function (err, playinfo) {
                 if (err) {
                     return callback("SQL INFO FAIL");
                 }
@@ -472,7 +473,7 @@ function findPlay(pid, uid, callback) {
                 play.Sprice = playinfo[0].Sprice;
                 play.saleSprice = parseInt(playinfo[0].Sprice * ((100 - playinfo[0].saveOff) / 100));
                 play.starScore = playinfo[0].starScoreAvg;
-                play.userCount = 0;
+                play.userCount = playinfo[0].userCount;
                 if (playinfo[0].imageType === 0) {
                     play.poster = url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(playinfo[0].imageName));
                     // play.poster.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(playinfo[i].imageName));
