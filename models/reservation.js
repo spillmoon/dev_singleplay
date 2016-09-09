@@ -109,7 +109,7 @@ function createRsv(userId, playId, playName, usableSeatNo, seatClass, booker, bo
 
 // 예약 내역들 중 하나의 예약 내역 상세보기
 function findRsv(rsvId, callback) {
-    var sql = 'select r.id rid, r.play_name, substring(p.playDay, 1, 10) playDay, substring(p.playTime, 1, 5) playTime, ' +
+    var sql = 'select r.id rid, r.play_name name, substring(p.playDay, 1, 10) playDay, substring(p.playTime, 1, 5) playTime, ' +
         "pl.placeName, r.seatClass, u.seatInfo, i.imageName, concat(date_format(r.rsvDate, '%Y-%m%d'), '-', r.id, r.user_id, r.play_id) rsvNo, r.settlement " +
         'from reservation r join usableSeat u on (r.usableSeat_usableNo = u.usableNo) ' +
         'join play p on (p.id = r.play_id) ' +
