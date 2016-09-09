@@ -459,6 +459,7 @@ function findPlay(pid, uid, callback) {
                 if (playinfo[0].theme == 2)
                     theme = "콘서트";
                 play.playId = playinfo[0].pid;
+                play.uid = uid;
                 play.playName = playinfo[0].name;
                 play.theme = theme;
                 play.placeName = playinfo[0].placeName;
