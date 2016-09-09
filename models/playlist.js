@@ -404,11 +404,11 @@ function searchKeyword(keyword, callback) {
 function findPlay(pid, uid, callback) {
     // 공연정보, 포스터, 출연자 이미지 가져오기
     var sql_info = "select p.id pid, name, theme, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-        "VIPprice, Rprice, Sprice, p.saveOff, (select sum(s.starScore)/count(s.user_id) starScoreAvg from play p join starScore s on (p.id = s.play_id) where p.id=?) starScoreAvg, imageName, imageType, " +
+        "VIPprice, Rprice, Sprice, p.saveOff, p.starScoreAvg oldAvg, (select sum(s.starScore)/count(s.user_id) starScoreAvg from play p join starScore s on (p.id = s.play_id) where p.id=?) newAvg, imageName, imageType, " +
         "(select count(*) userCount from play p join starScore s on (p.id = s.play_id) where p.id=?) userCount " +
-        "from play p join image i on (i.play_name = p.name) " +
-        "join place pl on (p.place_id = pl.id) " +
-        "where p.id = ?";
+    "from play p join image i on (i.play_name = p.name) " +
+    "join place pl on (p.place_id = pl.id) " +
+    "where p.id = ?";
     // 위시리스트에 있는지 판별
     var sql_isWish = "select wishId from wishlist where playId = ? and userId = ?";
     // 빈좌석 갯수 가져오기
@@ -453,6 +453,13 @@ function findPlay(pid, uid, callback) {
                     return callback("공연 조회 실패")
                 }
                 var theme = "";
+                var tmpAvg = {};
+                if (playinfo[0].newAvg === null) { // VIPprice가 없는 경우 Rprice를 결과값으로 한다.
+                    tmpAvg.starScoreAvg = playinfo[0].oldAvg;
+                } else { // VIPprice가 있으면 VIPprice를 결과값으로 한다.
+                    tmpAvg.starScoreAvg = playinfo[0].newAvg;
+                }
+
                 if (playinfo[0].theme == 0)
                     theme = "뮤지컬";
                 if (playinfo[0].theme == 1)
@@ -472,7 +479,7 @@ function findPlay(pid, uid, callback) {
                 play.saleRprice = parseInt(playinfo[0].Rprice * ((100 - playinfo[0].saveOff) / 100));
                 play.Sprice = playinfo[0].Sprice;
                 play.saleSprice = parseInt(playinfo[0].Sprice * ((100 - playinfo[0].saveOff) / 100));
-                play.starScore = playinfo[0].starScoreAvg;
+                play.starScore = tmpAvg.starScoreAvg;
                 play.userCount = playinfo[0].userCount;
                 if (playinfo[0].imageType === 0) {
                     play.poster = url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(playinfo[0].imageName));
