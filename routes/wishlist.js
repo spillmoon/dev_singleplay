@@ -6,7 +6,7 @@ var Wishlist = require('../models/wishlist');
 var logger = require('../config/logger');
 
 // GET, 위시리스트 목록 조회
-router.get('/', isSecure, isAuthenticated, function(req, res, next) {
+router.get('/', isSecure, /*isAuthenticated,*/ function(req, res, next) {
     // user session id
     var userId = 1; //req.user.id;
 
@@ -36,7 +36,7 @@ router.get('/', isSecure, isAuthenticated, function(req, res, next) {
 });
 
 // POST, 위시리스트 추가
-router.post('/', isSecure, isAuthenticated, function(req, res, next) {
+router.post('/', isSecure, /*isAuthenticated,*/ function(req, res, next) {
     var userId = 1; //req.user.id; // 세션의 user.id -> userId
     var playId = req.body.playId; // body를 통해 공연ID를 매개변수로 받아온다.
 
@@ -67,7 +67,7 @@ router.post('/', isSecure, isAuthenticated, function(req, res, next) {
 });
 
 // DELETE, 위시리스트 삭제
-router.delete('/:wid', isSecure, isAuthenticated, function(req, res, next) {
+router.delete('/:wid', isSecure, /*isAuthenticated,*/ function(req, res, next) {
     var wishId = req.params.wid; // 매개변수를 동적 파라미터 :wid 입력 -> wishId(위시ID)
 
     logger.log('debug', 'method: %s', req.method);

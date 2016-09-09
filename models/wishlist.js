@@ -46,8 +46,8 @@ function listWish(uid, callback) {
                     placeName: results[i].placeName,
                     playDay: results[i].playDay,
                     playTime: results[i].playTime,
-                    price: tmpwish.price,
-                    salePrice: tmpwish.salePrice,
+                    price: parseInt(tmpwish.price),
+                    salePrice: parseInt(tmpwish.salePrice),
                     starScore: results[i].starScoreAvg,
                     poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
                     // poster : url.resolve('https://127.0.0.1:4433/posterimg/', path.basename(results[i].imageName))
@@ -60,7 +60,7 @@ function listWish(uid, callback) {
 
 // 위시리스트 추가
 function createWish(userId, playId, callback) {
-    var sql_insert_wish = 'insert into wishlist(userId, playId) values(?, ?)'; // 위시리스트 추가하는 쿼리문
+    var sql_insert_wish = "insert into wishlist (userId, playId, ctime) values (?, ?, convert_tz(current_timestamp(), '+00:00', '+09:00'))"; // 위시리스트 추가하는 쿼리문
 
     var sql_select_thumbnail = 'select i.imageName ' +
                                 'from wishlist w join play p on (w.playId = p.id) ' +
