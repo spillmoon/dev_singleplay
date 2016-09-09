@@ -26,7 +26,7 @@ var logger = new winston.Logger({
             dirname: path.join(__dirname, '../logs'),
             filename: 'debug_logs_',
             datePattern: 'yyyy-MM-ddTHH.log',
-            maxsize: 1024,
+            maxsize: 1024 * 1024,
             json: false
         })
     ],
@@ -42,7 +42,7 @@ var logger = new winston.Logger({
             dirname: path.join(__dirname, '../logs'),
             filename: 'exception_logs_',
             datePattern: 'yyyy-MM-ddTHH-mm.log',
-            maxsize: 1024,
+            maxsize: 1024 * 1024,
             json: false,
             handleExceptions: true,
             humanReadableUnhandledException: true
