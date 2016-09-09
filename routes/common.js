@@ -1,9 +1,7 @@
-var logger = require('../config/logger');
-
 function isAuthenticated(req, res, next) {
     if (!req.user) {
         return res.status(401).send({
-            message: '로그인을 해주세요.'
+            code: 2 // message: '로그인을 해주세요.'
         });
     }
     next();
