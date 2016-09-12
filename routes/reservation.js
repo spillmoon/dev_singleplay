@@ -8,7 +8,6 @@ var logger = require('../config/logger');
 // GET, 예약 내역 조회
 router.get('/', isSecure, isAuthenticated, function (req, res, next) {
     logger.log('debug', '********** Here is reservation get **************');
-    logger.log('debug', 'sessionId: %s', userId);
     logger.log('debug', 'method: %s', req.method);
     logger.log('debug', 'protocol: %s', req.protocol);
     logger.log('debug', 'host: %s', req.headers['host']);
@@ -19,7 +18,8 @@ router.get('/', isSecure, isAuthenticated, function (req, res, next) {
     logger.log('debug', '%s %s://%s%s', req.method, req.protocol, req.headers['host'], req.originalUrl);
 
     // ../models/reservation의 listRsv 함수 실행
-    var userId = req.user.id || 0;
+    var userId = (req.user) ? req.user.id : 0;
+    logger.log('debug', 'sessionId: %s', userId);
     Reservation.listRsv(userId, function (err, results) {
         if (err) {
             return res.send({
@@ -38,7 +38,6 @@ router.get('/', isSecure, isAuthenticated, function (req, res, next) {
 // POST, 예약 내역 추가
 router.post('/', isSecure, isAuthenticated, function(req, res, next) {
     logger.log('debug', '********** Here is reservation post **************');
-    logger.log('debug', 'sessionId: %s', req.user.id);
     logger.log('debug', 'method: %s', req.method);
     logger.log('debug', 'protocol: %s', req.protocol);
     logger.log('debug', 'host: %s', req.headers['host']);
@@ -49,7 +48,8 @@ router.post('/', isSecure, isAuthenticated, function(req, res, next) {
     logger.log('debug', '%s %s://%s%s', req.method, req.protocol, req.headers['host'], req.originalUrl);
 
     // 매개변수 받을 변수 선언
-    var userId = req.user.id || 0; // 세션에 있는 user.id 정보 -> userId
+    var userId = (req.user) ? req.user.id : 0;
+    logger.log('debug', 'sessionId: %s', userId);
     var playId = req.body.playId; // body를 통해 공연ID을 받아온다.
     var playName = req.body.playName; // body를 통해 공연명을 받아온다.
     var usableSeatNo = req.body.usableSeatNo; // body를 통해 빈좌석번호를 받아온다.

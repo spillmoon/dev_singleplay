@@ -8,7 +8,6 @@ var logger = require('../config/logger');
 // GET, 위시리스트 목록 조회
 router.get('/', isSecure, isAuthenticated, function(req, res, next) {
     logger.log('debug', '********** Here is wishlist get **************');
-    logger.log('debug', 'sessionId: %s', req.user.id);
     logger.log('debug', 'method: %s', req.method);
     logger.log('debug', 'protocol: %s', req.protocol);
     logger.log('debug', 'host: %s', req.headers['host']);
@@ -18,7 +17,8 @@ router.get('/', isSecure, isAuthenticated, function(req, res, next) {
     logger.log('debug', 'query: %j', req.query, {});
     logger.log('debug', '%s %s://%s%s', req.method, req.protocol, req.headers['host'], req.originalUrl);
     // user session id
-    var userId = req.user.id || 0;
+    var userId = (req.user) ? req.user.id : 0;
+    logger.log('debug', 'sessionId: %s', userId);
     Wishlist.listWish(userId, function (err, wishlist) {
         if (err) {
             return res.send({
@@ -37,7 +37,6 @@ router.get('/', isSecure, isAuthenticated, function(req, res, next) {
 // POST, 위시리스트 추가
 router.post('/', isSecure, isAuthenticated, function(req, res, next) {
     logger.log('debug', '********** Here is wishlist post **************');
-    logger.log('debug', 'sessionId: %s', req.user.id);
     logger.log('debug', 'method: %s', req.method);
     logger.log('debug', 'protocol: %s', req.protocol);
     logger.log('debug', 'host: %s', req.headers['host']);
@@ -47,7 +46,8 @@ router.post('/', isSecure, isAuthenticated, function(req, res, next) {
     logger.log('debug', 'body: %j', req.body, {});
     logger.log('debug', '%s %s://%s%s', req.method, req.protocol, req.headers['host'], req.originalUrl);
 
-    var userId = req.user.id || 0; // 세션의 user.id -> userId
+    var userId = (req.user) ? req.user.id : 0;
+    logger.log('debug', 'sessionId: %s', userId);
     var playId = req.body.playId; // body를 통해 공연ID를 매개변수로 받아온다.
     // 매개변수를 받아 ../models/wishlist의 createWish 함수 실행
     Wishlist.createWish(userId, playId, function (err, thumbnail) {
