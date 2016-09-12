@@ -350,7 +350,6 @@ function searchLocation(location, callback) {
                     callback(null, playlist);
                 });
             }
-
         });
     });
 }

@@ -113,8 +113,9 @@ router.get('/facebook/callback', passport.authenticate('facebook'), function (re
 });
 
 router.post('/facebook/token', passport.authenticate('facebook-token', { scope : ['email']}), function (req, res, next) {
+    var userId = req.user.id;
     if (req.user) {
-        User.getProfile(1 /*req.user.id*/, function (err, info) {
+        User.getProfile(userId, function (err, info) {
             if (err) {
                 return res.send({
                     code: 0,

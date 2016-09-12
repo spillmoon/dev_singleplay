@@ -9,7 +9,7 @@ var fs = require('fs');
 // 프로필 수정 빼고 에러 처리 해야 함.
 // deserializeUser에서 사용, id를 가지고 user를 복원
 function findUser(userId, callback) {
-    var sql = "select id, name, userEmail, facebookId from user where id = ?";
+    var sql = "select id, name, userEmail, userPhone, facebookId from user where id = ?";
 
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
@@ -24,6 +24,7 @@ function findUser(userId, callback) {
             user.id = results[0].id;
             user.name = results[0].name;
             user.email = results[0].userEmail;
+            user.phone = results[0].userPhone;
             user.facebookId = results[0].facebookId;
             callback(null, user);
         });
@@ -31,7 +32,7 @@ function findUser(userId, callback) {
 }
 // 페이스북 로그인시 회원 테이블에서 아이디를 찾고 없으면 추가, 있으면 기존 id 사용
 function findOrCreate(profile, callback) {
-    var sql_findUser = "select id, name, userEmail, facebookId from user where facebookId = ?";
+    var sql_findUser = "select id, name, userEmail, userPhone, facebookId from user where facebookId = ?";
     var sql_createUser = "insert into user(name, userEmail, facebookId) values(?, ?, ?)";
 
     dbPool.getConnection(function(err, dbConn) {
@@ -48,6 +49,7 @@ function findOrCreate(profile, callback) {
                 user.id = results[0].id;
                 user.name = results[0].name;
                 user.email = results[0].userEmail;
+                user.phone = results[0].userPhone;
                 user.facebookId = results[0].facebookId;
                 return callback(null, user);
             }

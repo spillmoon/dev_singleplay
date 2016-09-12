@@ -8,7 +8,7 @@ var logger = require('../config/logger');
 // GET, 위시리스트 목록 조회
 router.get('/', isSecure, isAuthenticated, function(req, res, next) {
     // user session id
-    var userId = 1; //req.user.id;
+    var userId = req.user.id;
 
     logger.log('debug', 'sessionId: %s', userId);
     logger.log('debug', 'method: %s', req.method);
@@ -37,7 +37,7 @@ router.get('/', isSecure, isAuthenticated, function(req, res, next) {
 
 // POST, 위시리스트 추가
 router.post('/', isSecure, isAuthenticated, function(req, res, next) {
-    var userId = 1; //req.user.id; // 세션의 user.id -> userId
+    var userId = req.user.id; // 세션의 user.id -> userId
     var playId = req.body.playId; // body를 통해 공연ID를 매개변수로 받아온다.
 
     logger.log('debug', 'sessionId: %s', userId);
