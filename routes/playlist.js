@@ -5,8 +5,7 @@ var logger = require('../config/logger');
 
 // GET, 항목별 정렬된 공연 목록
 router.get('/', function (req, res, next) {
-    var action = req.query.action;
-
+    logger.log('debug', '********** Here is playlist get **************');
     logger.log('debug', 'method: %s', req.method);
     logger.log('debug', 'protocol: %s', req.protocol);
     logger.log('debug', 'host: %s', req.headers['host']);
@@ -16,6 +15,7 @@ router.get('/', function (req, res, next) {
     logger.log('debug', 'query: %j', req.query, {});
     logger.log('debug', '%s %s://%s%s', req.method, req.protocol, req.headers['host'], req.originalUrl);
 
+    var action = req.query.action;
     if (action == 0) { // 항목별 검색
         var theme = req.query.theme; // undefined: 전체, 0: 뮤지컬, 1: 오페라, 2:콘서트
         var sort = req.query.sort || 0; // 0: 별점, 1:최신, 2: 할인
@@ -107,10 +107,7 @@ router.get('/', function (req, res, next) {
 
 // GET, 공연 상세 정보
 router.get('/:pid', function (req, res, next) {
-    var playId = req.params.pid;
-    var userId = (req.user) ? 1 /*req.user.id*/ : 0;
-
-    logger.log('debug', 'sessionId: %s', userId);
+    logger.log('debug', '********** Here is playlist detail get **************');
     logger.log('debug', 'method: %s', req.method);
     logger.log('debug', 'protocol: %s', req.protocol);
     logger.log('debug', 'host: %s', req.headers['host']);
@@ -120,6 +117,9 @@ router.get('/:pid', function (req, res, next) {
     logger.log('debug', 'params: %j', req.params, {});
     logger.log('debug', '%s %s://%s%s', req.method, req.protocol, req.headers['host'], req.originalUrl);
 
+    var playId = req.params.pid;
+    var userId = (req.user) ? req.user.id : 0;
+    logger.log('debug', 'sessionId: %s', userId);
     Play.findPlay(playId, userId, function(err, play) {
         if (err) {
             return res.send({

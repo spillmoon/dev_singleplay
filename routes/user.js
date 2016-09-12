@@ -10,10 +10,8 @@ var logger = require('../config/logger');
 
 
 router.put('/me', isSecure, isAuthenticated, function(req, res, next) {
-    var action = req.query.action;
-    var userId = req.user.id;
-
-    logger.log('debug', 'sessionId: %s', userId);
+    logger.log('debug', '********** Here is user put **************');
+    logger.log('debug', 'sessionId: %s', req.user.id);
     logger.log('debug', 'method: %s', req.method);
     logger.log('debug', 'protocol: %s', req.protocol);
     logger.log('debug', 'host: %s', req.headers['host']);
@@ -22,6 +20,9 @@ router.put('/me', isSecure, isAuthenticated, function(req, res, next) {
     logger.log('debug', 'url: %s', req.url);
     logger.log('debug', 'body: %j', req.body, {});
     logger.log('debug', '%s %s://%s%s', req.method, req.protocol, req.headers['host'], req.originalUrl);
+
+    var action = req.query.action;
+    var userId = req.user.id || 0;
     // PUSH 설정 변경
     if (action == "push") {
         var theme = req.body.theme;
@@ -94,8 +95,7 @@ router.put('/me', isSecure, isAuthenticated, function(req, res, next) {
 });
 // 회원정보(이름, 이메일, 전화번호) 가져오기
 router.get('/me', isSecure, isAuthenticated, function(req, res, next) {
-    var userId = req.user.id;
-
+    logger.log('debug', '********** Here is user get **************');
     logger.log('debug', 'sessionId: %s', userId);
     logger.log('debug', 'method: %s', req.method);
     logger.log('debug', 'protocol: %s', req.protocol);
@@ -106,6 +106,7 @@ router.get('/me', isSecure, isAuthenticated, function(req, res, next) {
     logger.log('debug', 'query: %j', req.query, {});
     logger.log('debug', '%s %s://%s%s', req.method, req.protocol, req.headers['host'], req.originalUrl);
 
+    var userId = req.user.id || 0;
     User.getProfile(userId, function(err, info) {
         if (err) {
             return res.send({
@@ -125,9 +126,8 @@ router.get('/me', isSecure, isAuthenticated, function(req, res, next) {
 });
 // 쿠폰 목록 조회, https, 로그인 해야 사용 가능
 router.get('/me/coupons', isSecure, isAuthenticated, function(req, res, next) {
-    var userId = req.user.id;
-
-    logger.log('debug', 'sessionId: %s', userId);
+    logger.log('debug', '********** Here is user coupon get **************');
+    logger.log('debug', 'sessionId: %s', req.user.id);
     logger.log('debug', 'method: %s', req.method);
     logger.log('debug', 'protocol: %s', req.protocol);
     logger.log('debug', 'host: %s', req.headers['host']);
@@ -137,6 +137,7 @@ router.get('/me/coupons', isSecure, isAuthenticated, function(req, res, next) {
     logger.log('debug', 'query: %j', req.query, {});
     logger.log('debug', '%s %s://%s%s', req.method, req.protocol, req.headers['host'], req.originalUrl);
 
+    var userId = req.user.id || 0;
     User.couponList(userId, function(err, coupons) { // 매개변수로 세션을 통해 request객체에 붙은 user의 id 사용
         if (err) {
             return res.send({
@@ -152,8 +153,7 @@ router.get('/me/coupons', isSecure, isAuthenticated, function(req, res, next) {
 });
 // 할인 목록
 router.get('/me/discounts', isSecure, isAuthenticated, function(req, res, next) {
-    var userId = req.user.id;
-
+    logger.log('debug', '********** Here is user discount get **************');
     logger.log('debug', 'sessionId: %s', userId);
     logger.log('debug', 'method: %s', req.method);
     logger.log('debug', 'protocol: %s', req.protocol);
@@ -164,6 +164,7 @@ router.get('/me/discounts', isSecure, isAuthenticated, function(req, res, next) 
     logger.log('debug', 'query: %j', req.query, {});
     logger.log('debug', '%s %s://%s%s', req.method, req.protocol, req.headers['host'], req.originalUrl);
 
+    var userId = req.user.id || 0;
     User.discountList(userId, function(err, discounts) { // 매개변수로 세션을 통해 request객체에 붙은 user의 id 사용
         if (err) {
             return res.send({

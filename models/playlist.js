@@ -15,7 +15,6 @@ function allList(sort, callback) {
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
         "where playDay = curdate() and imageType = 0 " +
-        // "group by name " +
         "order by starScoreAvg desc";
     // 최신순
     var sql_time = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
@@ -23,7 +22,6 @@ function allList(sort, callback) {
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
         "where playDay = curdate() and imageType = 0 " +
-        // "group by name " +
         "order by playTime asc";
     // 할인순
     var sql_sale = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
@@ -31,7 +29,6 @@ function allList(sort, callback) {
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
         "where playDay = curdate() and imageType = 0 " +
-        // "group by name " +
         "order by saveOff desc";
     // var sql_score = "select sum(starScore)/count(starScore) starAvg from starScore where play_name = ?";
     // 매개변수로 받은 정렬 값에 따라 쿼리 선택
@@ -72,7 +69,6 @@ function allList(sort, callback) {
                     salePrice: tmpPrice.salePrice,
                     starScore: results[i].starScoreAvg,
                     poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
-                    // poster: url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(results[i].imageName))
                 });
             }
             callback(null, playlist);
@@ -87,21 +83,18 @@ function musicalList(sort, callback) {
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
         "where playDay = curdate() and theme = 0 and imageType = 0 " +
-        // "group by name " +
         "order by starScoreAvg desc";
     var sql_time = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
         "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
         "where playDay = curdate() and theme = 0 and imageType = 0 " +
-        // "group by name " +
         "order by playTime asc";
     var sql_sale = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
         "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
         "where playDay = curdate() and theme = 0 and imageType = 0 " +
-        // "group by name " +
         "order by saveOff desc";
     var sql = "";
     if (sort == 0)
@@ -140,7 +133,6 @@ function musicalList(sort, callback) {
                     salePrice: tmpPrice.salePrice,
                     starScore: results[i].starScoreAvg,
                     poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
-                    // poster: url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(results[i].imageName))
                 });
             }
             callback(null, playlist);
@@ -155,21 +147,18 @@ function operaList(sort, callback) {
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
         "where playDay = curdate() and theme = 1 and imageType = 0 " +
-        // "group by name " +
         "order by starScoreAvg desc";
     var sql_time = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
         "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
         "where playDay = curdate() and theme = 1 and imageType = 0 " +
-        // "group by name " +
         "order by playTime asc";
     var sql_sale = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
         "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
         "where playDay = curdate() and theme = 1 and imageType = 0 " +
-        // "group by name " +
         "order by saveOff desc";
     var sql = "";
     if (sort == 0)
@@ -208,7 +197,6 @@ function operaList(sort, callback) {
                     salePrice: tmpPrice.salePrice,
                     starScore: results[i].starScoreAvg,
                     poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
-                    // poster: url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(results[i].imageName))
                 });
             }
             callback(null, playlist);
@@ -223,21 +211,18 @@ function concertList(sort, callback) {
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
         "where playDay = curdate() and theme = 2 and imageType = 0 " +
-        // "group by name " +
         "order by starScoreAvg desc";
     var sql_time = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
         "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
         "where playDay = curdate() and theme = 2 and imageType = 0 " +
-        // "group by name " +
         "order by playTime asc";
     var sql_sale = "select py.id pid, name, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
         "VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
         "where playDay = curdate() and theme = 2 and imageType = 0 " +
-        // "group by name " +
         "order by saveOff desc";
 
     var sql = "";
@@ -277,7 +262,6 @@ function concertList(sort, callback) {
                     salePrice: tmpPrice.salePrice,
                     starScore: results[i].starScoreAvg,
                     poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
-                    // poster: url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(results[i].imageName))
                 });
             }
             callback(null, playlist);
@@ -344,7 +328,6 @@ function searchLocation(location, callback) {
                             salePrice: tmpPrice.salePrice,
                             starScore: results[i].starScoreAvg,
                             poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
-                            // poster: url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(results[i].imageName))
                         });
                     }
                     callback(null, playlist);
@@ -360,8 +343,7 @@ function searchKeyword(keyword, callback) {
     var sql = "select py.id pid, name, theme, placeName, playDay, playTime, VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
-        "where (name like '%" + keyword + "%' or placeName like '%" + keyword + "%') and playDay = curdate() and imageType = 0 "; // +
-    // "group by name";
+        "where (name like '%" + keyword + "%' or placeName like '%" + keyword + "%') and playDay = curdate() and imageType = 0 ";
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
@@ -482,12 +464,10 @@ function findPlay(pid, uid, callback) {
                 play.userCount = playinfo[0].userCount;
                 if (playinfo[0].imageType === 0) {
                     play.poster = url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(playinfo[0].imageName));
-                    // play.poster.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(playinfo[i].imageName));
                 }
                 play.cast = [];
                 for (var i = 1; i < playinfo.length; i++) {
                     play.cast.push(url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/castimg/', path.basename(playinfo[i].imageName)));
-                    // play.cast.push(url.resolve('http://127.0.0.1:8080/posterimg/', path.basename(playinfo[i].imageName)));
                 }
                 callback(null);
             });
