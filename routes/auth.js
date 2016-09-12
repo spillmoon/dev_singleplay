@@ -24,6 +24,8 @@ passport.use(new FacebookTokenStrategy({
     clientID: process.env.FACEBOOK_APP_ID,
     clientSecret: process.env.FACEBOOK_APP_SECRET
 }, function (accessToken, refreshToken, profile, done) {
+    logger.log('debug', 'accessToken: %s', accessToken);
+    logger.log('debug', 'profile: %j', profile, {});
     User.findOrCreate(profile, function (err, user) {
         if (err) {
             return done(err);

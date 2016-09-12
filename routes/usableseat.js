@@ -5,7 +5,7 @@ var isAuthenticated = require('./common').isAuthenticated;
 var Usableseat = require('../models/usableseat');
 var logger = require('../config/logger');
 // 공연의 빈자리 정보 가져오기
-router.get('/:pid', isSecure, /*isAuthenticated,*/ function(req, res, next) {
+router.get('/:pid', isSecure, isAuthenticated, function(req, res, next) {
     var playId = req.params.pid;
 
     logger.log('debug', 'method: %s', req.method);

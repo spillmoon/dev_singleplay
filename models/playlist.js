@@ -299,7 +299,6 @@ function searchLocation(location, callback) {
                 dbConn.release();
                 return callback("지역 선택 실패");
             }
-            var queryObj = [];
             if (results.length == 0) {
                 dbConn.release();
                 return callback("공연장 없음");
@@ -309,6 +308,7 @@ function searchLocation(location, callback) {
                     "from play py join place pe on (py.place_id = pe.id) " +
                     "join image i on (i.play_name = py.name) " +
                     "where playDay = curdate() and imageType = 0 and (";
+                var queryObj = [];
                 var tmp = "";
                 for (var i = 0; i < results.length; i++) {
                     queryObj.push({

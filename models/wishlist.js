@@ -124,7 +124,7 @@ function createWish(userId, playId, callback) {
 
 // 위시리스트 삭제
 function deleteWish(wishId, callback) {
-    var sql = 'delete from wishlist where wishId = ? '; // 위시리스트 삭제하는 쿼리문
+    var sql = 'delete from wishlist where wishId = ?'; // 위시리스트 삭제하는 쿼리문
 
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
