@@ -8,7 +8,7 @@ var fs = require('fs');
 // 공지사항, 이벤트 목록 조회
 function listBoards(callback) {
     var sql = 'SELECT boardNo, titleFileName FROM board;'; // 게시물 목록 화면에 필요한 속성 추출하는 쿼리문
-
+    dbPool.logStatus();
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
             return callback("DB 연결 실패");
@@ -16,6 +16,7 @@ function listBoards(callback) {
         // dbConn 연결 - 'sql' 쿼리문을 실행한다.
         dbConn.query(sql, function (err, results) {
             dbConn.release();
+            dbPool.logStatus();
             if (err) {
                 return callback("공지사항, 이벤트 목록 조회 실패");
             }
@@ -43,7 +44,7 @@ function listBoards(callback) {
 // 공지사항 이벤트 목록들 중 하나의 게시글 상세보기
 function findBoard(boardNo, callback) {
     var sql = 'select boardNo, fileName from board where boardNo = ?'; // select 쿼리문
-
+    dbPool.logStatus();
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
             return callback("DB 연결 실패");
@@ -51,6 +52,7 @@ function findBoard(boardNo, callback) {
         // dbConn 연결 - 매개변수로 게시물번호를 받아 'sql' 쿼리문을 실행한다.
         dbConn.query(sql, [boardNo], function (err, result) {
             dbConn.release();
+            dbPool.logStatus();
             if (err) {
                 return callback("이미지 불러오기 실패");
             }

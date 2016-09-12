@@ -11,13 +11,14 @@ function selectSeat(playId, callback) {
         "from play p join place pl on (pl.id = p.place_id) " +
         "join usableSeat u on (u.play_id = p.id) " +
         "where p.playDay = curdate() and p.id = ? and u.state = 0";
-
+    dbPool.logStatus();
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
             return callback("DB CONNECTION FAIL");
         }
         dbConn.query(sql, [playId], function (err, results) {
             dbConn.release();
+            dbPool.logStatus();
             if (err) {
                 return callback("빈자리 정보 제공 실패");
             }

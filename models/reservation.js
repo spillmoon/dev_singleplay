@@ -14,7 +14,7 @@ function listRsv(uid, callback) {
                              'join image i on (p.name = i.play_name) ' +
                              'where r.user_id = ? ' +
                              'group by r.id'; // play, reservation, place, image 테이블을 join하여 필요한 속성을 추출하는 쿼리문
-
+    dbPool.logStatus();
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
             return callback("DB CONNECTION FAIL");
@@ -22,6 +22,7 @@ function listRsv(uid, callback) {
         // dbConn 연결 - 'sql_select_rsvlist' 쿼리문 실행
         dbConn.query(sql_select_rsvlist, [uid], function (err, results) {
             dbConn.release();
+            dbPool.logStatus();
             if (err) {
                 return callback("예약 내역 조회 실패");
             }
@@ -62,7 +63,7 @@ function createRsv(userId, playId, playName, usableSeatNo, seatClass, booker, bo
                      'useMileage, useCoupon, settlement) ' +
                      "values (?, ?, ?, convert_tz(current_timestamp(), '+00:00', '+09:00'), ?, ?, ?, ?, ?, ?, ?, ?)";// 예약을 추가하는 쿼리문
     var sql_update = 'update usableSeat set state = 1 where state = 0 and usableNo = ?';
-
+    dbPool.logStatus();
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
             return callback("DB CONNECTION FAIL");
@@ -70,17 +71,20 @@ function createRsv(userId, playId, playName, usableSeatNo, seatClass, booker, bo
         dbConn.beginTransaction(function (err) { // 두 개의 행동이 하나의 작업
             if (err) {
                 dbConn.release();
+                dbPool.logStatus();
                 return callback("예약 실패");
             }
             async.series([insertRsv, updateSeatState], function (err, result) {
                 if (err) {
                     return dbConn.rollback(function () { // 에러가 나면 db 롤백! (주의! autocommit 모드 해제!)
                         dbConn.release(); // db연결 끊음
+                        dbPool.logStatus();
                         callback("예약 실패"); // callback에 err를 넘겨주고
                     });
                 }
                 dbConn.commit(function () { // 에러가 아니면 commit
                     dbConn.release(); // db연결 끊음
+                    dbPool.logStatus();
                     callback(null, result[0]); //
                 })
             });
@@ -116,7 +120,7 @@ function findRsv(rsvId, callback) {
         'join place pl on (p.place_id = pl.id) ' +
         'join image i on (i.play_name = r.play_name) ' +
         'where r.id = ? and imageType = 0'; // reservation, usableSeat, play, place, image 테이블을 join 하여 필요한 속성을 추출하는 쿼리문
-
+    dbPool.logStatus();
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
             return callback("DB CONNECTION FAIL");
@@ -124,6 +128,7 @@ function findRsv(rsvId, callback) {
         // dbConn 연결 - 매개변수로 예약ID를 받아 'sql' 쿼리문을 실행한다.
         dbConn.query(sql, [rsvId], function (err, result) {
             dbConn.release();
+            dbPool.logStatus();
             if (err) {
                 return callback("예약 상세정보 조회 실패");
             }
@@ -164,7 +169,7 @@ function findRsv(rsvId, callback) {
 function deleteRsv(rsvId, callback) {
     var sql_seat_cancel = "update usableSeat set state = 0 where usableNo = (select usableSeat_usableNo from reservation where id = ?)";
     var sql_rsv_delete = "delete from reservation where id = ?";
-
+    dbPool.logStatus();
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
             return callback("DB 연결 실패");
@@ -172,17 +177,20 @@ function deleteRsv(rsvId, callback) {
         dbConn.beginTransaction(function (err) {
             if (err) {
                 dbConn.release();
+                dbPool.logStatus();
                 return callback("예약 취소 실패");
             }
             async.series([seatCancel, rsvDelete], function (err, result) {
                 if (err) {
                     return dbConn.rollback(function () {
                         dbConn.release();
+                        dbPool.logStatus();
                         callback("예약 취소 실패");
                     });
                 }
                 dbConn.commit(function () {
                     dbConn.release();
+                    dbPool.logStatus();
                     callback(null);
                 });
             });

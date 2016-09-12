@@ -10,13 +10,14 @@ var fs = require('fs');
 // deserializeUser에서 사용, id를 가지고 user를 복원
 function findUser(userId, callback) {
     var sql = "select id, name, userEmail, userPhone, facebookId from user where id = ?";
-
+    dbPool.logStatus();
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
             return callback("DB CONNECTION FAIL");
         }
         dbConn.query(sql, [userId], function(err, results) {
             dbConn.release();
+            dbPool.logStatus();
             if (err) {
                 return callback("로그인 실패");
             }
@@ -34,17 +35,20 @@ function findUser(userId, callback) {
 function findOrCreate(profile, callback) {
     var sql_findUser = "select id, name, userEmail, userPhone, facebookId from user where facebookId = ?";
     var sql_createUser = "insert into user(name, userEmail, facebookId) values(?, ?, ?)";
-
+    dbPool.logStatus();
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
             return callback("DB CONNECTION FAIL");
         }
         dbConn.query(sql_findUser, [profile.id], function(err, results) {
             if (err) {
+                dbConn.release();
+                dbPool.logStatus();
                 return callback("SQL FIND USER FAIL");
             }
             if (results.length !== 0) {
                 dbConn.release();
+                dbPool.logStatus();
                 var user = {};
                 user.id = results[0].id;
                 user.name = results[0].name;
@@ -55,6 +59,7 @@ function findOrCreate(profile, callback) {
             }
             dbConn.query(sql_createUser, [profile.displayName, profile.emails[0].value, profile.id], function(err, result) {
                 dbConn.release();
+                dbPool.logStatus();
                 if (err) {
                     return callback("SQL CREATE USER FAIL");
                 }
@@ -73,13 +78,14 @@ function couponList(uid, callback) {
     var sql_coupon_list = "select couponNo, couponName, saveOff, substring(periodStart, 1, 10) periodStart, substring(periodEnd, 1, 10) periodEnd " +
                             "from coupon " +
                             "where user_id = ?";
-
+    dbPool.logStatus();
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
             return callback("DB CONNECTION FAIL");
         }
         dbConn.query(sql_coupon_list, [uid], function(err, results) {
             dbConn.release();
+            dbPool.logStatus();
             if (err) {
                 return callback("쿠폰함 조회 실패");
             }
@@ -103,11 +109,14 @@ function getProfile(uid, callback) {
             "sum(case when couponNo then 1 else 0 end) 'couponCnt' " +
             "from user u left join coupon c on (u.id = c.user_id) " +
             "where id = ?";
+    dbPool.logStatus();
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
             return callback("DB CONNECTION FAIL");
         }
         dbConn.query(sql, [uid], function(err, result) {
+            dbConn.release();
+            dbPool.logStatus();
             if (err) {
                 return callback("사용자 정보 가져오기 실패");
             }
@@ -119,7 +128,7 @@ function getProfile(uid, callback) {
 function discountList(uid, callback) {
     var sql_coupon_list = "select couponNo, couponName, saveOff from coupon where user_id = ? and curdate() between periodStart and periodEnd";
     var sql_mileage = "select mileage from user where id = ?";
-
+    dbPool.logStatus();
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
             return callback("DB CONNECTION FAIL");
@@ -127,17 +136,21 @@ function discountList(uid, callback) {
         var discounts = {};
         dbConn.beginTransaction(function(err) {
             if (err) {
+                dbConn.release();
+                dbPool.logStatus();
                 return callback("TRANSACTION FAIL");
             }
             async.parallel([getMileage, getCoupon], function(err, result) {
                 if (err) {
                     return dbConn.rollback(function() {
                         dbConn.release();
+                        dbPool.logStatus();
                         callback("할인 목록 가져오기 실패");
                     });
                 }
                 dbConn.commit(function() {
                     dbConn.release();
+                    dbPool.logStatus();
                     callback(null, discounts);
                 });
             });
@@ -179,13 +192,14 @@ function updateProfile(userInfo, callback) {
     var sql_update_profile = 'update user ' +
         "set name = ?, userEmail = ?, userPhone = ? " +
         "where id =?";
-
+    dbPool.logStatus();
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
             return callback("DB CONNECTION FAIL");
         }
         dbConn.query(sql_update_profile, [userInfo.userName, userInfo.userEmail, userInfo.userPhone, userInfo.userId], function(err) {
             dbConn.release();
+            dbPool.logStatus();
             if (err) {
                 return callback("프로필 변경 실패");
             }
@@ -198,17 +212,18 @@ function updatePush(userId, sql_theme, sql_day, callback) {
     var sql_reset = "update user set musical = 0, opera = 0, concert = 0, mon = 0, tue = 0, wed = 0, thu = 0, fri = 0, sat = 0, sun = 0 where id = ?";
     var sql_change = "update user set " + sql_theme + sql_day + " where id = ?";
     console.log(sql_change);
+    dbPool.logStatus();
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
             return callback("DB CONNECTION FAIL");
         }
         dbConn.query(sql_reset, [userId], function(err, result) {
+            dbConn.release();
+            dbPool.logStatus();
             if (err) {
-                dbConn.release();
                 return callback("RESET FAIL");
             }
             dbConn.query(sql_change, [userId], function(err, result) {
-                dbConn.release();
                 if (err) {
                     return callback("알림 설정 변경 실패");
                 }

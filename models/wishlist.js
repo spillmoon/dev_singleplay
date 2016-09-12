@@ -14,7 +14,7 @@ function listWish(uid, callback) {
                               "join image i on (p.name = i.play_name) " +
                               "where w.userId = ? " +
                               "group by w.wishId"; // image, place, play, wishlist 테이블을 join하여 필요한 속성 추출하는 쿼리문
-
+    dbPool.logStatus();
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
             return callback("DB CONNECTION FAIL");
@@ -22,6 +22,7 @@ function listWish(uid, callback) {
         // dbConn 연결 - 'sql_select'wishlist' 쿼리문 실행
         dbConn.query(sql_select_wishlist, [uid], function (err, results) {
             dbConn.release();
+            dbPool.logStatus();
             if (err) {
                 return callback("위시리스트 조회 실패");
             }
@@ -67,7 +68,7 @@ function createWish(userId, playId, callback) {
                                 'join image i on (i.play_name = p.name) ' +
                                 'where w.userId = ? ' +
                                 'group by wishId'; // 위시리스트 추가할 시 나타나는 썸네일 이미지 URL 출력해줄 쿼리문
-
+    dbPool.logStatus();
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
             return callback("DB CONNECTION FAIL");
@@ -75,17 +76,20 @@ function createWish(userId, playId, callback) {
         dbConn.beginTransaction(function (err) { // 두 개의 행동이 하나의 작업
             if (err) {
                 dbConn.release();
+                dbPool.logStatus();
                 return callback("위시리스트 추가 실패"); // createWish의 callback에 err를 넘겨줌
             }
             async.series([insertWish, selectThumbnail], function (err, result) { // insertWish, selectThumbnail 함수를 순차실행
                 if (err) {
                     return dbConn.rollback(function () { // 에러가 나면 db 롤백! (주의! autocommit 모드 해제!)
                         dbConn.release(); // db연결 끊음
+                        dbPool.logStatus();
                         callback("위시리스트 추가 실패"); // callback에 err를 넘겨주고
                     });
                 }
                 dbConn.commit(function () { // 에러가 아니면 commit
                     dbConn.release(); // db연결 끊음
+                    dbPool.logStatus();
                     callback(null, result[1]); // 두번째 함수의 result가 router의 createWish 함수에 전달 됨.
                 })
             });
@@ -125,7 +129,7 @@ function createWish(userId, playId, callback) {
 // 위시리스트 삭제
 function deleteWish(wishId, callback) {
     var sql = 'delete from wishlist where wishId = ?'; // 위시리스트 삭제하는 쿼리문
-
+    dbPool.logStatus();
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
             return callback("DB CONNECTION FAIL");
@@ -133,6 +137,7 @@ function deleteWish(wishId, callback) {
         // dbConn 연결 - 위시리스트ID를 매개변수로 받아 'sql' 쿼리문을 실행한다.
         dbConn.query(sql, [wishId], function (err) {
             dbConn.release();
+            dbPool.logStatus();
             if (err) {
                 return callback("위시리스트 삭제 실패");
             }

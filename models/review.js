@@ -6,7 +6,7 @@ var dbPool = require('../models/common').dbPool;
 function createReview(userId, playId, playName, starScore, callback) {
     var sql = 'insert into starScore(user_id, play_id, play_name, starScore) ' +
               "values (?, ?, ?, ?)"; // 리뷰 생성하는 쿼리문
-
+    dbPool.logStatus();
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
             return callback("DB CONNECTION FAIL");
@@ -14,6 +14,7 @@ function createReview(userId, playId, playName, starScore, callback) {
         // dbConn 연결 - 매개변수로 회원ID, 공연ID, 공연명, 별점을 받아 'sql' 쿼리문 실행
         dbConn.query(sql, [userId, playId, playName, starScore], function(err) {
             dbConn.release();
+            dbPool.logStatus();
             if (err) {
                return callback("평가 입력 실패");
             }

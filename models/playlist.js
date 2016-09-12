@@ -40,12 +40,14 @@ function allList(sort, callback) {
     if (sort == 2)
         sql = sql_sale;
     // dbPool에서 커넥션을 가져옴
+    dbPool.logStatus();
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
             return callback("DB CONNECTION FAIL");
         }
         dbConn.query(sql, function (err, results) {
             dbConn.release();
+            dbPool.logStatus();
             if (err) {
                 return callback("목록 조회 실패");
             }
@@ -103,13 +105,14 @@ function musicalList(sort, callback) {
         sql = sql_time;
     if (sort == 2)
         sql = sql_sale;
-
+    dbPool.logStatus();
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
             return callback("DB CONNECTION FAIL");
         }
         dbConn.query(sql, function (err, results) {
             dbConn.release();
+            dbPool.logStatus();
             if (err) {
                 return callback("목록 조회 실패");
             }
@@ -167,13 +170,14 @@ function operaList(sort, callback) {
         sql = sql_time;
     if (sort == 2)
         sql = sql_sale;
-
+    dbPool.logStatus();
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
             return callback("DB CONNECTION FAIL");
         }
         dbConn.query(sql, function (err, results) {
             dbConn.release();
+            dbPool.logStatus();
             if (err) {
                 return callback("목록 조회 실패");
             }
@@ -232,13 +236,14 @@ function concertList(sort, callback) {
         sql = sql_time;
     if (sort == 2)
         sql = sql_sale;
-
+    dbPool.logStatus();
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
             return callback("DB CONNECTION FAIL");
         }
         dbConn.query(sql, function (err, results) {
             dbConn.release();
+            dbPool.logStatus();
             if (err) {
                 return callback("목록 조회 실패");
             }
@@ -273,7 +278,7 @@ function concertList(sort, callback) {
 function searchLocation(location, callback) {
     // 당일 검색한 구에 위치한 공연장에서 하는 공연 목록 검색 쿼리
     var sql_get_address = "select address from place where match(location) against(? in boolean mode) group by address";
-
+    dbPool.logStatus();
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
             return callback("DB CONNECTION FAIL");
@@ -281,10 +286,12 @@ function searchLocation(location, callback) {
         dbConn.query(sql_get_address, [location], function (err, results) {
             if (err) {
                 dbConn.release();
+                dbPool.logStatus();
                 return callback("지역 선택 실패");
             }
             if (results.length == 0) {
                 dbConn.release();
+                dbPool.logStatus();
                 return callback("공연장 없음");
             } else {
                 var sql = "select py.id pid, name, theme, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
@@ -305,6 +312,7 @@ function searchLocation(location, callback) {
 
                 dbConn.query(sql, queryObj, function(err, results) {
                     dbConn.release();
+                    dbPool.logStatus();
                     if (err) {
                         return callback("공연장 없음");
                     }
@@ -344,13 +352,14 @@ function searchKeyword(keyword, callback) {
         "from play py join place pe on (py.place_id = pe.id) " +
         "join image i on (i.play_name = py.name) " +
         "where (name like '%" + keyword + "%' or placeName like '%" + keyword + "%') and playDay = curdate() and imageType = 0 ";
-
+    dbPool.logStatus();
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
             return callback("DB CONNECTION FAIL");
         }
         dbConn.query(sql, function (err, results) {
             dbConn.release();
+            dbPool.logStatus();
             if (err) {
                 return callback("키워드 검색 실패");
             }
@@ -399,7 +408,7 @@ function findPlay(pid, uid, callback) {
         "sum(case when seatClass = 'S' then 1 else 0 end) 'S' " +
         "from play p join usableSeat u on (p.id = u.play_id) " +
         "where p.id = ? and u.state = 0";
-
+    dbPool.logStatus();
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
             return callback("DB CONNECTION FAIL");
@@ -408,17 +417,21 @@ function findPlay(pid, uid, callback) {
         // async의 parallel로 공연정보, 빈자리 정보 가져오기
         dbConn.beginTransaction(function(err) {
             if (err) {
+                dbConn.release();
+                dbPool.logStatus();
                 return callback("TRANSACTION FAIL");
             }
             async.parallel([getPlayInfo, getPlaySeat, isWish], function (err) {
                 if (err) {
                     return dbConn.rollback(function() {
                         dbConn.release();
+                        dbPool.logStatus();
                         callback("공연 상세 조회 실패");
                     });
                 }
                 dbConn.commit(function() {
                     dbConn.release();
+                    dbPool.logStatus();
                     callback(null, play);
                 });
             });
