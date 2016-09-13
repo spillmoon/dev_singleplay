@@ -40,7 +40,7 @@ app.use(session({
     client: redisClient
   }),
   resave: true, // 변경된 게 없으면 세션을 저장하지 말아라.
-  saveUninitialized: false, // 저장된 게 없으면 세션을 생성하지 말아라.
+  saveUninitialized: true, // 저장된 게 없으면 세션을 생성하지 말아라.
   cookie: {
     path: '/',
     httpOnly: true,

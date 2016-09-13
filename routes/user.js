@@ -102,12 +102,11 @@ router.get('/me', isSecure, isAuthenticated, function(req, res, next) {
     logger.log('debug', 'originalUrl: %s', req.originalUrl);
     logger.log('debug', 'baseUrl: %s', req.baseUrl);
     logger.log('debug', 'url: %s', req.url);
-    logger.log('debug', 'query: %j', req.query, {});
     logger.log('debug', '%s %s://%s%s', req.method, req.protocol, req.headers['host'], req.originalUrl);
 
     var userId = (req.user) ? req.user.id : 0;
     logger.log('debug', 'sessionId: %s', userId);
-    User.getProfile(userId, function(err, info) {
+    User.getProfile(userId, function(err, user) {
         if (err) {
             return res.send({
                 code: 0,
@@ -116,11 +115,7 @@ router.get('/me', isSecure, isAuthenticated, function(req, res, next) {
         }
         res.send({
             code: 1,
-            result: {
-                name: info[0].name,
-                email: info[0].userEmail,
-                phone: info[0].userPhone
-            }
+            result: user
         });
     });
 });

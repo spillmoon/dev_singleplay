@@ -8,11 +8,12 @@ var User = require('../models/user');
 var logger = require('../config/logger');
 
 passport.serializeUser(function (user, done) {
-    logger.log('debug', 'serialize user.id : %s', user.id);
+    logger.log('debug', '********** Here is serializeUser userId : %s', user.id);
     done(null, user.id);
 });
 
 passport.deserializeUser(function (id, done) {
+    logger.log('debug', '********** Here is deserializeUser ****************');
     User.findUser(id, function (err, user) {
         if (err) {
             return done(err);
@@ -26,7 +27,7 @@ passport.use(new FacebookTokenStrategy({
     clientID: process.env.FACEBOOK_APP_ID,
     clientSecret: process.env.FACEBOOK_APP_SECRET
 }, function (accessToken, refreshToken, profile, done) {
-    logger.log('debug', 'facebookToken Strategy ------------------------------ ');
+    logger.log('debug', '********** facebookToken Strategy ****** %j : ', profile, {});
     User.findOrCreate(profile, function (err, user) {
         if (err) {
             return done(err);
@@ -37,6 +38,7 @@ passport.use(new FacebookTokenStrategy({
 
 router.get('/logout', function (req, res, next) {
     req.logout();
+    logger.log('debug', '********** Here is logout ****************');
     res.send({
         code: 1,
         message: '로그아웃 성공'
@@ -51,7 +53,6 @@ router.get('/facebook/callback', passport.authenticate('facebook'), function (re
 
 router.post('/facebook/token', passport.authenticate('facebook-token', { scope : ['email']}), function (req, res, next) {
     logger.log('debug', '********** Here is facebook token **************');
-    logger.log('debug', 'sessionId: %s', req.user.id);
     logger.log('debug', 'method: %s', req.method);
     logger.log('debug', 'protocol: %s', req.protocol);
     logger.log('debug', 'host: %s', req.headers['host']);
@@ -62,7 +63,8 @@ router.post('/facebook/token', passport.authenticate('facebook-token', { scope :
     logger.log('debug', 'user: %j', req.user, {});
     logger.log('debug', '%s %s://%s%s', req.method, req.protocol, req.headers['host'], req.originalUrl);
 
-    var userId = req.user.id || 0;
+    var userId = (req.user) ? req.user.id : 0;
+    logger.log('debug', 'sessionId: %s', req.user.id);
     if (req.user) {
         User.getProfile(userId, function (err, info) {
             if (err) {
@@ -73,11 +75,7 @@ router.post('/facebook/token', passport.authenticate('facebook-token', { scope :
             }
             res.send({
                 code: 1,
-                result: {
-                    name: info[0].name,
-                    couponCnt: info[0].couponCnt,
-                    mileage: info[0].mileage
-                }
+                message: "로그인 성공"
             });
         });
     }
