@@ -59,8 +59,8 @@ function listRsv(uid, callback) {
 
 // 예약 내역 추가
 function createRsv(userId, playId, playName, usableSeatNo, seatClass, booker, bookerPhone, bookerEmail, useMileage, useCoupon, settlement, callback) {
-    var sql_insert = 'insert into reservation(user_id, play_id, play_name, rsvDate, usableSeat_usableNo, seatClass, booker, bookerPhone, bookerEmail, ' +
-                     'useMileage, useCoupon, settlement, status) ' +
+    var sql_insert = "insert into reservation(user_id, play_id, play_name, rsvDate, usableSeat_usableNo, seatClass, booker, bookerPhone, bookerEmail, " +
+                     "useMileage, useCoupon, settlement, status) " +
                      "values (?, ?, ?, convert_tz(current_timestamp(), '+00:00', '+09:00'), ?, ?, ?, ?, ?, ?, ?, ?, 1)";// 예약을 추가하는 쿼리문
     var sql_update = 'update usableSeat set state = 1 where state = 0 and usableNo = ?';
     dbPool.logStatus();
@@ -113,7 +113,7 @@ function createRsv(userId, playId, playName, usableSeatNo, seatClass, booker, bo
 
 // 예약 내역들 중 하나의 예약 내역 상세보기
 function findRsv(rsvId, callback) {
-    var sql = 'select r.id rid, r.play_name name, substring(p.playDay, 1, 10) playDay, substring(p.playTime, 1, 5) playTime, r.status ' +
+    var sql = 'select r.id rid, r.play_name name, substring(p.playDay, 1, 10) playDay, substring(p.playTime, 1, 5) playTime, r.status, ' +
         "pl.placeName, r.seatClass, u.seatInfo, i.imageName, concat(date_format(r.rsvDate, '%Y-%m%d'), '-', r.id, r.user_id, r.play_id) rsvNo, r.settlement " +
         'from reservation r join usableSeat u on (r.usableSeat_usableNo = u.usableNo) ' +
         'join play p on (p.id = r.play_id) ' +
