@@ -22,12 +22,11 @@ function findOrCreate(profile, callback) {
                 return callback("SQL FIND USER FAIL");
             }
             if (results.length !== 0) {
-                console.log("Zzzz");
                 dbConn.release();
                 dbPool.logStatus();
                 var user = {};
                 user.id = results[0].id;
-                user.name = resulty[0].name;
+                user.name = results[0].name;
                 user.facebookId = results[0].facebookId;
                 return callback(null, user);
             }
@@ -37,7 +36,6 @@ function findOrCreate(profile, callback) {
                 if (err) {
                     return callback("SQL CREATE USER FAIL");
                 }
-                console.log("크레이트");
                 var user = {};
                 user.id = result.insertId;
                 user.name = profile.displayName;
