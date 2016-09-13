@@ -113,7 +113,7 @@ router.get('/:rid', isSecure, isAuthenticated, function(req, res, next) {
     });
 });
 
-router.delete('/:rid', isSecure, isAuthenticated, function(req, res, next) {
+router.put('/:rid', isSecure, isAuthenticated, function(req, res, next) {
     logger.log('debug', '********** Here is reservation delete **************');
     logger.log('debug', 'method: %s', req.method);
     logger.log('debug', 'protocol: %s', req.protocol);

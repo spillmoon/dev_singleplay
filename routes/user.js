@@ -71,7 +71,6 @@ router.put('/me', isSecure, isAuthenticated, function(req, res, next) {
     } else if (action == "profile") { // 프로필 변경
         var userInfo = {};
         userInfo.userId = userId;
-        userInfo.userName = req.body.userName;
         userInfo.userEmail = req.body.userEmail;
         userInfo.userPhone = req.body.userPhone;
         User.updateProfile(userInfo, function (err) {
@@ -85,7 +84,6 @@ router.put('/me', isSecure, isAuthenticated, function(req, res, next) {
                 code: 1,
                 result: {
                     message: '프로필 변경 완료',
-                    userName: userInfo.userName,
                     userEmail: userInfo.userEmail,
                     userPhone: userInfo.userPhone
                 }

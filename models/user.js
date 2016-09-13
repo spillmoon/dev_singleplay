@@ -113,15 +113,13 @@ function getProfile(uid, callback) {
 
 // 프로필 수정
 function updateProfile(userInfo, callback) {
-    var sql_update_profile = 'update user ' +
-        "set name = ?, userEmail = ?, userPhone = ? " +
-        "where id =?";
+    var sql_update_profile = "update user set userEmail = ?, userPhone = ? where id = ?";
     dbPool.logStatus();
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
             return callback("DB CONNECTION FAIL");
         }
-        dbConn.query(sql_update_profile, [userInfo.userName, userInfo.userEmail, userInfo.userPhone, userInfo.userId], function(err) {
+        dbConn.query(sql_update_profile, [userInfo.userEmail, userInfo.userPhone, userInfo.userId], function(err) {
             dbConn.release();
             dbPool.logStatus();
             if (err) {

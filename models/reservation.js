@@ -60,8 +60,8 @@ function listRsv(uid, callback) {
 // 예약 내역 추가
 function createRsv(userId, playId, playName, usableSeatNo, seatClass, booker, bookerPhone, bookerEmail, useMileage, useCoupon, settlement, callback) {
     var sql_insert = 'insert into reservation(user_id, play_id, play_name, rsvDate, usableSeat_usableNo, seatClass, booker, bookerPhone, bookerEmail, ' +
-                     'useMileage, useCoupon, settlement) ' +
-                     "values (?, ?, ?, convert_tz(current_timestamp(), '+00:00', '+09:00'), ?, ?, ?, ?, ?, ?, ?, ?)";// 예약을 추가하는 쿼리문
+                     'useMileage, useCoupon, settlement, status) ' +
+                     "values (?, ?, ?, convert_tz(current_timestamp(), '+00:00', '+09:00'), ?, ?, ?, ?, ?, ?, ?, ?, 1)";// 예약을 추가하는 쿼리문
     var sql_update = 'update usableSeat set state = 1 where state = 0 and usableNo = ?';
     dbPool.logStatus();
     dbPool.getConnection(function (err, dbConn) {
@@ -113,7 +113,7 @@ function createRsv(userId, playId, playName, usableSeatNo, seatClass, booker, bo
 
 // 예약 내역들 중 하나의 예약 내역 상세보기
 function findRsv(rsvId, callback) {
-    var sql = 'select r.id rid, r.play_name name, substring(p.playDay, 1, 10) playDay, substring(p.playTime, 1, 5) playTime, ' +
+    var sql = 'select r.id rid, r.play_name name, substring(p.playDay, 1, 10) playDay, substring(p.playTime, 1, 5) playTime, r.status ' +
         "pl.placeName, r.seatClass, u.seatInfo, i.imageName, concat(date_format(r.rsvDate, '%Y-%m%d'), '-', r.id, r.user_id, r.play_id) rsvNo, r.settlement " +
         'from reservation r join usableSeat u on (r.usableSeat_usableNo = u.usableNo) ' +
         'join play p on (p.id = r.play_id) ' +
@@ -159,6 +159,7 @@ function findRsv(rsvId, callback) {
                 // }
                 // 예약한 공연의 포스터 이미지
                 rsv.poster = url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(result[0].imageName));
+                rsv.status = result[0].status;
                 // rsv.poster = url.resolve('https://127.0.0.1:4433/posterimg/', path.basename(result[0].imageName));
                 callback(null, rsv); // router에 null->err, rsv객체->result에 넘겨준다.
             }
@@ -168,7 +169,7 @@ function findRsv(rsvId, callback) {
 
 function deleteRsv(rsvId, callback) {
     var sql_seat_cancel = "update usableSeat set state = 0 where usableNo = (select usableSeat_usableNo from reservation where id = ?)";
-    var sql_rsv_delete = "delete from reservation where id = ?";
+    var sql_rsv_delete = "update reservation set status = 0 where id = ?";
     dbPool.logStatus();
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
