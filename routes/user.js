@@ -8,6 +8,32 @@ var isAuthenticated = require('./common').isAuthenticated;
 var User = require('../models/user');
 var logger = require('../config/logger');
 
+// 회원정보(이름, 이메일, 전화번호) 가져오기
+router.get('/me', isSecure, isAuthenticated, function(req, res, next) {
+    logger.log('debug', '********** Here is user get **************');
+    logger.log('debug', 'method: %s', req.method);
+    logger.log('debug', 'protocol: %s', req.protocol);
+    logger.log('debug', 'host: %s', req.headers['host']);
+    logger.log('debug', 'originalUrl: %s', req.originalUrl);
+    logger.log('debug', 'baseUrl: %s', req.baseUrl);
+    logger.log('debug', 'url: %s', req.url);
+    logger.log('debug', '%s %s://%s%s', req.method, req.protocol, req.headers['host'], req.originalUrl);
+
+    var userId = (req.user) ? req.user.id : 0;
+    logger.log('debug', 'sessionId: %s', userId);
+    User.getProfile(userId, function(err, user) {
+        if (err) {
+            return res.send({
+                code: 0,
+                error: "회원정보 가져오기 실패"
+            });
+        }
+        res.send({
+            code: 1,
+            result: user
+        });
+    });
+});
 
 router.put('/me', isSecure, isAuthenticated, function(req, res, next) {
     logger.log('debug', '********** Here is user put **************');
@@ -91,32 +117,7 @@ router.put('/me', isSecure, isAuthenticated, function(req, res, next) {
         });
     }
 });
-// 회원정보(이름, 이메일, 전화번호) 가져오기
-router.get('/me', isSecure, isAuthenticated, function(req, res, next) {
-    logger.log('debug', '********** Here is user get **************');
-    logger.log('debug', 'method: %s', req.method);
-    logger.log('debug', 'protocol: %s', req.protocol);
-    logger.log('debug', 'host: %s', req.headers['host']);
-    logger.log('debug', 'originalUrl: %s', req.originalUrl);
-    logger.log('debug', 'baseUrl: %s', req.baseUrl);
-    logger.log('debug', 'url: %s', req.url);
-    logger.log('debug', '%s %s://%s%s', req.method, req.protocol, req.headers['host'], req.originalUrl);
 
-    var userId = (req.user) ? req.user.id : 0;
-    logger.log('debug', 'sessionId: %s', userId);
-    User.getProfile(userId, function(err, user) {
-        if (err) {
-            return res.send({
-                code: 0,
-                error: "회원정보 가져오기 실패"
-            });
-        }
-        res.send({
-            code: 1,
-            result: user
-        });
-    });
-});
 // 쿠폰 목록 조회, https, 로그인 해야 사용 가능
 router.get('/me/coupons', isSecure, isAuthenticated, function(req, res, next) {
     logger.log('debug', '********** Here is user coupon get **************');

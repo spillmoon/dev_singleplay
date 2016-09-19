@@ -68,6 +68,42 @@ function findUser(userId, callback) {
     });
 }
 
+function updateRegistrationToken(token, uid, callback) {
+    var sql = "update user set registrationToken = ? where id = ?";
+    dbPool.logStatus();
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback("DB CONNECTION FAIL");
+        }
+        dbConn.query(sql, [token, uid], function(err, result) {
+            dbConn.release();
+            dbPool.logStatus();
+            if (err) {
+                return callback("registrationToken 등록 실패");
+            }
+            callback(null);
+        });
+    });
+}
+
+function getRegistrationToken(callback) {
+    var sql = "select registrationToken from user";
+    dbPool.logStatus();
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback("DB CONNECTION FAIL");
+        }
+        dbConn.query(sql, function(err, results) {
+            dbConn.release();
+            dbPool.logStatus();
+            if (err) {
+                return callback("registrationToken 조회 실패");
+            }
+            callback(null, results);
+        });
+    });
+}
+
 // 사용자 정보 가져오기
 function getProfile(uid, callback) {
     var sql = "select id, name, userEmail, userPhone, mileage, musical, opera, concert, " +
@@ -254,4 +290,5 @@ module.exports.getProfile = getProfile;
 module.exports.discountList = discountList;
 module.exports.updateProfile = updateProfile;
 module.exports.updatePush = updatePush;
-
+module.exports.updateRegistrationToken = updateRegistrationToken;
+module.exports.getRegistrationToken = getRegistrationToken;

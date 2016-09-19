@@ -48,7 +48,7 @@ function listRsv(uid, callback) {
                     price: tmprsv.price,
                     salePrice: tmprsv.salePrice,
                     starScore: results[i].starScoreAvg,
-                    poster: url.resolve('https://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:4433/posterimg/', path.basename(results[i].imageName))
+                    poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
                     // poster: url.resolve('https://127.0.0.1:4433/posterimg/', path.basename(results[i].imageName))
                 });
             }

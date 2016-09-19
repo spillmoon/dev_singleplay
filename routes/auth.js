@@ -65,8 +65,9 @@ router.post('/facebook/token', passport.authenticate('facebook-token', { scope :
 
     var userId = (req.user) ? req.user.id : 0;
     logger.log('debug', 'sessionId: %s', req.user.id);
+    logger.log('debug', 'registrationToken: %s', req.body.registration_token);
     if (req.user) {
-        User.getProfile(userId, function (err, info) {
+        User.updateRegistrationToken(req.body.registration_token, userId, function (err, info) {
             if (err) {
                 return res.send({
                     code: 0,

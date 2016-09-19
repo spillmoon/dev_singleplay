@@ -20,6 +20,14 @@ var user = require('./routes/user');
 var notification = require('./routes/notification');
 var usableseat = require('./routes/usableseat');
 
+var FCM = require('fcm').FCM;
+var User = require('./models/user');
+var CronJob = require('cron').CronJob;
+var logger2 = require('./config/logger');
+var async = require('async');
+var timeZone = "Asia/Seoul";
+var sendTime = "1 * * * * *";
+
 var app = express();
 
 // view engine setup
@@ -66,6 +74,40 @@ app.use('/reviews', review);
 app.use('/users', user);
 app.use('/notifications', notification); //(url, 모듈명)
 app.use('/usableseats', usableseat);
+
+
+var job = new CronJob(sendTime, function() {
+    logger2.log('debug', '***************** this is FCM CronJob');
+    User.getRegistrationToken(function(err, tokens) {
+        if (err) {
+            logger2.log('debug', 'get registrationToken Fail');
+        }
+        logger2.log('debug', 'tokens %j', tokens, {});
+        async.each(tokens, function(item, callback) {
+            var fcm = new FCM('AIzaSyDwz_s38S_LU-fNSOA3mqKpDDGxhWuJOIs');
+            // var regTokens = [];
+            // regTokens.push(item[0].registrationToken);
+            var message = {
+                registration_id: item.registrationToken,
+                notification: {
+                    title: "Hello, World",
+                    icon: "ic_launcher",
+                    body: "This is a notification that will be displayed ASAP."
+                }
+            };
+            logger2.log('debug', 'registrationToken: %s', item.registrationToken);
+            fcm.send(message, /*{registrationTokens: regTokens},*/ function (err, messageId) {
+                if (err)
+                    logger2.log('debug', 'FCM Send Error ');
+                else
+                    logger2.log('debug', 'FCM Send Success');
+            });
+        }, function(err) {
+            logger2.log('debug', 'FCM async Error');
+        });
+    });
+}, true, timeZone);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
