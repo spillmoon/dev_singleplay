@@ -26,7 +26,7 @@ var CronJob = require('cron').CronJob;
 var logger2 = require('./config/logger');
 var async = require('async');
 var timeZone = "Asia/Seoul";
-var sendTime = "00 00 9-18 * * *";
+var sendTime = "00 00 * * * *";
 
 var app = express();
 
@@ -78,7 +78,9 @@ app.use('/usableseats', usableseat);
 
 var job = new CronJob(sendTime, function() {
     logger2.log('debug', '***************** this is FCM CronJob');
-    User.getRegistrationToken(function(err, tokens) {
+    var date = new Date();
+    var week = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+    User.getRegistrationToken(week[date.getDay()], function(err, tokens) {
         if (err) {
             logger2.log('debug', 'get registrationToken Fail');
         }

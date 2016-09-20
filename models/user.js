@@ -86,8 +86,8 @@ function updateRegistrationToken(token, uid, callback) {
     });
 }
 
-function getRegistrationToken(callback) {
-    var sql = "select registrationToken from user";
+function getRegistrationToken(day, callback) {
+    var sql = "select registrationToken from user where (musical =1 or opera = 1 or concert = 1) and " + day + " = 1";
     dbPool.logStatus();
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
