@@ -26,7 +26,7 @@ var CronJob = require('cron').CronJob;
 var logger2 = require('./config/logger');
 var async = require('async');
 var timeZone = "Asia/Seoul";
-var sendTime = "00 00 08 * * 0-6";
+var sendTime = "00 00 9-18 * * 0-6";
 
 var app = express();
 
