@@ -55,30 +55,52 @@ router.put('/me', isSecure, isAuthenticated, function(req, res, next) {
         var day = req.body.day;
         var sql_theme = "";
         var sql_day = "";
-        for(var i = 0; i < theme.length; i++) {
-            if (theme[i] == '0')
-                sql_theme += "musical = 1, ";
-            if (theme[i] == '1')
-                sql_theme += "opera = 1, ";
-            if (theme[i] == '2')
-                sql_theme += "concert = 1, ";
-        }
-        for(var i = 0; i < day.length; i++) {
-            if (day[i] == '0')
-                sql_day += "sun = 1, ";
-            if (day[i] == '1')
-                sql_day += "mon = 1, ";
-            if (day[i] == '2')
-                sql_day += "tue = 1, ";
-            if (day[i] == '3')
-                sql_day += "wed = 1, ";
-            if (day[i] == '4')
-                sql_day += "thu = 1, ";
-            if (day[i] == '5')
-                sql_day += "fri = 1, ";
-            if (day[i] == '6')
-                sql_day += "sat = 1, ";
-        }
+
+        if (theme[0] == '1')
+            sql_theme += "musical = 1, ";
+        else
+            sql_theme += "musical = 0, ";
+        if (theme[1] == '1')
+            sql_theme += "opera = 1, ";
+        else
+            sql_theme += "opera = 0, ";
+        if (theme[2] == '1')
+            sql_theme += "concert = 1, ";
+        else
+            sql_theme += "concert = 0, ";
+        if (day[0] == '1')
+            sql_day += "mon = 1, ";
+        else
+            sql_day += "mon = 0, ";
+        if (day[1] == '1')
+            sql_day += "tue = 1, ";
+        else
+            sql_day += "tue = 0, ";
+        if (day[2] == '1')
+            sql_day += "wed = 1, ";
+        else
+            sql_day += "wed = 0, ";
+        if (day[3] == '1')
+            sql_day += "thu = 1, ";
+        else
+            sql_day += "thu = 0, ";
+        if (day[4] == '1')
+            sql_day += "fri = 1, ";
+        else
+            sql_day += "fri = 0, ";
+        if (day[5] == '1')
+            sql_day += "sat = 1, ";
+        else
+            sql_day += "sat = 0, ";
+        if (day[6] == '1')
+            sql_day += "sun = 1, ";
+        else
+            sql_day += "sun = 0, ";
+        if (req.body.noti == 'on')
+            sql_day += "push = on ";
+        else
+            sql_day += "push = off ";
+
         sql_day = sql_day.substr(0, sql_day.length-2);
         console.log(sql_theme);
         console.log(sql_day);

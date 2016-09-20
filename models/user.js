@@ -87,7 +87,7 @@ function updateRegistrationToken(token, uid, callback) {
 }
 
 function getRegistrationToken(day, callback) {
-    var sql = "select registrationToken from user where (musical =1 or opera = 1 or concert = 1) and " + day + " = 1";
+    var sql = "select registrationToken from user where (musical =1 or opera = 1 or concert = 1) and " + day + " = 1 and push = 'on'";
     dbPool.logStatus();
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
@@ -165,7 +165,6 @@ function updateProfile(userInfo, callback) {
 }
 
 function updatePush(userId, sql_theme, sql_day, callback) {
-    var sql_reset = "update user set musical = 0, opera = 0, concert = 0, mon = 0, tue = 0, wed = 0, thu = 0, fri = 0, sat = 0, sun = 0 where id = ?";
     var sql_change = "update user set " + sql_theme + sql_day + " where id = ?";
     console.log(sql_change);
     dbPool.logStatus();
@@ -173,18 +172,13 @@ function updatePush(userId, sql_theme, sql_day, callback) {
         if (err) {
             return callback("DB CONNECTION FAIL");
         }
-        dbConn.query(sql_reset, [userId], function(err, result) {
+        dbConn.query(sql_change, [userId], function(err, result) {
             dbConn.release();
             dbPool.logStatus();
             if (err) {
                 return callback("RESET FAIL");
             }
-            dbConn.query(sql_change, [userId], function(err, result) {
-                if (err) {
-                    return callback("알림 설정 변경 실패");
-                }
-                callback(null);
-            });
+            callback(null);
         });
     });
 }

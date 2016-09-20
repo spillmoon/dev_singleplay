@@ -26,7 +26,7 @@ var CronJob = require('cron').CronJob;
 var logger2 = require('./config/logger');
 var async = require('async');
 var timeZone = "Asia/Seoul";
-var sendTime = "00 00 * * * *";
+var sendTime = "00 00 08 * * 0-6";
 
 var app = express();
 
@@ -110,6 +110,41 @@ var job = new CronJob(sendTime, function() {
         });
     });
 }, true, timeZone);
+//
+// var job = new CronJob(sendTime, function() {
+//     logger2.log('debug', '***************** this is FCM CronJob');
+//     var date = new Date();
+//     var week = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+//     User.getRegistrationToken(week[date.getDay()], function(err, tokens) {
+//         if (err) {
+//             logger2.log('debug', 'get registrationToken Fail');
+//         }
+//         async.each(tokens, function(item, callback) {
+//             var message = new FCM.Message({
+//                 delayWhileIdle: false,
+//                 notification: {
+//                     title: "Single Play Notification",
+//                     body: "오늘 뮤지컬 공연이 있어요"
+//                 },
+//                 data: {
+//                     title: "1",
+//                     content: "2"
+//                 }
+//             });
+//             var fcm = new FCM.Sender('AIzaSyDwz_s38S_LU-fNSOA3mqKpDDGxhWuJOIs');
+//             var regToken = [];
+//             regToken.push(item.registrationToken);
+//             fcm.send(message, { registrationTokens: regToken}, function (err, response) {
+//                 if (err)
+//                     logger2.log('debug', 'FCM Send Error ', err);
+//                 else
+//                     logger2.log('debug', 'FCM Send Success ', response);
+//             });
+//         }, function(err) {
+//             logger2.log('debug', 'FCM async Error');
+//         });
+//     });
+// }, true, timeZone);
 
 
 // catch 404 and forward to error handler
