@@ -123,10 +123,10 @@ function getProfile(uid, callback) {
             }
             var user = {};
             user.id = result[0].id;
-            user.name = result[0].userName;
+            user.name = result[0].name;
             user.email = result[0].userEmail;
             user.phone = result[0].userPhone;
-            user.copons = result[0].coupons;
+            user.coupons = result[0].coupons;
             user.mileage = result[0].mileage;
             user.day = [];
             user.theme = [];

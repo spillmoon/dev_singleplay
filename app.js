@@ -20,13 +20,13 @@ var user = require('./routes/user');
 var notification = require('./routes/notification');
 var usableseat = require('./routes/usableseat');
 
-var FCM = require('fcm').FCM;
+var FCM = require('node-gcm');
 var User = require('./models/user');
 var CronJob = require('cron').CronJob;
 var logger2 = require('./config/logger');
 var async = require('async');
 var timeZone = "Asia/Seoul";
-var sendTime = "1 * * * * *";
+var sendTime = "00 00 9-18 * * *";
 
 var app = express();
 
@@ -82,25 +82,26 @@ var job = new CronJob(sendTime, function() {
         if (err) {
             logger2.log('debug', 'get registrationToken Fail');
         }
-        logger2.log('debug', 'tokens %j', tokens, {});
         async.each(tokens, function(item, callback) {
-            var fcm = new FCM('AIzaSyDwz_s38S_LU-fNSOA3mqKpDDGxhWuJOIs');
-            // var regTokens = [];
-            // regTokens.push(item[0].registrationToken);
-            var message = {
-                registration_id: item.registrationToken,
+            var message = new FCM.Message({
+                delayWhileIdle: false,
                 notification: {
-                    title: "Hello, World",
-                    icon: "ic_launcher",
-                    body: "This is a notification that will be displayed ASAP."
+                    title: "Single Play Notification",
+                    body: "오늘 뮤지컬 공연이 있어요"
+                },
+                data: {
+                    title: "1",
+                    content: "2"
                 }
-            };
-            logger2.log('debug', 'registrationToken: %s', item.registrationToken);
-            fcm.send(message, /*{registrationTokens: regTokens},*/ function (err, messageId) {
+            });
+            var fcm = new FCM.Sender('AIzaSyDwz_s38S_LU-fNSOA3mqKpDDGxhWuJOIs');
+            var regToken = [];
+            regToken.push(item.registrationToken);
+            fcm.send(message, { registrationTokens: regToken}, function (err, response) {
                 if (err)
-                    logger2.log('debug', 'FCM Send Error ');
+                    logger2.log('debug', 'FCM Send Error ', err);
                 else
-                    logger2.log('debug', 'FCM Send Success');
+                    logger2.log('debug', 'FCM Send Success ', response);
             });
         }, function(err) {
             logger2.log('debug', 'FCM async Error');

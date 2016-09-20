@@ -1,6 +1,6 @@
 var express =require('express');
 var router = express.Router();
-var fcm = require('node-gcm');
+// var fcm = require('node-gcm');
 var User = require('../models/user');
 var CronJob = require('cron').CronJob;
 var isAuthenticated = require('./common').isAuthenticated;
@@ -10,21 +10,21 @@ var sendTime = "00 * 9-18 * * 1-5";
 
 router.post('/', isAuthenticated, function(req, res, next) {
     var job = new CronJob(sendTime, function() {
-        var sender = new fcm.Sender('AIzaSyDwz_s38S_LU-fNSOA3mqKpDDGxhWuJOIs');
-        var regTokens = [];
-        User.getRegistrationToken(userId, function (err, token) {
-            if (err) {
-                return next(err);
-            }
-            regTokens.push(token[0].registrationToken);
-        });
-        var message = new fcm.Message({
-            data: {key1: 'msg1'}
-        });
-        sender.send(message, {registrationTokens: regTokens}, function (err, response) {
-            if (err) console.error(err);
-            else    console.log(response);
-        });
+        // var sender = new fcm.Sender('AIzaSyDwz_s38S_LU-fNSOA3mqKpDDGxhWuJOIs');
+        // var regTokens = [];
+        // User.getRegistrationToken(userId, function (err, token) {
+        //     if (err) {
+        //         return next(err);
+        //     }
+        //     regTokens.push(token[0].registrationToken);
+        // });
+        // var message = new fcm.Message({
+        //     data: {key1: 'msg1'}
+        // });
+        // sender.send(message, {registrationTokens: regTokens}, function (err, response) {
+        //     if (err) console.error(err);
+        //     else    console.log(response);
+        // });
     }, true, timeZone);
 
     // var fcm = new FCM('AIzaSyDwz_s38S_LU-fNSOA3mqKpDDGxhWuJOIs');
