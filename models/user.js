@@ -129,7 +129,7 @@ function getWishToken(callback) {
 // 사용자 정보 가져오기
 function getProfile(uid, callback) {
     var sql = "select id, name, userEmail, userPhone, mileage, musical, opera, concert, " +
-        "mon, tue, wed, thu, fri, sat, sun, push, sum(case when couponNo then 1 else 0 end) 'coupons' " +
+        "mon, tue, wed, thu, fri, sat, sun, push, wishPush, sum(case when couponNo then 1 else 0 end) 'coupons' " +
         "from user u left join coupon c on (u.id = c.user_id) " +
         "where id = ? and c.state = 0";
     dbPool.logStatus();
@@ -151,6 +151,7 @@ function getProfile(uid, callback) {
             user.coupons = result[0].coupons;
             user.mileage = result[0].mileage;
             user.noti = result[0].push;
+            user.wishnoti = result[0].wishPush;
             user.day = [];
             user.theme = [];
             user.day.push((result[0].mon === 1) ? 1 : 0);
