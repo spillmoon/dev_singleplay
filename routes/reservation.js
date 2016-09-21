@@ -68,6 +68,7 @@ router.post('/', isSecure, isAuthenticated, function(req, res, next) {
                 error: "예약 실패"
             });
         }
+        // 추가된 예약의 id로 예약결과를 리턴
         Reservation.findRsv(rid, function(err, result) {
             if (err) {
                 return res.send({
@@ -112,7 +113,7 @@ router.get('/:rid', isSecure, isAuthenticated, function(req, res, next) {
         });
     });
 });
-
+// 예약 취소
 router.put('/:rid', isSecure, isAuthenticated, function(req, res, next) {
     logger.log('debug', '********** Here is reservation delete **************');
     logger.log('debug', 'method: %s', req.method);

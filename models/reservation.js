@@ -50,7 +50,6 @@ function listRsv(uid, callback) {
                     salePrice: tmprsv.salePrice,
                     starScore: results[i].starScoreAvg,
                     poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
-                    // poster: url.resolve('https://127.0.0.1:4433/posterimg/', path.basename(results[i].imageName))
                 });
             }
             callback(null, rsv); // router에 null->err, board 객체->results를 넘겨준다.
@@ -94,7 +93,7 @@ function createRsv(userId, playId, playName, usableSeatNo, seatClass, booker, bo
             });
         });
 
-        function insertRsv(callback) { // 트랜잭션 내의 함수 정의
+        function insertRsv(callback) { // 트랜잭션 내의 함수 정의 - 예약 추가
             dbConn.query(sql_insert, [userId, playId, playName, usableSeatNo, seatClass, booker, bookerPhone, bookerEmail,
                 useMileage, useCoupon, settlement], function (err, result) {
                 if (err) {
@@ -104,7 +103,7 @@ function createRsv(userId, playId, playName, usableSeatNo, seatClass, booker, bo
             });
         }
 
-        function updateSeatState(callback) { // 트랜잭션 내의 함수 정의
+        function updateSeatState(callback) { // 트랜잭션 내의 함수 정의 - 예약한 자리 상태 변경
             dbConn.query(sql_update, [usableSeatNo], function (err) {
                 if (err) {
                     return callback("SEAT_STATE UPDATE Failed!!!");
@@ -113,7 +112,7 @@ function createRsv(userId, playId, playName, usableSeatNo, seatClass, booker, bo
             });
         }
 
-        function updateCouponState(callback) { // 트랜잭션 내의 함수 정의
+        function updateCouponState(callback) { // 트랜잭션 내의 함수 정의 - 사용한 쿠폰 상태 변경
             dbConn.query(sql_update_coupon, [useCoupon], function (err) {
                 if (err) {
                     return callback("COUPON_STATE UPDATE Failed!!!");
@@ -122,7 +121,7 @@ function createRsv(userId, playId, playName, usableSeatNo, seatClass, booker, bo
             });
         }
 
-        function updateMileage(callback) { // 트랜잭션 내의 함수 정의
+        function updateMileage(callback) { // 트랜잭션 내의 함수 정의 - 사용한 마일리지 차감
             dbConn.query(sql_update_mileage, [useMileage, userId], function (err) {
                 if (err) {
                     return callback("MILEAGE UPDATE Failed!!!");
@@ -168,28 +167,16 @@ function findRsv(rsvId, callback) {
                 rsv.seatClass = result[0].seatClass;
                 rsv.seatInfo = result[0].seatInfo;
                 rsv.settlement = result[0].settlement;
-                // 좌석등급에 따라 결제금액을 처리해준다.
-                // 결제금액 = 좌석등급 가격*(100-쿠폰 할인율(%))-회원 마일리지
-                // if (rsv.seatClass === 'VIP') {
-                //     rsv.settlement = ((result[0].VIPprice*(100-result[0].saveOff)/100)-result[0].mileage)
-                // }
-                // if (rsv.seatClass === 'R') {
-                //     rsv.settlement = ((result[0].Rprice*(100-result[0].saveOff)/100)-result[0].mileage)
-                // }
-                // if (rsv.seatClass === 'S') {
-                //     rsv.settlement = ((result[0].Sprice*(100-result[0].saveOff)/100)-result[0].mileage)
-                // }
                 // 예약한 공연의 포스터 이미지
                 rsv.poster = url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(result[0].imageName));
                 rsv.status = result[0].status;
-                // rsv.poster = url.resolve('https://127.0.0.1:4433/posterimg/', path.basename(result[0].imageName));
                 callback(null, rsv); // router에 null->err, rsv객체->result에 넘겨준다.
             }
         });
     });
 }
 
-function deleteRsv(rsvId, callback) {
+function deleteRsv(rsvId, callback) { // 예약 취소
     var sql_seat_cancel = "update usableSeat set state = 0 where usableNo = (select usableSeat_usableNo from reservation where id = ?)";
     var sql_rsv_delete = "update reservation set status = 0 where id = ?";
     var sql_update_coupon = 'update coupon set state = 0 where state = 1 and couponNo = (select useCoupon from reservation where id = ?)';
@@ -222,7 +209,7 @@ function deleteRsv(rsvId, callback) {
             });
         });
 
-        function seatCancel(callback) {
+        function seatCancel(callback) { // 예약한 자리 상태 복구
             dbConn.query(sql_seat_cancel, [rsvId], function (err, result) {
                 if (err) {
                     return callback("SEAT CANCEL Failed!!!");
@@ -231,7 +218,7 @@ function deleteRsv(rsvId, callback) {
             });
         }
 
-        function rsvDelete(callback) {
+        function rsvDelete(callback) { // 예약 취소 상태로 변경
             dbConn.query(sql_rsv_delete, [rsvId], function (err, result) {
                 if (err) {
                     return callback("RESERVATION DELETE Failed!!!");
@@ -240,7 +227,7 @@ function deleteRsv(rsvId, callback) {
             });
         }
 
-        function updateCouponState(callback) { // 트랜잭션 내의 함수 정의
+        function updateCouponState(callback) { // 트랜잭션 내의 함수 정의 - 사용한 쿠폰 상태 복구
             dbConn.query(sql_update_coupon, [rsvId], function (err) {
                 if (err) {
                     return callback("COUPON_STATE UPDATE Failed!!!");
@@ -249,7 +236,7 @@ function deleteRsv(rsvId, callback) {
             });
         }
 
-        function updateMileage(callback) { // 트랜잭션 내의 함수 정의
+        function updateMileage(callback) { // 트랜잭션 내의 함수 정의 - 사용한 마일리지 복구
             dbConn.query(sql_update_mileage, [rsvId, rsvId], function (err) {
                 if (err) {
                     return callback("MILEAGE UPDATE Failed!!!");

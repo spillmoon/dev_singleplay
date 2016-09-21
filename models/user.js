@@ -68,7 +68,7 @@ function findUser(userId, callback) {
         });
     });
 }
-
+// registrationToken 갱신
 function updateRegistrationToken(token, uid, callback) {
     var sql = "update user set registrationToken = ? where id = ?";
     dbPool.logStatus();
@@ -86,9 +86,30 @@ function updateRegistrationToken(token, uid, callback) {
         });
     });
 }
-
+// FCM을 위한 registrationToken 조회
 function getRegistrationToken(day, callback) {
     var sql = "select registrationToken from user where (musical =1 or opera = 1 or concert = 1) and " + day + " = 1 and push = 'on'";
+    dbPool.logStatus();
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback("DB CONNECTION FAIL");
+        }
+        dbConn.query(sql, function(err, results) {
+            dbConn.release();
+            dbPool.logStatus();
+            if (err) {
+                return callback("registrationToken 조회 실패");
+            }
+            callback(null, results);
+        });
+    });
+}
+// 위시리스트 알림용 registrationToken 조회
+function getWishToken(callback) {
+    var sql = "select registrationToken from user u join wishlist w on (u.id = w.userId) " +
+                "join play p on (p.id = w.playId) " +
+                "where playDay = curdate() and push = 'on' " +
+                "group by registrationToken";
     dbPool.logStatus();
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
@@ -165,9 +186,29 @@ function updateProfile(userInfo, callback) {
         });
     });
 }
-
+// 알림 설정 변경
 function updatePush(userId, sql_theme, sql_day, callback) {
     var sql_change = "update user set " + sql_theme + sql_day + " where id = ?";
+    console.log(sql_change);
+    dbPool.logStatus();
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback("DB CONNECTION FAIL");
+        }
+        dbConn.query(sql_change, [userId], function(err, result) {
+            dbConn.release();
+            dbPool.logStatus();
+            if (err) {
+                return callback("RESET FAIL");
+            }
+            callback(null);
+        });
+    });
+}
+
+// 위시 알림 설정 변경
+function updateWishPush(userId, wishPush, callback) {
+    var sql_change = "update user set " + wishPush + " where id = ?";
     console.log(sql_change);
     dbPool.logStatus();
     dbPool.getConnection(function(err, dbConn) {
@@ -286,5 +327,7 @@ module.exports.getProfile = getProfile;
 module.exports.discountList = discountList;
 module.exports.updateProfile = updateProfile;
 module.exports.updatePush = updatePush;
+module.exports.updateWishPush = updateWishPush;
 module.exports.updateRegistrationToken = updateRegistrationToken;
 module.exports.getRegistrationToken = getRegistrationToken;
+module.exports.getWishToken = getWishToken;

@@ -26,7 +26,8 @@ var CronJob = require('cron').CronJob;
 var logger2 = require('./config/logger');
 var async = require('async');
 var timeZone = "Asia/Seoul";
-var sendTime = "00 00 9-18 * * 0-6";
+var sendTime1 = "00 00 9-18 * * 0-6";
+var sendTime2 = "00 00 9-18 * * 0-6";
 
 var app = express();
 
@@ -75,8 +76,8 @@ app.use('/users', user);
 app.use('/notifications', notification); //(url, 모듈명)
 app.use('/usableseats', usableseat);
 
-
-var job = new CronJob(sendTime, function() {
+// 요일, 테마 알림
+var job1 = new CronJob(sendTime1, function() {
     logger2.log('debug', '***************** this is FCM CronJob');
     var date = new Date();
     var week = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
@@ -89,12 +90,8 @@ var job = new CronJob(sendTime, function() {
                 delayWhileIdle: false,
                 notification: {
                     title: "Single Play Notification",
-                    body: "오늘 뮤지컬 공연이 있어요"
+                    body: "오늘 공연이 있어요"
                 },
-                data: {
-                    title: "1",
-                    content: "2"
-                }
             });
             var fcm = new FCM.Sender('AIzaSyDwz_s38S_LU-fNSOA3mqKpDDGxhWuJOIs');
             var regToken = [];
@@ -110,42 +107,35 @@ var job = new CronJob(sendTime, function() {
         });
     });
 }, true, timeZone);
-//
-// var job = new CronJob(sendTime, function() {
-//     logger2.log('debug', '***************** this is FCM CronJob');
-//     var date = new Date();
-//     var week = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-//     User.getRegistrationToken(week[date.getDay()], function(err, tokens) {
-//         if (err) {
-//             logger2.log('debug', 'get registrationToken Fail');
-//         }
-//         async.each(tokens, function(item, callback) {
-//             var message = new FCM.Message({
-//                 delayWhileIdle: false,
-//                 notification: {
-//                     title: "Single Play Notification",
-//                     body: "오늘 뮤지컬 공연이 있어요"
-//                 },
-//                 data: {
-//                     title: "1",
-//                     content: "2"
-//                 }
-//             });
-//             var fcm = new FCM.Sender('AIzaSyDwz_s38S_LU-fNSOA3mqKpDDGxhWuJOIs');
-//             var regToken = [];
-//             regToken.push(item.registrationToken);
-//             fcm.send(message, { registrationTokens: regToken}, function (err, response) {
-//                 if (err)
-//                     logger2.log('debug', 'FCM Send Error ', err);
-//                 else
-//                     logger2.log('debug', 'FCM Send Success ', response);
-//             });
-//         }, function(err) {
-//             logger2.log('debug', 'FCM async Error');
-//         });
-//     });
-// }, true, timeZone);
-
+// 위시리스트 알림
+var job2 = new CronJob(sendTime2, function() {
+    logger2.log('debug', '***************** this is FCM CronJob');
+    User.getWishToken(function(err, tokens) {
+        if (err) {
+            logger2.log('debug', 'get registrationToken Fail');
+        }
+        async.each(tokens, function(item, callback) {
+            var message = new FCM.Message({
+                delayWhileIdle: false,
+                notification: {
+                    title: "Single Play Notification",
+                    body: "위시리스트가 곧 시작해요"
+                },
+            });
+            var fcm = new FCM.Sender('AIzaSyDwz_s38S_LU-fNSOA3mqKpDDGxhWuJOIs');
+            var regToken = [];
+            regToken.push(item.registrationToken);
+            fcm.send(message, { registrationTokens: regToken}, function (err, response) {
+                if (err)
+                    logger2.log('debug', 'FCM Send Error ', err);
+                else
+                    logger2.log('debug', 'FCM Send Success ', response);
+            });
+        }, function(err) {
+            logger2.log('debug', 'FCM async Error');
+        });
+    });
+}, true, timeZone);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -34,7 +34,7 @@ router.get('/me', isSecure, isAuthenticated, function(req, res, next) {
         });
     });
 });
-
+// 회원 프로필(이메일, 전화번호) 수정 / 알림설정
 router.put('/me', isSecure, isAuthenticated, function(req, res, next) {
     logger.log('debug', '********** Here is user put **************');
     logger.log('debug', 'method: %s', req.method);
@@ -105,6 +105,25 @@ router.put('/me', isSecure, isAuthenticated, function(req, res, next) {
         console.log(sql_theme);
         console.log(sql_day);
         User.updatePush(userId, sql_theme, sql_day, function(err, result) {
+            if (err) {
+                return res.send({
+                    code: 0,
+                    error: "알림 설정 변경 실패"
+                });
+            }
+            res.send({
+                code: 1,
+                message: "알림 변경 성공"
+            });
+        });
+    } else if (action == "wish") {
+        var wishPush = "";
+        if (req.body.noti == "on")
+            wishPush = "wishPush = 'on'";
+        else if (req.body.noti == "off")
+            wishPush = "wishPush = 'off'";
+
+        User.updateWishPush(userId, wishPush, function(err, result) {
             if (err) {
                 return res.send({
                     code: 0,

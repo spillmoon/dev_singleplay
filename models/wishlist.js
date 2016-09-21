@@ -51,7 +51,6 @@ function listWish(uid, callback) {
                     salePrice: parseInt(tmpwish.salePrice),
                     starScore: results[i].starScoreAvg,
                     poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
-                    // poster : url.resolve('https://127.0.0.1:4433/posterimg/', path.basename(results[i].imageName))
                 });
             }
             callback(null, wish); // router에 null->err, wish->result를 넘겨준다.
@@ -117,7 +116,6 @@ function createWish(userId, playId, callback) {
                     // 결과로 출력할 위시리스트에 있는 공연 포스터 URL을 thumbnail 배열에 push한다.
                     thumbnail.push(
                         url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
-                        // url.resolve('https://127.0.0.1:4433/posterimg/', path.basename(results[i].imageName));
                     );
                 }
                 callback(null, thumbnail); // router의 createWish 함수에 null->err, thumbnail 배열 객체->results를 념겨준다.

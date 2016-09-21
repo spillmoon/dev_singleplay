@@ -4,7 +4,7 @@ var path = require('path');
 var url = require('url');
 var fs = require('fs');
 
-function selectSeat(playId, callback) {
+function selectSeat(playId, callback) { // 해당 공연의 관련 정보와 빈자리 목록
     var sql = "select p.theme, p.name, substring(p.playDay, 1, 10) playDay, substring(p.playTime, 1, 5) playTime, pl.address, pl.placeName, " +
         "p.placeImageName, u.seatClass, u.seatInfo, (p.VIPprice*(100-p.saveOff)/100) VIPprice, (p.Rprice*(100-p.saveOff)/100) Rprice, " +
         "(p.Sprice*(100-p.saveOff)/100) Sprice, u.usableNo " +

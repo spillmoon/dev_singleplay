@@ -1,17 +1,15 @@
 var express = require('express');
 var router = express.Router();
 var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
-var FacebookStrategy = require('passport-facebook').Strategy;
 var FacebookTokenStrategy = require('passport-facebook-token');
 var User = require('../models/user');
 var logger = require('../config/logger');
-
+// 회원테이블의 회원id를 세션에 등록
 passport.serializeUser(function (user, done) {
     logger.log('debug', '********** Here is serializeUser userId : %s', user.id);
     done(null, user.id);
 });
-
+// 세션에서 회원id를 이용해 회원 객체 복원
 passport.deserializeUser(function (id, done) {
     logger.log('debug', '********** Here is deserializeUser ****************');
     User.findUser(id, function (err, user) {
@@ -22,7 +20,7 @@ passport.deserializeUser(function (id, done) {
         done(null, user);
     });
 });
-
+// 페이스북 인증
 passport.use(new FacebookTokenStrategy({
     clientID: process.env.FACEBOOK_APP_ID,
     clientSecret: process.env.FACEBOOK_APP_SECRET
@@ -44,13 +42,7 @@ router.get('/logout', function (req, res, next) {
         message: '로그아웃 성공'
     });
 });
-
-router.get('/facebook', passport.authenticate('facebook', { scope : ['email']}));
-
-router.get('/facebook/callback', passport.authenticate('facebook'), function (req, res, next) {
-    res.send({message: 'facebook callback'});
-});
-
+// 페이스북 로그인
 router.post('/facebook/token', passport.authenticate('facebook-token', { scope : ['email']}), function (req, res, next) {
     logger.log('debug', '********** Here is facebook token **************');
     logger.log('debug', 'method: %s', req.method);
@@ -66,6 +58,7 @@ router.post('/facebook/token', passport.authenticate('facebook-token', { scope :
     var userId = (req.user) ? req.user.id : 0;
     logger.log('debug', 'sessionId: %s', req.user.id);
     logger.log('debug', 'registrationToken: %s', req.body.registration_token);
+    // 로그인 때마다 registrationToken 갱신
     if (req.user) {
         User.updateRegistrationToken(req.body.registration_token, userId, function (err, info) {
             if (err) {
