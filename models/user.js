@@ -9,7 +9,8 @@ var fs = require('fs');
 // 페이스북 로그인시 회원 테이블에서 아이디를 찾고 없으면 추가, 있으면 기존 id 사용
 function findOrCreate(profile, callback) {
     var sql_findUser = "select id, name, userEmail, userPhone, facebookId from user where facebookId = ?";
-    var sql_createUser = "insert into user(name, facebookId) values(?, ?)";
+    var sql_createUser = "insert into user(name, facebookId, mileage, musical, opera, concert, mon, tue, wed, thu, fri, sat, sun, push) " +
+                            "values(?, ?, 5000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'off')";
     dbPool.logStatus();
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
