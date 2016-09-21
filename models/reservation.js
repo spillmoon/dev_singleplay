@@ -64,6 +64,9 @@ function createRsv(userId, playId, playName, usableSeatNo, seatClass, booker, bo
                      "useMileage, useCoupon, settlement, status) " +
                      "values (?, ?, ?, convert_tz(current_timestamp(), '+00:00', '+09:00'), ?, ?, ?, ?, ?, ?, ?, ?, 1)";// 예약을 추가하는 쿼리문
     var sql_update = 'update usableSeat set state = 1 where state = 0 and usableNo = ?';
+    var sql_update_coupon = 'update coupon set state = 1 where state = 0 and couponNo = ?';
+    var sql_update_mileage = 'update user set mileage = (mileage-?) where id = ?';
+
     dbPool.logStatus();
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
@@ -75,7 +78,7 @@ function createRsv(userId, playId, playName, usableSeatNo, seatClass, booker, bo
                 dbPool.logStatus();
                 return callback("예약 실패");
             }
-            async.series([insertRsv, updateSeatState], function (err, result) {
+            async.series([insertRsv, updateSeatState, updateCouponState, updateMileage], function (err, result) {
                 if (err) {
                     return dbConn.rollback(function () { // 에러가 나면 db 롤백! (주의! autocommit 모드 해제!)
                         dbConn.release(); // db연결 끊음
@@ -105,6 +108,24 @@ function createRsv(userId, playId, playName, usableSeatNo, seatClass, booker, bo
             dbConn.query(sql_update, [usableSeatNo], function (err) {
                 if (err) {
                     return callback("SEAT_STATE UPDATE Failed!!!");
+                }
+                callback(null);
+            });
+        }
+
+        function updateCouponState(callback) { // 트랜잭션 내의 함수 정의
+            dbConn.query(sql_update_coupon, [useCoupon], function (err) {
+                if (err) {
+                    return callback("COUPON_STATE UPDATE Failed!!!");
+                }
+                callback(null);
+            });
+        }
+
+        function updateMileage(callback) { // 트랜잭션 내의 함수 정의
+            dbConn.query(sql_update_mileage, [useMileage, userId], function (err) {
+                if (err) {
+                    return callback("MILEAGE UPDATE Failed!!!");
                 }
                 callback(null);
             });
@@ -171,6 +192,9 @@ function findRsv(rsvId, callback) {
 function deleteRsv(rsvId, callback) {
     var sql_seat_cancel = "update usableSeat set state = 0 where usableNo = (select usableSeat_usableNo from reservation where id = ?)";
     var sql_rsv_delete = "update reservation set status = 0 where id = ?";
+    var sql_update_coupon = 'update coupon set state = 0 where state = 1 and couponNo = (select useCoupon from reservation where id = ?)';
+    var sql_update_mileage = 'update user set mileage = (mileage+(select useMileage from reservation where id = ?)) where id = (select user_id from reservation where id = ?)';
+
     dbPool.logStatus();
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
@@ -182,7 +206,7 @@ function deleteRsv(rsvId, callback) {
                 dbPool.logStatus();
                 return callback("예약 취소 실패");
             }
-            async.series([seatCancel, rsvDelete], function (err, result) {
+            async.series([seatCancel, rsvDelete, updateCouponState, updateMileage], function (err, result) {
                 if (err) {
                     return dbConn.rollback(function () {
                         dbConn.release();
@@ -211,6 +235,24 @@ function deleteRsv(rsvId, callback) {
             dbConn.query(sql_rsv_delete, [rsvId], function (err, result) {
                 if (err) {
                     return callback("RESERVATION DELETE Failed!!!");
+                }
+                callback(null);
+            });
+        }
+
+        function updateCouponState(callback) { // 트랜잭션 내의 함수 정의
+            dbConn.query(sql_update_coupon, [rsvId], function (err) {
+                if (err) {
+                    return callback("COUPON_STATE UPDATE Failed!!!");
+                }
+                callback(null);
+            });
+        }
+
+        function updateMileage(callback) { // 트랜잭션 내의 함수 정의
+            dbConn.query(sql_update_mileage, [rsvId, rsvId], function (err) {
+                if (err) {
+                    return callback("MILEAGE UPDATE Failed!!!");
                 }
                 callback(null);
             });
