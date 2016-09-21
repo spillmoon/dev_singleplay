@@ -2,10 +2,9 @@ var path = require('path');
 var url = require('url');
 var async = require('async');
 var dbPool = require('../models/common').dbPool;
-// 같은 날 다른 시간 공연들 하나로 표시, 시간은 여러개 저장할 수 있도록 하기
 
 // 당일 전체 공연 목록
-function allList(sort, callback) {
+function allList(sort, userId, callback) {
     // 공연, 공연장, 이미지 테이블로 공연 목록 정보 제공
     // substring()으로 T00:00:00.000Z 만 제거
     // curdate()로 현재 날짜 검색
@@ -30,7 +29,10 @@ function allList(sort, callback) {
         "join image i on (i.play_name = py.name) " +
         "where playDay = curdate() and imageType = 0 " +
         "order by saveOff desc";
-    // var sql_score = "select sum(starScore)/count(starScore) starAvg from starScore where play_name = ?";
+    var sql_review = "select p.id playId, name, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, status " +
+                        "from play p join reservation r on (p.id = r.play_id) " +
+                        "where status = 1 and playDay = curdate()-1 and user_id = ? " +
+                        "group by name";
     // 매개변수로 받은 정렬 값에 따라 쿼리 선택
     var sql = "";
     if (sort == 0)
@@ -46,9 +48,9 @@ function allList(sort, callback) {
             return callback("DB CONNECTION FAIL");
         }
         dbConn.query(sql, function (err, results) {
-            dbConn.release();
-            dbPool.logStatus();
             if (err) {
+                dbConn.release();
+                dbPool.logStatus();
                 return callback("목록 조회 실패");
             }
             var playlist = [];
@@ -73,7 +75,23 @@ function allList(sort, callback) {
                     poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
                 });
             }
-            callback(null, playlist);
+            dbConn.query(sql_review, [userId], function(err, results) {
+                dbConn.release();
+                dbPool.logStatus();
+                if (err) {
+                    return callback("review list fail");
+                }
+                var reviewlist = [];
+                for(var i = 0; i < results.length; i++) {
+                    reviewlist.push({
+                        playId: results[i].playId,
+                        playName: results[i].name,
+                        playDay: results[i].playDay,
+                        playTime: results[i].playTime
+                    });
+                }
+                callback(null, playlist, reviewlist);
+            });
         });
     });
 }

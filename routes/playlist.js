@@ -19,8 +19,9 @@ router.get('/', function (req, res, next) {
     if (action == 0) { // 항목별 검색
         var theme = req.query.theme; // undefined: 전체, 0: 뮤지컬, 1: 오페라, 2:콘서트
         var sort = req.query.sort || 0; // 0: 별점, 1:최신, 2: 할인
+        var userId = (req.user) ? req.user.id : 0;
         if (theme == 0) { // 장르 구분없는 공연 목록
-            Play.allList(sort, function(err, playlist) {
+            Play.allList(sort, userId, function(err, playlist, reviewlist) {
                 if (err) {
                     return res.send({
                         code: 0,
@@ -29,7 +30,8 @@ router.get('/', function (req, res, next) {
                 }
                 res.send({
                     code:1,
-                    results: playlist
+                    results: playlist,
+                    review: reviewlist
                 });
             });
         } else if (theme == 1) { // 뮤지컬 목록

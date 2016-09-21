@@ -108,7 +108,7 @@ function getRegistrationToken(day, callback) {
 function getWishToken(callback) {
     var sql = "select registrationToken from user u join wishlist w on (u.id = w.userId) " +
                 "join play p on (p.id = w.playId) " +
-                "where playDay = curdate() and push = 'on' " +
+                "where playDay = curdate() and wishPush = 'on' " +
                 "group by registrationToken";
     dbPool.logStatus();
     dbPool.getConnection(function(err, dbConn) {
