@@ -186,7 +186,7 @@ function updatePush(userId, sql_theme, sql_day, callback) {
 
 // 할인할 수 있는 정보들
 function discountList(uid, callback) {
-    var sql_coupon_list = "select couponNo, couponName, saveOff from coupon where user_id = ? and curdate() between periodStart and periodEnd";
+    var sql_coupon_list = "select couponNo, couponName, saveOff from coupon where user_id = ? and state = 0 and curdate() between periodStart and periodEnd";
     var sql_mileage = "select mileage from user where id = ?";
     dbPool.logStatus();
     dbPool.getConnection(function (err, dbConn) {
@@ -251,7 +251,7 @@ function discountList(uid, callback) {
 function couponList(uid, callback) {
     var sql_coupon_list = "select couponNo, couponName, saveOff, substring(periodStart, 1, 10) periodStart, substring(periodEnd, 1, 10) periodEnd " +
         "from coupon " +
-        "where user_id = ?";
+        "where user_id = ? and state = 0";
     dbPool.logStatus();
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
