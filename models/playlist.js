@@ -292,6 +292,7 @@ function concertList(sort, callback) {
     });
 }
 
+// TODO : 평점 수정
 // 검색한 구의 공연장에서 하는 공연 목록
 function searchLocation(location, callback) {
     // 당일 검색한 구에 위치한 공연장에서 하는 공연 목록 검색 쿼리
@@ -364,6 +365,7 @@ function searchLocation(location, callback) {
 }
 
 // 검색한 키워드와 관련된 공연 목록
+// TODO : 키워드로 조회 경우 평점 수정
 function searchKeyword(keyword, callback) {
     // like를 사용해 검색할 단어와 연관된 공연, 공연장의 공연 목록 제공
     var sql = "select py.id pid, name, theme, placeName, playDay, playTime, VIPprice, Rprice, Sprice, saveOff, starScoreAvg, imageName, imageType " +
@@ -411,12 +413,12 @@ function searchKeyword(keyword, callback) {
 
 function findPlay(pid, uid, callback) {
     // 공연정보, 포스터, 출연자 이미지 가져오기
-    var sql_info = "select p.id pid, name, theme, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, " +
-        "VIPprice, Rprice, Sprice, p.saveOff, p.starScoreAvg oldAvg, (select sum(s.starScore)/count(s.user_id) starScoreAvg from play p join starScore s on (p.id = s.play_id) where p.id=?) newAvg, imageName, imageType, " +
-        "(select count(*) userCount from play p join starScore s on (p.id = s.play_id) where p.id=?) userCount " +
-    "from play p join image i on (i.play_name = p.name) " +
-    "join place pl on (p.place_id = pl.id) " +
-    "where p.id = ?";
+    var sql_info = "select p.id pid, name, theme, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, VIPprice, Rprice, Sprice, p.saveOff, p.starScoreAvg oldAvg, " +
+        "(select round((sum(s.starScore)/count(s.user_id)), 1) starScoreAvg from play p join starScore s on (p.id = s.play_id) where play_name like (select distinct play_name from starScore where play_id = ?)) newAvg, " +
+        "imageName, imageType, (select count(*) userCount from play p join starScore s on (p.id = s.play_id) where play_name like (select distinct play_name from starScore where play_id = ?)) userCount " +
+        "from play p join image i on (i.play_name = p.name) " +
+        "join place pl on (p.place_id = pl.id) " +
+        "where p.id = ?";
     // 위시리스트에 있는지 판별
     var sql_isWish = "select wishId from wishlist where playId = ? and userId = ?";
     // 빈좌석 갯수 가져오기
@@ -465,6 +467,8 @@ function findPlay(pid, uid, callback) {
                     return callback("공연 조회 실패")
                 }
                 var theme = "";
+
+                // 평점 구하기
                 var tmpAvg = {};
                 if (playinfo[0].newAvg === null) { // VIPprice가 없는 경우 Rprice를 결과값으로 한다.
                     tmpAvg.starScoreAvg = playinfo[0].oldAvg;
