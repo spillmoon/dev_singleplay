@@ -30,7 +30,7 @@ function allList(sort, userId, callback) {
                     "left join (select play_name pname, round(sum(starScore)/count(starScore), 1) starAvg from starScore group by pname) a on (p.name = a.pname) " +
                     "where playDay = curdate() and imageType = 0 " +
                     "order by saveOff desc";
-    var sql_review = "select p.id playId, name, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, status " +
+    var sql_review = "select p.id playId, name, theme, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, status " +
         "from play p join reservation r on (p.id = r.play_id) " +
         "where status = 1 and playDay = curdate()-1 and user_id = ? " +
         "group by name";
