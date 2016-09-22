@@ -55,6 +55,7 @@ function allList(sort, userId, callback) {
             }
             var playlist = [];
             var tmpPrice = {};
+            var theme = '';
             for (var i = 0; i < results.length; i++) { // 결과 갯수만큼 객체들을 만들어 정보를 배열에 저장
                 if (results[i].VIPprice === null) { // 최고가가 없는 경우 처리
                     tmpPrice.price = results[i].Rprice;
@@ -63,9 +64,16 @@ function allList(sort, userId, callback) {
                     tmpPrice.price = results[i].VIPprice;
                     tmpPrice.salePrice = results[i].VIPprice * ((100 - results[i].saveOff) / 100);
                 }
+                if (results[i].theme == 0)
+                    theme = "뮤지컬";
+                if (results[i].theme == 1)
+                    theme = "오페라";
+                if (results[i].theme == 2)
+                    theme = "콘서트";
                 playlist.push({
                     playId: results[i].pid,
                     playName: results[i].name,
+                    theme: theme,
                     placeName: results[i].placeName,
                     playDay: results[i].playDay,
                     playTime: results[i].playTime,
