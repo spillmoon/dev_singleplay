@@ -7,13 +7,13 @@ var async = require('async');
 
 // 위시리스트 목록 조회
 function listWish(uid, callback) {
-    var sql_select_wishlist = "SELECT p.id pid, w.wishId, p.name, place.placeName, substring(p.playDay, 1, 10) playDay, substring(p.playTime, 1, 5) playTime, " +
-                              "VIPprice, Rprice, Sprice, p.saveOff, p.starScoreAvg, i.imageName " +
-                              "FROM play p join wishlist w on (p.id = w.playId) " +
-                              "join place on (place.id = p.place_id)" +
-                              "join image i on (p.name = i.play_name) " +
-                              "where w.userId = ? " +
-                              "group by w.wishId"; // image, place, play, wishlist 테이블을 join하여 필요한 속성 추출하는 쿼리문
+    var sql_select_wishlist = "SELECT p.id pid, w.wishId, p.name, placeName, substring(p.playDay, 1, 10) playDay, substring(p.playTime, 1, 5) playTime, VIPprice, Rprice, Sprice, p.saveOff, " +
+                            "p.starScoreAvg, imageType, imageName, a.starAvg, case when a.starAvg is null then round(p.starScoreAvg, 1) else round(a.starAvg, 1) end 'star' " +
+                            "FROM play p join wishlist w on (p.id = w.playId) " +
+                            "join place pl on (pl.id = p.place_id)" +
+                            "join image i on (p.name = i.play_name) " +
+                            "left join (select play_name pname, round(sum(starScore)/count(starScore), 1) starAvg from starScore group by pname) a on (p.name = a.pname) " +
+                            "where w.userId = ? and imageType = 0"; // image, place, play, wishlist 테이블을 join하여 필요한 속성 추출하는 쿼리문
     dbPool.logStatus();
     dbPool.getConnection(function (err, dbConn) {
         if (err) {

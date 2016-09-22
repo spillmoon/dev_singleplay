@@ -7,14 +7,14 @@ var async = require('async');
 
 // 예약 내역 조회
 function listRsv(uid, callback) {
-    var sql_select_rsvlist = 'SELECT r.id rid, p.name, place.placeName, substring(p.playDay, 1, 10) playDay, substring(p.playTime, 1, 5) playTime, ' +
-                             'p.VIPprice, p.Rprice, p.Sprice, p.saveOff, p.starScoreAvg, i.imageName, rsvDate ' +
-                             'FROM play p join reservation r on (p.id = r.play_id) ' +
-                             'join place on (place.id = p.place_id) ' +
-                             'join image i on (p.name = i.play_name) ' +
-                             'where r.user_id = ? ' +
-                             'group by r.id ' +
-                             'order by rsvDate desc'; // play, reservation, place, image 테이블을 join하여 필요한 속성을 추출하는 쿼리문
+    var sql_select_rsvlist = "SELECT r.id rid, p.name, placeName, substring(p.playDay, 1, 10) playDay, substring(p.playTime, 1, 5) playTime, VIPprice, Rprice, Sprice, saveOff, " +
+                        "p.starScoreAvg, imageType, imageName, rsvDate, a.starAvg, case when a.starAvg is null then round(p.starScoreAvg, 1) else round(a.starAvg, 1) end 'star' " +
+                        "FROM play p join reservation r on (p.id = r.play_id) " +
+                        "join place pl on (pl.id = p.place_id) " +
+                        "join image i on (p.name = i.play_name) " +
+                        "left join (select play_name pname, round(sum(starScore)/count(starScore), 1) starAvg from starScore group by pname) a on (p.name = a.pname) " +
+                        "where r.user_id = ? and imageType = 0 " +
+                        "order by rsvDate desc"; // play, reservation, place, image 테이블을 join하여 필요한 속성을 추출하는 쿼리문
     dbPool.logStatus();
     dbPool.getConnection(function (err, dbConn) {
         if (err) {
@@ -48,7 +48,7 @@ function listRsv(uid, callback) {
                     playTime: results[i].playTime,
                     price: tmprsv.price,
                     salePrice: tmprsv.salePrice,
-                    starScore: results[i].starScoreAvg,
+                    starScore: results[i].star,
                     poster: url.resolve('http://ec2-52-78-118-8.ap-northeast-2.compute.amazonaws.com:8080/posterimg/', path.basename(results[i].imageName))
                 });
             }
