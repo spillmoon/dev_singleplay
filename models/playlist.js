@@ -32,7 +32,7 @@ function allList(sort, userId, callback) {
                     "order by saveOff desc";
     var sql_review = "select p.id playId, name, theme, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, status " +
         "from play p join reservation r on (p.id = r.play_id) " +
-        "where status = 1 and playDay = curdate()-1 and user_id = ? " +
+        "where status = 1 and review = 0 and playDay = curdate()-1 and user_id = ? " +
         "group by name";
     // 매개변수로 받은 정렬 값에 따라 쿼리 선택
     var sql = "";
