@@ -311,7 +311,7 @@ function concertList(sort, callback) {
     });
 }
 
-// TODO : 평점 수정
+// 평점 수정
 // 검색한 구의 공연장에서 하는 공연 목록
 function searchLocation(location, callback) {
     // 당일 검색한 구에 위치한 공연장에서 하는 공연 목록 검색 쿼리
@@ -386,7 +386,7 @@ function searchLocation(location, callback) {
 }
 
 // 검색한 키워드와 관련된 공연 목록
-// TODO : 키워드로 조회 경우 평점 수정
+// 키워드로 조회 경우 평점 수정
 function searchKeyword(keyword, callback) {
     // like를 사용해 검색할 단어와 연관된 공연, 공연장의 공연 목록 제공
     var sql = "select p.id pid, name, theme, placeName, substring(playDay, 1, 10) playDay, substring(playTime, 1, 5) playTime, VIPprice, Rprice, Sprice, saveOff, " +
